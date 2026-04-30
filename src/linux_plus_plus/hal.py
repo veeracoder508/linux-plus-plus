@@ -42,7 +42,7 @@ def _detect_os() -> str:
 
 CURRENT_OS: str = _detect_os()
 IS_WINDOWS: bool = CURRENT_OS == OSType.WINDOWS
-IS_UNIX:    bool = CURRENT_OS in (OSType.LINUX, OSType.MACOS)
+IS_UNIX: bool = CURRENT_OS in (OSType.LINUX, OSType.MACOS)
 
 
 # ---------------------------------------------------------------------------

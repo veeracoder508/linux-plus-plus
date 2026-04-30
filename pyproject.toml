@@ -1,10 +1,28 @@
+[build-system]
+requires = ["uv-build>=0.1.0"]
+build-backend = "uv_build"
+
 [project]
 name = "linux-plus-plus"
-version = "0.1.0"
-description = "Add your description here"
+authors = [{ name = "R A Veeraragavan", email = "veeracoder123@gmail.com" }]
+version = "0.0.0b2"
+description = "A simple terminal OS made in python."
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "paramiko>=4.0.0",
     "psutil>=7.2.2",
     "pyreadline3>=3.5.4",
 ]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+
+[project.scripts]
+linux-plus-plus = "linux_plus_plus.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
