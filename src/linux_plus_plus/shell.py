@@ -1271,18 +1271,30 @@ class Shell:
         if cwd.startswith(home):
             cwd = "~" + cwd[len(home):]
 
-        # colour codes (ANSI)
-        if not IS_WINDOWS:
-            R  = "\033[0m"
-            G  = "\033[32m"
-            B  = "\033[34m"
-            Y  = "\033[33m"
-            RD = "\033[31m"
-            marker = f"{RD}#{R}" if os.geteuid() == 0 else f"{G}${R}"
-            return f"{G}{user}{R}@{B}{host}{R}:{Y}{cwd}{R}{marker} "
-        else:
+        if IS_WINDOWS:
             marker = "#" if os.environ.get("ELEVATED") else "$"
             return f"{user}@{host}:{cwd}{marker} "
+
+        # Wrap every ANSI escape in \001 ... \002 so readline does not
+        # count the invisible bytes toward the visible prompt width.
+        # Without these markers the cursor jumps to the wrong column
+        # and escape codes print as raw text like [32m on some terminals.
+        def _c(code: str) -> str:
+            return f"\001{code}\002"
+
+        R  = _c("\033[0m")
+        G  = _c("\033[32m")
+        B  = _c("\033[34m")
+        Y  = _c("\033[33m")
+        RD = _c("\033[31m")
+
+        try:
+            is_root = os.geteuid() == 0
+        except AttributeError:
+            is_root = False
+
+        marker = f"{RD}#{R}" if is_root else f"{G}${R}"
+        return f"{G}{user}{R}@{B}{host}{R}:{Y}{cwd}{R}{marker} "
 
     # --- line execution (called by REPL and `source`) ---
 
