@@ -904,25 +904,6 @@ EXAMPLES
 
     # connect from another machine:
     ssh user@your-ip -p 2222""",
-
-    "e2eeftp_client": """\
-NAME
-    e2eeftp_client - connect to a e2eeftp server.
-    
-SYNOPSIS
-    e2eeftp_client <host> [port]
-    
-SUBCOMMANDS
-    ls/list                     list all the files in the server.
-    hlist                       get all the commandes supported by the server.
-    get <file-path>             download a file from the server.
-    put/send/upload <file-path> upload a file to the server.
-    delete <file-path>          delete a file in the server.
-    exit                        exit e2eeftp session.
-    
-EXAMPLES
-    e2eeftp_client 192.168.1.10 2121
-    e2eeftp_client localhost 2121"""
 }
 
 
@@ -1272,21 +1253,21 @@ class ScriptRunner:
 
 
 # ===========================================================================
-# SSHClient  — interactive SSH using paramiko (with system ssh fallback)
+# SSHClient  — interactive SSH (system binary on Unix, paramiko on Windows)
 # ===========================================================================
 
 class SSHClient:
     """
     SSH client with two backends:
 
-    Backend 1 — paramiko (preferred, pure Python):
-        pip install paramiko
-        Full interactive PTY session, key auth, password auth.
+    Backend 1 — system ssh binary (Unix primary):
+        Uses os.execvp to replace the process image with ssh.
+        Perfect PTY, terminal resize (SIGWINCH), Ctrl+C, colours — all work.
+        No extra deps needed on any Unix/macOS system.
 
-    Backend 2 — system ssh binary (fallback):
-        Uses whatever `ssh` is on PATH (OpenSSH on Linux/macOS,
-        or the built-in ssh.exe on Windows 10+).
-        No extra deps needed.
+    Backend 2 — paramiko (Windows primary / Unix fallback):
+        pip install paramiko
+        Used when no system ssh binary is found.
 
     Usage:
         ssh [user@]host [port]          interactive session
@@ -1299,238 +1280,324 @@ class SSHClient:
         self._port = port
 
     # ------------------------------------------------------------------
-    # Public entry points
+    # Public entry point
     # ------------------------------------------------------------------
 
     def run_interactive(self, command: Optional[str] = None) -> int:
-        """Try paramiko first, fall back to system ssh."""
+        import shutil
+        ssh_bin = shutil.which("ssh")
+
+        # On Unix, system ssh is far more reliable for PTY handling
+        if not IS_WINDOWS and ssh_bin:
+            return self._system_ssh(ssh_bin, command)
+
+        # Windows or no system ssh → paramiko
         try:
             import paramiko  # type: ignore
             return self._paramiko_session(paramiko, command)
         except ImportError:
-            return self._system_ssh(command)
+            if ssh_bin:
+                # Windows fallback: run as subprocess
+                return self._system_ssh(ssh_bin, command)
+            IOManager.error(
+                "ssh: no ssh binary found and paramiko is not installed.\n"
+                "     Install paramiko:  pip install paramiko"
+            )
+            return 1
 
     # ------------------------------------------------------------------
-    # Backend 1 — paramiko
+    # Backend 1 — system ssh binary
+    # ------------------------------------------------------------------
+
+    def _system_ssh(self, ssh_bin: str, command: Optional[str]) -> int:
+        """
+        On Unix: use os.execvp — replaces the current process image with ssh.
+        This gives a perfect native terminal experience with no wrapper overhead.
+        On Windows: use subprocess.run (execvp not available).
+        """
+        import subprocess
+
+        cmd = [
+            ssh_bin,
+            "-p", str(self._port),
+            "-o", "StrictHostKeyChecking=accept-new",
+            "-o", "ServerAliveInterval=30",
+            f"{self._user}@{self._host}",
+        ]
+        if command:
+            # pass remote command as separate args (not shell-quoted string)
+            cmd += ["--"] + command.split()
+
+        try:
+            if IS_WINDOWS:
+                result = subprocess.run(cmd)
+                return result.returncode
+            else:
+                # execvp replaces this process — no subprocess overhead,
+                # no I/O redirection, the real terminal is used directly
+                os.execvp(ssh_bin, cmd)
+                # execvp never returns on success
+        except FileNotFoundError:
+            IOManager.error(f"ssh: binary not found: {ssh_bin}")
+            return 127
+        except KeyboardInterrupt:
+            return 130
+        except Exception as e:
+            IOManager.error(f"ssh: {e}")
+            return 1
+        return 0
+
+    # ------------------------------------------------------------------
+    # Backend 2 — paramiko
     # ------------------------------------------------------------------
 
     def _paramiko_session(self, paramiko, command: Optional[str]) -> int:
+        import getpass
+
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-        # try key auth first, then password
-        password = None
-        try:
-            client.connect(
-                self._host,
-                port=self._port,
-                username=self._user,
-                timeout=10,
-                look_for_keys=True,
-                allow_agent=True,
-            )
-        except paramiko.AuthenticationException:
-            import getpass
-            password = getpass.getpass(
-                f"{self._user}@{self._host}'s password: "
-            )
+        # try key auth first, then password on second attempt
+        connected = False
+        for attempt in range(2):
             try:
-                client.connect(
-                    self._host,
+                kw = dict(
+                    hostname=self._host,
                     port=self._port,
                     username=self._user,
-                    password=password,
-                    timeout=10,
-                    look_for_keys=False,
+                    timeout=15,
+                    look_for_keys=(attempt == 0),
+                    allow_agent=(attempt == 0),
                 )
-            except Exception as e:
-                IOManager.error(f"ssh: authentication failed: {e}")
+                if attempt == 1:
+                    kw["password"] = getpass.getpass(
+                        f"{self._user}@{self._host}'s password: "
+                    )
+                    kw["look_for_keys"] = False
+                client.connect(**kw)
+                connected = True
+                break
+            except paramiko.AuthenticationException:
+                if attempt == 1:
+                    IOManager.error("ssh: authentication failed")
+                    return 1
+            except paramiko.SSHException as e:
+                IOManager.error(f"ssh: SSH error: {e}")
                 return 1
-        except Exception as e:
-            IOManager.error(f"ssh: {e}")
+            except socket.timeout:
+                IOManager.error(f"ssh: connection timed out: {self._host}")
+                return 1
+            except OSError as e:
+                IOManager.error(f"ssh: {e}")
+                return 1
+
+        if not connected:
             return 1
 
         IOManager.write(
             f"Connected to {self._user}@{self._host}:{self._port} "
             f"(paramiko {paramiko.__version__})"
         )
-
         try:
             if command:
                 return self._paramiko_exec(client, command)
             else:
                 return self._paramiko_pty(client)
         finally:
-            client.close()
+            try:
+                client.close()
+            except Exception:
+                pass
 
     def _paramiko_exec(self, client, command: str) -> int:
-        """Run a single command and stream its output."""
-        stdin, stdout, stderr = client.exec_command(command)
-        for line in stdout:
-            IOManager.write(line, end="")
-        for line in stderr:
-            IOManager.error(line, end="")
-        return stdout.channel.recv_exit_status()
+        try:
+            _, stdout, stderr = client.exec_command(command, get_pty=False)
+            while True:
+                chunk = stdout.read(4096)
+                if not chunk:
+                    break
+                sys.stdout.buffer.write(chunk)
+                sys.stdout.buffer.flush()
+            err = stderr.read().decode("utf-8", errors="replace")
+            if err:
+                sys.stderr.write(err)
+            return stdout.channel.recv_exit_status()
+        except Exception as e:
+            IOManager.error(f"ssh exec: {e}")
+            return 1
 
     def _paramiko_pty(self, client) -> int:
-        """Full interactive PTY session."""
-        import select
+        if IS_WINDOWS:
+            return self._paramiko_pty_windows(client)
+        return self._paramiko_pty_unix(client)
 
-        chan = client.invoke_shell()
+    def _paramiko_pty_unix(self, client) -> int:
+        import termios, tty, select as _sel, signal as _sig
+
+        try:
+            cols, rows = os.get_terminal_size()
+        except OSError:
+            cols, rows = 80, 24
+
+        chan = client.invoke_shell(term="xterm-256color", width=cols, height=rows)
         chan.settimeout(0.0)
 
-        if IS_WINDOWS:
-            # Windows: simple read/write loop without termios
-            import threading
+        fd      = sys.stdin.fileno()
+        old_tty = termios.tcgetattr(fd)
 
-            def _send():
-                try:
-                    while not chan.closed:
-                        data = sys.stdin.read(1)
-                        if not data:
-                            break
-                        chan.send(data)
-                except Exception:
-                    pass
+        def _resize(*_):
+            try:
+                c, r = os.get_terminal_size()
+                chan.resize_pty(width=c, height=r)
+            except Exception:
+                pass
 
-            t = threading.Thread(target=_send, daemon=True)
-            t.start()
-            try:
-                while not chan.closed:
-                    if chan.recv_ready():
-                        out = chan.recv(1024).decode("utf-8", errors="replace")
-                        sys.stdout.write(out)
-                        sys.stdout.flush()
-                    time.sleep(0.01)
-            except KeyboardInterrupt:
-                chan.send("\x03")
-        else:
-            import termios, tty, select as _sel
-            old_tty = termios.tcgetattr(sys.stdin)
-            try:
-                tty.setraw(sys.stdin.fileno())
-                tty.setcbreak(sys.stdin.fileno())
-                while True:
-                    r, _, _ = _sel.select([chan, sys.stdin], [], [], 0.1)
-                    if chan in r:
-                        data = chan.recv(1024)
+        old_winch = _sig.getsignal(_sig.SIGWINCH)
+        _sig.signal(_sig.SIGWINCH, _resize)
+
+        try:
+            tty.setraw(fd)
+            while True:
+                r, _, _ = _sel.select([chan, sys.stdin], [], [], 0.5)
+                if chan in r:
+                    try:
+                        data = chan.recv(4096)
                         if not data:
                             break
                         sys.stdout.buffer.write(data)
-                        sys.stdout.flush()
-                    if sys.stdin in r:
-                        key = sys.stdin.read(1)
+                        sys.stdout.buffer.flush()
+                    except Exception:
+                        break
+                if sys.stdin in r:
+                    try:
+                        key = os.read(fd, 256)
                         if not key:
                             break
-                        chan.send(key)
-            finally:
-                termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_tty)
+                        chan.sendall(key)
+                    except Exception:
+                        break
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_tty)
+            _sig.signal(_sig.SIGWINCH, old_winch)
 
-        IOManager.write("\nConnection closed.")
+        sys.stdout.write("\r\nConnection closed.\r\n")
+        sys.stdout.flush()
         return 0
 
-    # ------------------------------------------------------------------
-    # Backend 2 — system ssh binary
-    # ------------------------------------------------------------------
-
-    def _system_ssh(self, command: Optional[str]) -> int:
-        """Delegate to the system's ssh binary."""
-        import shutil, subprocess
-
-        ssh_bin = shutil.which("ssh")
-        if not ssh_bin:
-            IOManager.error(
-                "ssh: neither 'paramiko' nor a system 'ssh' binary was found.\n"
-                "     Install paramiko:  pip install paramiko\n"
-                "     Or install OpenSSH for your OS."
-            )
-            return 1
-
-        cmd = [ssh_bin, "-p", str(self._port), f"{self._user}@{self._host}"]
-        if command:
-            cmd.append(command)
-
-        IOManager.write(
-            f"[using system ssh: {ssh_bin}]  "
-            f"{self._user}@{self._host}:{self._port}"
-        )
+    def _paramiko_pty_windows(self, client) -> int:
         try:
-            # inherit stdin/stdout/stderr — full interactive terminal
-            result = subprocess.run(cmd)
-            return result.returncode
+            cols, rows = os.get_terminal_size()
+        except OSError:
+            cols, rows = 80, 24
+
+        chan = client.invoke_shell(term="xterm-256color", width=cols, height=rows)
+        chan.settimeout(0.0)
+        stop = threading.Event()
+
+        def _send():
+            try:
+                while not stop.is_set():
+                    data = sys.stdin.buffer.read(1)
+                    if not data:
+                        break
+                    chan.sendall(data)
+            finally:
+                stop.set()
+
+        threading.Thread(target=_send, daemon=True).start()
+        try:
+            while not stop.is_set():
+                if chan.recv_ready():
+                    data = chan.recv(4096)
+                    if not data:
+                        break
+                    sys.stdout.buffer.write(data)
+                    sys.stdout.buffer.flush()
+                elif chan.closed:
+                    break
+                else:
+                    time.sleep(0.01)
         except KeyboardInterrupt:
-            return 130
-        except Exception as e:
-            IOManager.error(f"ssh: {e}")
-            return 1
+            chan.send(b"\x03")
+        finally:
+            stop.set()
+
+        sys.stdout.write("\r\nConnection closed.\r\n")
+        sys.stdout.flush()
+        return 0
 
 
 # ===========================================================================
-# SSHDaemon  — SSH server using paramiko (with fallback info)
+# SSHDaemon  — SSH server using paramiko
 # ===========================================================================
 
 class SSHDaemon:
     """
-    A real SSH server for linux++ built on paramiko's Transport layer.
+    A real SSH server built on paramiko's Transport layer.
 
     Features:
-      - Password authentication (checked against the OS user database)
-      - RSA host key (auto-generated on first start, saved to ~/.linuxpp/ssh/)
-      - Each accepted client gets a full linux++ shell session
+      - RSA host key (auto-generated, saved to ~/.linuxpp/ssh/host_rsa_key)
+      - Password auth via OS database (PAM → spwd → single-user fallback)
+      - Public key auth via ~/.ssh/authorized_keys
+      - Each client gets an isolated linux++ shell session
       - Runs in a background daemon thread — non-blocking
-      - Supports multiple concurrent clients
-      - sshd start [port]   — start the daemon
-      - sshd stop           — stop the daemon
-      - sshd status         — show running status and connected clients
-      - sshd keygen         — regenerate the host key
+      - Multiple concurrent clients supported
 
-    Requires:  pip install paramiko
+    Commands:
+      sshd start [port]   start (default port 2222)
+      sshd stop           stop and disconnect all clients
+      sshd status         show port and connected clients
+      sshd keygen         regenerate the host key
+
+    Requires: pip install paramiko
     """
 
-    KEY_DIR      = os.path.join(os.path.expanduser("~"), ".linuxpp", "ssh")
+    KEY_DIR       = os.path.join(os.path.expanduser("~"), ".linuxpp", "ssh")
     HOST_KEY_PATH = os.path.join(KEY_DIR, "host_rsa_key")
-    DEFAULT_PORT  = 2222          # non-privileged port, no sudo needed
-    BANNER        = "linux++ sshd\r\n"
+    DEFAULT_PORT  = 2222
+    BANNER        = b"linux++ sshd\r\n"
 
     def __init__(self, shell: "Shell"):
-        self._shell      = shell
-        self._port       = self.DEFAULT_PORT
+        self._shell       = shell
+        self._port        = self.DEFAULT_PORT
         self._server_sock: Optional[socket.socket] = None
         self._thread:      Optional[threading.Thread] = None
         self._running     = False
-        self._clients:    list[dict] = []          # {addr, transport, thread}
+        self._clients:    list[dict] = []
         self._host_key    = None
         self._lock        = threading.Lock()
 
     # ------------------------------------------------------------------
-    # Public control commands
+    # Public commands
     # ------------------------------------------------------------------
 
     def start(self, port: int = DEFAULT_PORT) -> int:
         if self._running:
             IOManager.error(f"sshd: already running on port {self._port}")
             return 1
-
         try:
             import paramiko  # type: ignore
         except ImportError:
             IOManager.error(
                 "sshd: paramiko is required.\n"
-                "      Install it with:  pip install paramiko"
+                "      pip install paramiko"
             )
             return 1
 
-        self._port    = port
+        self._port     = port
         self._host_key = self._load_or_generate_key(paramiko)
+        if self._host_key is None:
+            return 1
 
         try:
-            self._server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self._server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            self._server_sock.bind(("0.0.0.0", port))
-            self._server_sock.listen(10)
-            self._server_sock.settimeout(1.0)
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            sock.bind(("0.0.0.0", port))
+            sock.listen(10)
+            sock.settimeout(1.0)
+            self._server_sock = sock
         except OSError as e:
-            IOManager.error(f"sshd: cannot bind to port {port}: {e}")
+            IOManager.error(f"sshd: cannot bind port {port}: {e}")
             return 1
 
         self._running = True
@@ -1538,14 +1605,13 @@ class SSHDaemon:
             target=self._accept_loop,
             args=(paramiko,),
             daemon=True,
-            name="sshd-accept"
+            name="sshd-accept",
         )
         self._thread.start()
 
-        fingerprint = self._key_fingerprint(self._host_key)
         IOManager.write(
             f"sshd: listening on 0.0.0.0:{port}\n"
-            f"sshd: host key fingerprint: {fingerprint}\n"
+            f"sshd: host key fingerprint: {self._fingerprint(self._host_key)}\n"
             f"sshd: connect with:  ssh {EnvManager.username()}@localhost -p {port}"
         )
         return 0
@@ -1561,7 +1627,6 @@ class SSHDaemon:
             except Exception:
                 pass
             self._server_sock = None
-        # close all active client transports
         with self._lock:
             for c in self._clients:
                 try:
@@ -1577,14 +1642,15 @@ class SSHDaemon:
             IOManager.write("sshd: not running")
             return 0
         with self._lock:
-            n = len(self._clients)
-            addrs = [c["addr"] for c in self._clients]
+            clients = list(self._clients)
         IOManager.write(
             f"sshd: running on port {self._port}\n"
-            f"sshd: {n} client(s) connected"
+            f"sshd: {len(clients)} client(s) connected"
         )
-        for addr in addrs:
-            IOManager.write(f"       {addr[0]}:{addr[1]}")
+        for c in clients:
+            addr = c.get("addr", ("?", 0))
+            user = c.get("user", "?")
+            IOManager.write(f"       {user}@{addr[0]}:{addr[1]}")
         return 0
 
     def keygen(self) -> int:
@@ -1596,14 +1662,16 @@ class SSHDaemon:
         os.makedirs(self.KEY_DIR, exist_ok=True)
         key = paramiko.RSAKey.generate(2048)
         key.write_private_key_file(self.HOST_KEY_PATH)
+        if not IS_WINDOWS:
+            os.chmod(self.HOST_KEY_PATH, 0o600)
         IOManager.write(
-            f"sshd: new host key written to {self.HOST_KEY_PATH}\n"
-            f"sshd: fingerprint: {self._key_fingerprint(key)}"
+            f"sshd: new host key → {self.HOST_KEY_PATH}\n"
+            f"sshd: fingerprint:   {self._fingerprint(key)}"
         )
         return 0
 
     # ------------------------------------------------------------------
-    # Accept loop (daemon thread)
+    # Accept loop
     # ------------------------------------------------------------------
 
     def _accept_loop(self, paramiko) -> None:
@@ -1614,14 +1682,12 @@ class SSHDaemon:
                 continue
             except OSError:
                 break
-
-            t = threading.Thread(
+            threading.Thread(
                 target=self._handle_client,
                 args=(paramiko, conn, addr),
                 daemon=True,
-                name=f"sshd-client-{addr[0]}:{addr[1]}"
-            )
-            t.start()
+                name=f"sshd-{addr[0]}:{addr[1]}",
+            ).start()
 
     # ------------------------------------------------------------------
     # Per-client handler
@@ -1629,75 +1695,65 @@ class SSHDaemon:
 
     def _handle_client(self, paramiko, conn: socket.socket, addr: tuple) -> None:
         transport = None
-        entry = {"addr": addr, "transport": None, "thread": threading.current_thread()}
-
-        try:
-            transport = paramiko.Transport(conn)
-            transport.set_gss_host(socket.getfqdn(""))
-            transport.load_server_moduli()
-        except Exception:
-            pass
+        iface     = _SSHServerInterface()
+        entry     = {"addr": addr, "transport": None, "user": "?"}
 
         try:
             transport = paramiko.Transport(conn)
             transport.add_server_key(self._host_key)
-
-            server_iface = _SSHServerInterface(self._shell)
-            transport.start_server(server=server_iface)
+            transport.start_server(server=iface)
 
             entry["transport"] = transport
             with self._lock:
                 self._clients.append(entry)
 
-            # wait for auth channel
             chan = transport.accept(30)
             if chan is None:
                 return
 
-            # wait for shell/exec request
-            server_iface.shell_event.wait(10)
+            iface.shell_event.wait(10)
+            entry["user"] = iface.username or "?"
 
-            if server_iface.exec_command:
-                # non-interactive: run a single command
-                self._run_command(chan, server_iface.exec_command)
+            if iface.exec_command:
+                self._run_command(chan, iface.exec_command)
             else:
-                # interactive shell session
                 self._run_shell(chan)
 
-        except Exception as e:
+        except Exception:
             pass
         finally:
             if transport:
-                try: transport.close()
-                except Exception: pass
-            try: conn.close()
-            except Exception: pass
+                try:
+                    transport.close()
+                except Exception:
+                    pass
+            try:
+                conn.close()
+            except Exception:
+                pass
             with self._lock:
                 self._clients[:] = [c for c in self._clients if c is not entry]
 
     def _run_command(self, chan, command: str) -> None:
-        """Execute a single command and send output back over the channel."""
+        """Execute one command in a fresh shell and send output back."""
+        import io as _io
         from .kernel import Kernel
         from .shell  import Shell as _Shell
 
         k  = Kernel()
         sh = _Shell(k)
-
-        import io as _io
         buf = _io.StringIO()
-        old_stdout = sys.stdout
-        old_stderr = sys.stderr
-        sys.stdout = buf
-        sys.stderr = buf
+        old_out, old_err = sys.stdout, sys.stderr
+        sys.stdout = sys.stderr = buf
         try:
             rc = sh.execute_line(command)
         finally:
-            sys.stdout = old_stdout
-            sys.stderr = old_stderr
+            sys.stdout, sys.stderr = old_out, old_err
 
-        output = buf.getvalue()
+        output = buf.getvalue().replace("\n", "\r\n")
         try:
-            chan.send(output.encode("utf-8", errors="replace"))
+            if output:
+                chan.send(output.encode("utf-8", errors="replace"))
             chan.send_exit_status(rc)
         except Exception:
             pass
@@ -1705,35 +1761,33 @@ class SSHDaemon:
             chan.close()
 
     def _run_shell(self, chan) -> None:
-        """
-        Full interactive shell over the SSH channel.
-        Reads from channel, writes back to channel.
-        """
+        """Interactive shell session over the SSH channel."""
+        import io as _io
+        import re as _re
         from .kernel import Kernel
         from .shell  import Shell as _Shell
-        import io as _io
 
         k  = Kernel()
         sh = _Shell(k)
 
-        # Redirect shell I/O through the channel
-        chan.send(self.BANNER.encode())
-        chan.send(b"\r\n")
+        chan.send(self.BANNER)
 
-        buf = ""
         try:
-            while True:
-                # send prompt
-                prompt = sh._prompt().encode("utf-8", errors="replace")
-                # strip ANSI for simplicity in remote sessions
-                import re as _re
-                prompt = _re.sub(rb'\x1b\[[0-9;]*m', b'', prompt)
-                chan.send(prompt)
+            while sh.running:
+                # build and strip ANSI from prompt (client renders its own)
+                raw_prompt = sh._prompt()
+                plain_prompt = _re.sub(r'\033\[[0-9;]*[mGKHF]', '', raw_prompt)
+                # also strip readline \001..\002 markers
+                plain_prompt = plain_prompt.replace("\001", "").replace("\002", "")
+                chan.send(plain_prompt.encode("utf-8", errors="replace"))
 
-                # read line character by character
-                line_buf = ""
+                # read one line char-by-char
+                line = ""
                 while True:
-                    data = chan.recv(1)
+                    try:
+                        data = chan.recv(1)
+                    except Exception:
+                        return
                     if not data:
                         return
                     ch = data.decode("utf-8", errors="replace")
@@ -1741,50 +1795,46 @@ class SSHDaemon:
                     if ch in ("\r", "\n"):
                         chan.send(b"\r\n")
                         break
-                    elif ch == "\x03":      # Ctrl+C
+                    elif ch == "\x03":       # Ctrl+C
                         chan.send(b"^C\r\n")
-                        line_buf = ""
+                        line = ""
                         break
-                    elif ch == "\x04":      # Ctrl+D
-                        chan.send(b"\r\nlogout\r\n")
+                    elif ch == "\x04":       # Ctrl+D / EOF
+                        chan.send(b"logout\r\n")
                         return
                     elif ch in ("\x7f", "\x08"):  # Backspace
-                        if line_buf:
-                            line_buf = line_buf[:-1]
+                        if line:
+                            line = line[:-1]
                             chan.send(b"\x08 \x08")
-                    else:
-                        line_buf += ch
+                    elif ord(ch) >= 32:
+                        line += ch
                         chan.send(ch.encode())
 
-                if not line_buf.strip():
+                if not line.strip():
                     continue
 
-                # capture shell output
-                out_buf = _io.StringIO()
-                old_out = sys.stdout
-                old_err = sys.stderr
-                sys.stdout = out_buf
-                sys.stderr = out_buf
+                # capture output
+                buf = _io.StringIO()
+                old_out, old_err = sys.stdout, sys.stderr
+                sys.stdout = sys.stderr = buf
                 try:
-                    sh.execute_line(line_buf)
+                    sh.execute_line(line)
                 finally:
-                    sys.stdout = old_out
-                    sys.stderr = old_err
+                    sys.stdout, sys.stderr = old_out, old_err
 
-                output = out_buf.getvalue()
-                if output:
+                out = buf.getvalue()
+                if out:
                     # convert bare \n to \r\n for SSH terminals
-                    output = output.replace("\n", "\r\n")
-                    chan.send(output.encode("utf-8", errors="replace"))
-
-                if not sh.running:
-                    chan.send(b"logout\r\n")
-                    return
+                    out = out.replace("\n", "\r\n")
+                    chan.send(out.encode("utf-8", errors="replace"))
 
         except Exception:
             pass
         finally:
-            chan.close()
+            try:
+                chan.close()
+            except Exception:
+                pass
 
     # ------------------------------------------------------------------
     # Key management
@@ -1797,87 +1847,119 @@ class SSHDaemon:
                 key = paramiko.RSAKey(filename=self.HOST_KEY_PATH)
                 IOManager.write(f"sshd: loaded host key from {self.HOST_KEY_PATH}")
                 return key
-            except Exception:
-                pass
-        IOManager.write("sshd: generating 2048-bit RSA host key ...")
-        key = paramiko.RSAKey.generate(2048)
-        key.write_private_key_file(self.HOST_KEY_PATH)
-        if not IS_WINDOWS:
-            os.chmod(self.HOST_KEY_PATH, 0o600)
-        IOManager.write(f"sshd: host key saved to {self.HOST_KEY_PATH}")
-        return key
+            except Exception as e:
+                IOManager.write(f"sshd: could not load host key ({e}), regenerating...")
+
+        IOManager.write("sshd: generating RSA host key ...")
+        try:
+            key = paramiko.RSAKey.generate(2048)
+            key.write_private_key_file(self.HOST_KEY_PATH)
+            if not IS_WINDOWS:
+                os.chmod(self.HOST_KEY_PATH, 0o600)
+            IOManager.write(f"sshd: host key saved to {self.HOST_KEY_PATH}")
+            return key
+        except Exception as e:
+            IOManager.error(f"sshd: failed to generate host key: {e}")
+            return None
 
     @staticmethod
-    def _key_fingerprint(key) -> str:
-        import base64
-        data = key.asbytes()
+    def _fingerprint(key) -> str:
+        data   = key.asbytes()
         digest = hashlib.md5(data).hexdigest()
         return ":".join(digest[i:i+2] for i in range(0, 32, 2))
 
 
 class _SSHServerInterface:
     """
-    Paramiko ServerInterface implementation.
-    Handles auth and channel requests for each connecting client.
+    Paramiko ServerInterface — handles auth and channel negotiation.
+    Clean rewrite: no duplicate Transport creation, proper auth methods.
     """
 
-    def __init__(self, shell: "Shell"):
-        self._shell      = shell
+    def __init__(self):
         self.shell_event  = threading.Event()
         self.exec_command: Optional[str] = None
+        self.username:     Optional[str] = None
 
-    def check_channel_request(self, kind, chanid):
-        import paramiko  # type: ignore
-        if kind == "session":
-            return paramiko.OPEN_SUCCEEDED
-        return paramiko.OPEN_FAILED_ADMINISTRATIVELY_PROHIBITED
+    # --- auth ---
+
+    def get_allowed_auths(self, username: str) -> str:
+        self.username = username
+        return "password,publickey"
 
     def check_auth_password(self, username: str, password: str) -> int:
-        import paramiko  # type: ignore
-        """
-        Authenticate against the OS user database.
-        On Unix: uses PAM via 'pam' module if available, else spwd/pwd.
-        On Windows: uses ctypes WinAPI LogonUser.
-        Falls back to a simple env-var override for testing:
-            export SSHD_TEST_USER=myuser SSHD_TEST_PASS=mypass
-        """
-        # test override (development / CI)
-        test_user = EnvManager.get("SSHD_TEST_USER")
-        test_pass = EnvManager.get("SSHD_TEST_PASS")
-        if test_user and username == test_user and password == test_pass:
+        try:
+            import paramiko  # type: ignore
+        except ImportError:
+            return 1   # AUTH_FAILED = 1
+
+        self.username = username
+
+        # dev override via env vars
+        tu = EnvManager.get("SSHD_TEST_USER")
+        tp = EnvManager.get("SSHD_TEST_PASS")
+        if tu and username == tu and password == tp:
             return paramiko.AUTH_SUCCESSFUL
 
         if IS_WINDOWS:
             return self._auth_windows(paramiko, username, password)
         return self._auth_unix(paramiko, username, password)
 
+    def check_auth_publickey(self, username: str, key) -> int:
+        try:
+            import paramiko, base64  # type: ignore
+        except ImportError:
+            return 1
+
+        auth_path = os.path.expanduser(f"~/.ssh/authorized_keys")
+        if not os.path.isfile(auth_path):
+            return paramiko.AUTH_FAILED
+
+        try:
+            with open(auth_path, encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line or line.startswith("#"):
+                        continue
+                    parts = line.split()
+                    if len(parts) < 2:
+                        continue
+                    try:
+                        ak = paramiko.RSAKey(data=base64.b64decode(parts[1]))
+                        if ak == key:
+                            return paramiko.AUTH_SUCCESSFUL
+                    except Exception:
+                        continue
+        except Exception:
+            pass
+        return paramiko.AUTH_FAILED
+
     def _auth_unix(self, paramiko, username: str, password: str) -> int:
         # try PAM first
         try:
             import pam  # type: ignore
-            p = pam.pam()
-            if p.authenticate(username, password):
+            if pam.pam().authenticate(username, password):
                 return paramiko.AUTH_SUCCESSFUL
             return paramiko.AUTH_FAILED
         except ImportError:
             pass
-        # fallback: spwd (shadow password — requires root on most systems)
+
+        # try shadow password
         try:
             import spwd, crypt  # type: ignore
-            sp = spwd.getspnam(username)
-            hashed = crypt.crypt(password, sp.sp_pwdp)
-            if hashed == sp.sp_pwdp:
+            sp  = spwd.getspnam(username)
+            if crypt.crypt(password, sp.sp_pwdp) == sp.sp_pwdp:
                 return paramiko.AUTH_SUCCESSFUL
             return paramiko.AUTH_FAILED
-        except Exception:
+        except (ImportError, KeyError, PermissionError):
             pass
-        # last resort: accept if username matches current user (dev mode)
+
+        # last resort: accept current user without password check (dev mode)
         import getpass
         if username == getpass.getuser():
             IOManager.write(
-                f"\nsshd: [WARNING] falling back to single-user mode "
-                f"(accepted {username!r} without password check)\n"
-                f"sshd: set SSHD_TEST_USER / SSHD_TEST_PASS for proper auth"
+                "\nsshd: [WARNING] single-user fallback — accepted "
+                f"{username!r} without password verification\n"
+                "sshd: set SSHD_TEST_USER / SSHD_TEST_PASS for proper auth"
             )
             return paramiko.AUTH_SUCCESSFUL
         return paramiko.AUTH_FAILED
@@ -1885,13 +1967,9 @@ class _SSHServerInterface:
     def _auth_windows(self, paramiko, username: str, password: str) -> int:
         try:
             import ctypes
-            advapi = ctypes.windll.advapi32
-            token  = ctypes.c_void_p()
-            ok = advapi.LogonUserW(
-                username, None, password,
-                2,   # LOGON32_LOGON_INTERACTIVE
-                0,   # LOGON32_PROVIDER_DEFAULT
-                ctypes.byref(token)
+            token = ctypes.c_void_p()
+            ok = ctypes.windll.advapi32.LogonUserW(
+                username, None, password, 2, 0, ctypes.byref(token)
             )
             if ok:
                 ctypes.windll.kernel32.CloseHandle(token)
@@ -1900,203 +1978,30 @@ class _SSHServerInterface:
             pass
         return paramiko.AUTH_FAILED
 
-    def check_auth_publickey(self, username, key):
-        import paramiko  # type: ignore
-        """Check ~/.ssh/authorized_keys for the presented public key."""
-        auth_keys_path = os.path.join(
-            os.path.expanduser(f"~{username}"), ".ssh", "authorized_keys"
-        )
-        if not os.path.isfile(auth_keys_path):
-            return paramiko.AUTH_FAILED
+    # --- channel ---
+
+    def check_channel_request(self, kind: str, chanid: int) -> int:
         try:
-            with open(auth_keys_path, encoding="utf-8") as f:
-                for line in f:
-                    line = line.strip()
-                    if not line or line.startswith("#"):
-                        continue
-                    parts = line.split()
-                    if len(parts) < 2:
-                        continue
-                    import base64
-                    key_data = base64.b64decode(parts[1])
-                    ak = paramiko.RSAKey(data=key_data)
-                    if ak == key:
-                        return paramiko.AUTH_SUCCESSFUL
-        except Exception:
-            pass
-        return paramiko.AUTH_FAILED
+            import paramiko  # type: ignore
+            return (paramiko.OPEN_SUCCEEDED if kind == "session"
+                    else paramiko.OPEN_FAILED_ADMINISTRATIVELY_PROHIBITED)
+        except ImportError:
+            return 0
 
-    def get_allowed_auths(self, username):
-        return "password,publickey"
-
-    def check_channel_shell_request(self, channel):
+    def check_channel_shell_request(self, channel) -> bool:
         self.shell_event.set()
         return True
 
-    def check_channel_exec_request(self, channel, command):
+    def check_channel_exec_request(self, channel, command: bytes) -> bool:
         self.exec_command = command.decode("utf-8", errors="replace")
         self.shell_event.set()
         return True
 
-    def check_channel_pty_request(self, channel, term, width, height, *args):
+    def check_channel_pty_request(self, channel, term, width, height, *args) -> bool:
         return True
 
-    def check_channel_window_change_request(self, channel, width, height, *args):
+    def check_channel_window_change_request(self, channel, width, height, *args) -> bool:
         return True
-
-
-# ===========================================================================
-# SSHDaemon  — SSH server using paramiko (with fallback info)
-# ===========================================================================
-
-class E2eeftpClient:
-    """"""
-
-    def __init__(self, host: str, port:int):
-        self._host = host
-        self._port = port
-
-    def run_interactive(self, command: Optional[str] = None) -> int:
-        try:
-            from e2eeftp import e2eeftpClient
-            return self._e2eeftp_session(e2eeftpClient, command)
-        except ImportError:
-            IOManager.error("e2eeftp not found can't run.")
-            return 1
-        
-    def _e2eeftp_session(self, e2eeftp_client, command: Optional[str] = None) -> int:
-        # instantiate client with documented defaults 
-        try:
-            client = e2eeftp_client(host=self._host, port=self._port, logging=False)
-        except Exception as e:
-            IOManager.error(f"e2eeftp: failed to create client: {e}")
-            return 1
-
-        # helper to read input via IOManager if available
-        def _read(prompt: str) -> str:
-            if hasattr(IOManager, 'read_input'):
-                return IOManager.read_input(prompt)
-            try:
-                return input(prompt)
-            except EOFError:
-                return ""
-
-        # If a single command was provided, try to execute it and exit.
-        if command:
-            parts = command.split()
-            cmd = parts[0].lower()
-            args = parts[1:]
-            try:
-                if cmd == 'ls' or cmd == 'list':
-                    files = client.list_files()
-                    if files:
-                        for f in files:
-                            IOManager.write(f)
-                    return 0
-                if cmd == 'hlist':
-                    h = client.hlist()
-                    if h:
-                        for item in h:
-                            IOManager.write(item)
-                    return 0
-                if cmd == 'get':
-                    if not args:
-                        IOManager.error('get: usage: get <filename>')
-                        return 1
-                    return client.get(args[0])
-                if cmd in ('put', 'send', 'upload'):
-                    if not args:
-                        IOManager.error('put: usage: put <local_path>')
-                        return 1
-                    return client.send(args[0])
-                if cmd == 'delete':
-                    if not args:
-                        IOManager.error('delete: usage: delete <filename>')
-                        return 1
-                    return client.delete(args[0])
-            except Exception as e:
-                IOManager.error(f"e2eeftp: {e}")
-                return 1
-
-        IOManager.write("Type 'help' for commands, 'quit' to exit.")
-        try:
-            while True:
-                raw = _read("e2eeftp> ")
-                if raw is None:
-                    break
-                raw = raw.strip()
-                if not raw:
-                    continue
-                parts = raw.split()
-                cmd = parts[0].lower()
-                args = parts[1:]
-
-                if cmd in ("quit", "bye", "exit"):
-                    break
-                if cmd == 'help':
-                    IOManager.write("commands: list hlist get put delete help quit")
-                    continue
-
-                try:
-                    if cmd in ('ls', 'list'):
-                        files = client.list_files()
-                        if files:
-                            for f in files:
-                                IOManager.write(f)
-                        else:
-                            IOManager.write("(no files)")
-
-                    elif cmd == 'hlist':
-                        h = client.hlist()
-                        if h:
-                            for item in h:
-                                IOManager.write(item)
-                        else:
-                            IOManager.write("(no commands)")
-
-                    elif cmd == 'get':
-                        if not args:
-                            IOManager.error('get: usage: get <filename>')
-                            continue
-                        rc = client.get(args[0])
-                        IOManager.write(f"get returned: {rc}")
-
-                    elif cmd in ('put', 'send', 'upload'):
-                        if not args:
-                            IOManager.error('put: usage: put <local_path>')
-                            continue
-                        path = args[0]
-                        if not os.path.isfile(path):
-                            IOManager.error(f"put: local file not found: {path}")
-                            continue
-                        rc = client.send(path)
-                        IOManager.write(f"send returned: {rc}")
-
-                    elif cmd == 'delete':
-                        if not args:
-                            IOManager.error('delete: usage: delete <filename>')
-                            continue
-                        rc = client.delete(args[0])
-                        IOManager.write(f"delete returned: {rc}")
-
-                    else:
-                        IOManager.error(f"unknown command: {cmd}")
-
-                except Exception as e:
-                    IOManager.error(f"e2eeftp error: {e}")
-
-        finally:
-            # try graceful close if provided
-            for closer in ("close", "disconnect", "quit", "stop"):
-                if hasattr(client, closer):
-                    try:
-                        getattr(client, closer)()
-                    except Exception:
-                        pass
-            IOManager.write("Goodbye.")
-        return 0
-        
-
 
 # ===========================================================================
 # Apps — register everything into the shell
@@ -2219,8 +2124,8 @@ def main(args):
             return 1
 
         # parse  [user@]host  [port]  [command...]
-        target = args[0]
-        rest = args[1:]
+        target  = args[0]
+        rest    = args[1:]
 
         # split user@host
         if "@" in target:
@@ -2239,37 +2144,17 @@ def main(args):
         command = " ".join(rest) if rest else None
 
         return SSHClient(host, user, port).run_interactive(command)
-    
-    def _e2eeftp_client(args: list[str]) -> int:
-        if not args:
-            IOManager.error(
-                "e2eeftp: usage: e2eeftp [host] [port]\n"
-                "  examples:\n"
-                "    e2eeftp 127.0.0.1 5050\n"
-            )
-
-        # Parse [host] [port]
-        host = args[0] if args else "127.0.0.1"
-        port = int(args[1]) if len(args) > 1 else 5050
-        rest = args[2:]
-
-        # remaining args = remote command (optional)
-        command = " ".join(rest) if rest else None
-
-        return E2eeftpClient(host, port).run_interactive(command)
 
     # --- register all ---
-    shell.builtins.register("lpp",            _lpp)
-    shell.builtins.register("man",            _man)
-    shell.builtins.register("lppedit",           _edit)
-    shell.builtins.register("ftp",            _ftp)
-    shell.builtins.register("sysinfo",        _sysinfo)
-    shell.builtins.register("neofetch",       _sysinfo)
-    shell.builtins.register("sh",             _sh)
-    shell.builtins.register("pkg-create",     _pkg_create)
-    shell.builtins.register("ssh",            _ssh)
-    shell.builtins.register("e2eeftp_client", _e2eeftp_client)
-
+    shell.builtins.register("lpp",        _lpp)
+    shell.builtins.register("man",        _man)
+    shell.builtins.register("edit",       _edit)
+    shell.builtins.register("ftp",        _ftp)
+    shell.builtins.register("sysinfo",    _sysinfo)
+    shell.builtins.register("neofetch",   _sysinfo)
+    shell.builtins.register("sh",         _sh)
+    shell.builtins.register("pkg-create", _pkg_create)
+    shell.builtins.register("ssh",        _ssh)
 
     # --- sshd (SSH daemon) ---
     _sshd_instance = SSHDaemon(shell)
