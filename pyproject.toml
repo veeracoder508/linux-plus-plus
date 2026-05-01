@@ -10,6 +10,7 @@ description = "A simple terminal OS made in python."
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "e2eeftp>=0.0.0",
     "paramiko>=4.0.0",
     "psutil>=7.2.2",
     "pyreadline3>=3.5.4",

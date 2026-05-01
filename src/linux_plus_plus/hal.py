@@ -23,8 +23,8 @@ from typing import Optional
 # ---------------------------------------------------------------------------
 
 class OSType:
-    LINUX   = "linux"
-    MACOS   = "macos"
+    LINUX = "linux"
+    MACOS = "macos"
     WINDOWS = "windows"
     UNKNOWN = "unknown"
 
@@ -53,16 +53,16 @@ class TerminalDriver:
     """Handles terminal colors, clearing, and cursor operations."""
 
     # ANSI codes work on Linux/macOS and on modern Windows 10+ terminals
-    _ANSI = not IS_WINDOWS or os.environ.get("WT_SESSION")  # Windows Terminal
+    _ANSI = not IS_WINDOWS or os.environ.get("WT_SESSION") # Windows Terminal
 
-    RESET  = "\033[0m"  if _ANSI else ""
-    BOLD   = "\033[1m"  if _ANSI else ""
-    RED    = "\033[31m" if _ANSI else ""
-    GREEN  = "\033[32m" if _ANSI else ""
+    RESET = "\033[0m" if _ANSI else ""
+    BOLD = "\033[1m" if _ANSI else ""
+    RED = "\033[31m" if _ANSI else ""
+    GREEN = "\033[32m" if _ANSI else ""
     YELLOW = "\033[33m" if _ANSI else ""
-    BLUE   = "\033[34m" if _ANSI else ""
-    CYAN   = "\033[36m" if _ANSI else ""
-    WHITE  = "\033[37m" if _ANSI else ""
+    BLUE = "\033[34m" if _ANSI else ""
+    CYAN = "\033[36m" if _ANSI else ""
+    WHITE = "\033[37m" if _ANSI else ""
 
     @staticmethod
     def enable_ansi_on_windows() -> None:
@@ -146,11 +146,11 @@ class DiskDriver:
             try:
                 st = entry.stat()
                 entries.append({
-                    "name":        entry.name,
-                    "is_dir":      entry.is_dir(),
-                    "is_file":     entry.is_file(),
-                    "is_symlink":  entry.is_symlink(),
-                    "size":        st.st_size,
+                    "name": entry.name,
+                    "is_dir": entry.is_dir(),
+                    "is_file": entry.is_file(),
+                    "is_symlink": entry.is_symlink(),
+                    "size": st.st_size,
                     "permissions": DiskDriver._perms(st.st_mode),
                 })
             except PermissionError:
@@ -250,10 +250,10 @@ class DiskDriver:
 
 class ProcessResult:
     def __init__(self, stdout: str, stderr: str, returncode: int):
-        self.stdout     = stdout
-        self.stderr     = stderr
+        self.stdout = stdout
+        self.stderr = stderr
         self.returncode = returncode
-        self.ok         = returncode == 0
+        self.ok = returncode == 0
 
     def __repr__(self):
         return f"<ProcessResult rc={self.returncode}>"
@@ -265,9 +265,9 @@ class ProcessDriver:
     @staticmethod
     def run(
         command: list[str] | str,
-        cwd:     Optional[str] = None,
-        env:     Optional[dict] = None,
-        shell:   bool = False,
+        cwd: Optional[str] = None,
+        env: Optional[dict] = None,
+        shell: bool = False,
         timeout: Optional[float] = None,
         capture: bool = True,
     ) -> ProcessResult:
@@ -434,15 +434,15 @@ class SystemInfoDriver:
     def info() -> dict:
         import time
         return {
-            "os":           CURRENT_OS,
-            "os_version":   platform.version(),
-            "os_release":   platform.release(),
-            "machine":      platform.machine(),
-            "processor":    platform.processor() or "unknown",
-            "python":       platform.python_version(),
-            "hostname":     NetworkDriver.hostname(),
-            "username":     SystemInfoDriver.username(),
-            "uptime_secs":  SystemInfoDriver._uptime(),
+            "os": CURRENT_OS,
+            "os_version": platform.version(),
+            "os_release": platform.release(),
+            "machine": platform.machine(),
+            "processor": platform.processor() or "unknown",
+            "python": platform.python_version(),
+            "hostname": NetworkDriver.hostname(),
+            "username": SystemInfoDriver.username(),
+            "uptime_secs": SystemInfoDriver._uptime(),
         }
 
     @staticmethod
@@ -460,10 +460,10 @@ class SystemInfoDriver:
             import psutil
             vm = psutil.virtual_memory()
             return {
-                "total":     vm.total,
+                "total": vm.total,
                 "available": vm.available,
-                "used":      vm.used,
-                "percent":   vm.percent,
+                "used": vm.used,
+                "percent": vm.percent,
             }
         except ImportError:
             return {"total": 0, "available": 0, "used": 0, "percent": 0.0}
@@ -527,12 +527,12 @@ class HAL:
         HAL.process.run(["python3", "--version"])
     """
     terminal = TerminalDriver
-    disk     = DiskDriver
-    process  = ProcessDriver
-    network  = NetworkDriver
-    system   = SystemInfoDriver
-    signals  = SignalDriver
-    os_type  = CURRENT_OS
+    disk = DiskDriver
+    process = ProcessDriver
+    network = NetworkDriver
+    system = SystemInfoDriver
+    signals = SignalDriver
+    os_type = CURRENT_OS
 
     @staticmethod
     def boot() -> None:

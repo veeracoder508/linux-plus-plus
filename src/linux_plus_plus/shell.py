@@ -48,6 +48,104 @@ except ImportError:
         _READLINE = False
 from typing  import Optional
 from dataclasses import dataclass, field
+
+# ---------------------------------------------------------------------------
+# Color — ANSI color helper (works on Linux, macOS, and Windows 10+)
+# ---------------------------------------------------------------------------
+
+class Color:
+    """
+    Central color palette for linux++ output.
+    All builtins use this — never raw ANSI strings.
+    On Windows, colors are enabled by Shell._enable_windows_ansi() at boot.
+    """
+    # styles
+    BOLD      = "\033[1m"
+    DIM       = "\033[2m"
+    UNDERLINE = "\033[4m"
+    RESET     = "\033[0m"
+
+    # foreground colors
+    BLACK   = "\033[30m"
+    RED     = "\033[31m"
+    GREEN   = "\033[32m"
+    YELLOW  = "\033[33m"
+    BLUE    = "\033[34m"
+    MAGENTA = "\033[35m"
+    CYAN    = "\033[36m"
+    WHITE   = "\033[37m"
+
+    # bright foreground
+    BRED    = "\033[91m"
+    BGREEN  = "\033[92m"
+    BYELLOW = "\033[93m"
+    BBLUE   = "\033[94m"
+    BMAGENTA= "\033[95m"
+    BCYAN   = "\033[96m"
+    BWHITE  = "\033[97m"
+
+    # background
+    BG_RED    = "\033[41m"
+    BG_GREEN  = "\033[42m"
+    BG_YELLOW = "\033[43m"
+    BG_BLUE   = "\033[44m"
+    BG_CYAN   = "\033[46m"
+
+    @staticmethod
+    def c(code: str, text: str) -> str:
+        """Wrap text in a color code and reset."""
+        return f"{code}{text}{Color.RESET}"
+
+    # convenience wrappers
+    @staticmethod
+    def red(t):     return Color.c(Color.RED,     t)
+    @staticmethod
+    def green(t):   return Color.c(Color.GREEN,   t)
+    @staticmethod
+    def yellow(t):  return Color.c(Color.YELLOW,  t)
+    @staticmethod
+    def blue(t):    return Color.c(Color.BLUE,    t)
+    @staticmethod
+    def cyan(t):    return Color.c(Color.CYAN,    t)
+    @staticmethod
+    def magenta(t): return Color.c(Color.MAGENTA, t)
+    @staticmethod
+    def bold(t):    return Color.c(Color.BOLD,    t)
+    @staticmethod
+    def dim(t):     return Color.c(Color.DIM,     t)
+    @staticmethod
+    def bred(t):    return Color.c(Color.BRED,    t)
+    @staticmethod
+    def bgreen(t):  return Color.c(Color.BGREEN,  t)
+    @staticmethod
+    def byellow(t): return Color.c(Color.BYELLOW, t)
+    @staticmethod
+    def bcyan(t):   return Color.c(Color.BCYAN,   t)
+
+    @staticmethod
+    def error(msg: str) -> str:
+        return f"{Color.BOLD}{Color.RED}error:{Color.RESET} {msg}"
+
+    @staticmethod
+    def success(msg: str) -> str:
+        return f"{Color.BOLD}{Color.GREEN}✔{Color.RESET} {msg}"
+
+    @staticmethod
+    def warn(msg: str) -> str:
+        return f"{Color.BOLD}{Color.YELLOW}warn:{Color.RESET} {msg}"
+
+    @staticmethod
+    def info(msg: str) -> str:
+        return f"{Color.BOLD}{Color.CYAN}info:{Color.RESET} {msg}"
+
+    @staticmethod
+    def header(msg: str) -> str:
+        return f"{Color.BOLD}{Color.BWHITE}{msg}{Color.RESET}"
+
+    @staticmethod
+    def strip(text: str) -> str:
+        """Remove all ANSI codes from a string (for pipes/redirects)."""
+        return re.sub(r'\033\[[0-9;]*m', '', text)
 from enum    import Enum, auto
 
 try:
@@ -76,7 +174,7 @@ class TT(Enum):
     BG        = auto()   # &  (background)
     LPAREN    = auto()   # (
     RPAREN    = auto()   # )
-    EOF       = auto()
+    EOF       = auto()   # End Of File
 
 
 @dataclass
@@ -496,17 +594,18 @@ class BuiltinRegistry:
             EnvManager.set("PWD", self._shell.kernel.syscall.getcwd(), export=True)
             return 0
         except SyscallError as e:
-            IOManager.error(f"cd: {e}")
+            IOManager.error(Color.error(f"cd: {e}"))
             return 1
 
     def _pwd(self, args: list[str]) -> int:
-        IOManager.write(self._shell.kernel.syscall.getcwd())
+        IOManager.write(Color.bgreen(self._shell.kernel.syscall.getcwd()))
         return 0
 
     def _exit(self, args: list[str]) -> int:
         code = int(args[0]) if args else 0
         self._shell.running = False
         self._shell._exit_code = code
+        IOManager.write(Color.dim(f"exit ({code})"))
         return code
 
     def _echo(self, args: list[str]) -> int:
@@ -515,7 +614,6 @@ class BuiltinRegistry:
             newline = False
             args = args[1:]
         text = " ".join(args)
-        # interpret \n \t \\
         text = text.replace("\\n", "\n").replace("\\t", "\t").replace("\\\\", "\\")
         IOManager.write(text, end="\n" if newline else "")
         return 0
@@ -525,6 +623,7 @@ class BuiltinRegistry:
             if "=" in arg:
                 k, v = arg.split("=", 1)
                 EnvManager.set(k, v, export=True)
+                IOManager.write(f"  {Color.cyan(k)} = {Color.yellow(v)}")
             else:
                 v = EnvManager.get(arg, "")
                 EnvManager.set(arg, v, export=True)
@@ -533,54 +632,67 @@ class BuiltinRegistry:
     def _unset(self, args: list[str]) -> int:
         for arg in args:
             EnvManager.unset(arg)
+            IOManager.write(Color.dim(f"  unset {arg}"))
         return 0
 
     def _env(self, args: list[str]) -> int:
         for k, v in sorted(EnvManager.all().items()):
-            IOManager.write(f"{k}={v}")
+            IOManager.write(f"{Color.cyan(k)}={Color.yellow(v)}")
         return 0
 
     def _alias(self, args: list[str]) -> int:
         if not args:
             for k, v in sorted(AliasStore.all().items()):
-                IOManager.write(f"alias {k}='{v}'")
+                IOManager.write(f"{Color.bold('alias')} {Color.green(k)}={Color.yellow(repr(v))}")
             return 0
         for arg in args:
             if "=" in arg:
                 k, v = arg.split("=", 1)
                 v = v.strip("'\"")
                 AliasStore.set(k, v)
+                IOManager.write(Color.success(f"alias {k}='{v}'"))
             else:
                 v = AliasStore.get(arg)
                 if v:
-                    IOManager.write(f"alias {arg}='{v}'")
+                    IOManager.write(f"{Color.bold('alias')} {Color.green(arg)}={Color.yellow(repr(v))}")
                 else:
-                    IOManager.error(f"alias: {arg}: not found")
+                    IOManager.error(Color.error(f"alias: {arg}: not found"))
         return 0
 
     def _unalias(self, args: list[str]) -> int:
         for arg in args:
             AliasStore.unset(arg)
+            IOManager.write(Color.dim(f"  unalias {arg}"))
         return 0
 
     def _history(self, args: list[str]) -> int:
         entries = self._shell.history.get_all()
         n = int(args[0]) if args else len(entries)
         for i, entry in enumerate(entries[-n:], start=max(1, len(entries)-n+1)):
-            IOManager.write(f"  {i:4}  {entry}")
+            IOManager.write(f"  {Color.dim(f'{i:4}')}  {entry}")
         return 0
 
     def _jobs(self, args: list[str]) -> int:
         jobs = self._shell.kernel.syscall.jobs()
         if not jobs:
-            IOManager.write("No active jobs.")
+            IOManager.write(Color.dim("No active jobs."))
+            return 0
         for job in jobs:
-            IOManager.write(str(job))
+            state_color = Color.green if "DONE" in str(job) else Color.yellow
+            parts = str(job).split(None, 3)
+            if len(parts) == 4:
+                jid, state, pid, cmd = parts
+                IOManager.write(
+                    f"{Color.cyan(jid)} {state_color(state):<18} "
+                    f"{Color.dim(pid)}  {Color.bold(cmd)}"
+                )
+            else:
+                IOManager.write(str(job))
         return 0
 
     def _kill(self, args: list[str]) -> int:
         if not args:
-            IOManager.error("kill: usage: kill [-9] <job_id|pid>")
+            IOManager.error(Color.error("kill: usage: kill [-9] <job_id|pid>"))
             return 1
         force = False
         if args[0] == "-9":
@@ -591,35 +703,35 @@ class BuiltinRegistry:
                 job_id = int(arg.lstrip("%"))
                 ok = self._shell.kernel.syscall.kill(job_id, force=force)
                 if not ok:
-                    # try as raw PID
                     import signal as _sig
                     os.kill(job_id, _sig.SIGKILL if force else _sig.SIGTERM)
+                IOManager.write(Color.success(f"killed {arg}"))
             except (ValueError, ProcessLookupError, PermissionError) as e:
-                IOManager.error(f"kill: {e}")
+                IOManager.error(Color.error(f"kill: {e}"))
                 return 1
         return 0
 
     def _wait(self, args: list[str]) -> int:
         if not args:
-            IOManager.error("wait: usage: wait <job_id>")
+            IOManager.error(Color.error("wait: usage: wait <job_id>"))
             return 1
         try:
             job_id = int(args[0].lstrip("%"))
             rc = self._shell.kernel.syscall.wait(job_id, timeout=None)
             return rc if rc is not None else 0
         except ValueError:
-            IOManager.error(f"wait: invalid job id: {args[0]}")
+            IOManager.error(Color.error(f"wait: invalid job id: {args[0]}"))
             return 1
 
     def _source(self, args: list[str]) -> int:
         if not args:
-            IOManager.error("source: usage: source <file>")
+            IOManager.error(Color.error("source: usage: source <file>"))
             return 1
         path = self._shell.kernel.vfs.resolve(args[0])
         try:
             content = self._shell.kernel.syscall.open(path)
         except SyscallError as e:
-            IOManager.error(f"source: {e}")
+            IOManager.error(Color.error(f"source: {e}"))
             return 1
         rc = 0
         for line in content.splitlines():
@@ -628,9 +740,18 @@ class BuiltinRegistry:
 
     def _help(self, args: list[str]) -> int:
         builtins = sorted(self._builtins.keys())
-        IOManager.write("linux++ built-in commands:")
-        IOManager.write("  " + "  ".join(builtins))
-        IOManager.write("\nFor external commands, linux++ searches PATH.")
+        IOManager.write(Color.header("linux++ built-in commands") + "\n")
+        # display in colored columns
+        cols = 4
+        max_w = max(len(b) for b in builtins) + 2
+        for i in range(0, len(builtins), cols):
+            row = builtins[i:i+cols]
+            IOManager.write("  " + "".join(Color.green(b.ljust(max_w)) for b in row))
+        IOManager.write(
+            f"\n{Color.dim('For external commands, linux++ searches PATH.')}\n"
+            f"{Color.dim('Use')} {Color.cyan('man <command>')} "
+            f"{Color.dim('for detailed help.')}"
+        )
         return 0
 
     def _clear(self, args: list[str]) -> int:
@@ -783,7 +904,6 @@ class BuiltinRegistry:
                 files.append(arg)
 
         if not files:
-            # read from stdin
             try:
                 data = sys.stdin.read()
                 IOManager.write(data, end="")
@@ -803,16 +923,19 @@ class BuiltinRegistry:
                     chunks.append(chunk)
                 os.close(fd)
                 content = b"".join(chunks).decode("utf-8", errors="replace")
+                if len(files) > 1:
+                    IOManager.write(f"{Color.bold(Color.CYAN + f + Color.RESET)}")
+                    IOManager.write(Color.dim("─" * min(len(f) + 4, 60)))
                 if number:
                     for i, line in enumerate(content.splitlines(), 1):
-                        IOManager.write(f"  {i:6}  {line}")
+                        IOManager.write(f"  {Color.dim(f'{i:6}')}  {line}")
                 else:
                     IOManager.write(content, end="")
             except FileNotFoundError:
-                IOManager.error(f"cat: {f}: No such file or directory")
+                IOManager.error(Color.error(f"cat: {f}: No such file or directory"))
                 return 1
             except PermissionError:
-                IOManager.error(f"cat: {f}: Permission denied")
+                IOManager.error(Color.error(f"cat: {f}: Permission denied"))
                 return 1
         return 0
 
@@ -824,13 +947,14 @@ class BuiltinRegistry:
             if arg == "-p": parents = True
             else:           dirs.append(arg)
         if not dirs:
-            IOManager.error("mkdir: missing operand")
+            IOManager.error(Color.error("mkdir: missing operand"))
             return 1
         for d in dirs:
             try:
                 self._shell.kernel.syscall.mkdir(d, parents=parents)
+                IOManager.write(Color.success(f"mkdir: created '{Color.cyan(d)}'"))
             except SyscallError as e:
-                IOManager.error(f"mkdir: {e}")
+                IOManager.error(Color.error(f"mkdir: {e}"))
                 return 1
         return 0
 
@@ -846,51 +970,59 @@ class BuiltinRegistry:
             else:
                 paths.append(arg)
         if not paths:
-            IOManager.error("rm: missing operand")
+            IOManager.error(Color.error("rm: missing operand"))
             return 1
         for p in paths:
             try:
                 self._shell.kernel.syscall.unlink(p, recursive=recursive)
+                IOManager.write(Color.dim(f"  removed '{p}'"))
             except SyscallError as e:
                 if not force:
-                    IOManager.error(f"rm: {e}")
+                    IOManager.error(Color.error(f"rm: {e}"))
                     return 1
         return 0
 
     def _cp(self, args: list[str]) -> int:
         """cp <src> <dst>"""
         if len(args) < 2:
-            IOManager.error("cp: missing operand — usage: cp <src> <dst>")
+            IOManager.error(Color.error("cp: missing operand — usage: cp <src> <dst>"))
             return 1
         try:
             self._shell.kernel.syscall.copy(args[-2], args[-1])
+            IOManager.write(Color.success(
+                f"'{Color.cyan(args[-2])}' → '{Color.cyan(args[-1])}'"
+            ))
         except SyscallError as e:
-            IOManager.error(f"cp: {e}")
+            IOManager.error(Color.error(f"cp: {e}"))
             return 1
         return 0
 
     def _mv(self, args: list[str]) -> int:
         """mv <src> <dst>"""
         if len(args) < 2:
-            IOManager.error("mv: missing operand — usage: mv <src> <dst>")
+            IOManager.error(Color.error("mv: missing operand — usage: mv <src> <dst>"))
             return 1
         try:
             self._shell.kernel.syscall.rename(args[-2], args[-1])
+            IOManager.write(Color.success(
+                f"'{Color.cyan(args[-2])}' → '{Color.cyan(args[-1])}'"
+            ))
         except SyscallError as e:
-            IOManager.error(f"mv: {e}")
+            IOManager.error(Color.error(f"mv: {e}"))
             return 1
         return 0
 
     def _touch(self, args: list[str]) -> int:
         """touch <file> ..."""
         if not args:
-            IOManager.error("touch: missing operand")
+            IOManager.error(Color.error("touch: missing operand"))
             return 1
         for f in args:
             try:
                 self._shell.kernel.syscall.touch(f)
+                IOManager.write(Color.dim(f"  touched '{f}'"))
             except SyscallError as e:
-                IOManager.error(f"touch: {e}")
+                IOManager.error(Color.error(f"touch: {e}"))
                 return 1
         return 0
 
@@ -920,14 +1052,14 @@ class BuiltinRegistry:
             i += 1
 
         if not pattern_set:
-            IOManager.error("grep: usage: grep [-inv] <pattern> [file ...]")
+            IOManager.error(Color.error("grep: usage: grep [-inv] <pattern> [file ...]"))
             return 1
 
         flags = _re.IGNORECASE if ignore_case else 0
         try:
             regex = _re.compile(pattern, flags)
         except _re.error as e:
-            IOManager.error(f"grep: invalid pattern: {e}")
+            IOManager.error(Color.error(f"grep: invalid pattern: {e}"))
             return 1
 
         def _search(lines: list[str], label: str) -> bool:
@@ -938,12 +1070,19 @@ class BuiltinRegistry:
                     match = not match
                 if match:
                     found = True
-                    prefix = f"{label}:{lineno}: " if show_line_nums and label else \
-                             f"{lineno}: "          if show_line_nums else \
-                             f"{label}: "           if label else ""
-                    # highlight match in non-inverted mode
-                    if not invert and not IS_WINDOWS:
-                        line = regex.sub(lambda m: f"\033[31;1m{m.group()}\033[0m", line)
+                    # build prefix
+                    parts = []
+                    if label:
+                        parts.append(Color.magenta(label))
+                    if show_line_nums:
+                        parts.append(Color.cyan(str(lineno)))
+                    prefix = Color.dim(":").join(parts) + Color.dim(":") if parts else ""
+                    # highlight the match in the line
+                    if not invert:
+                        line = regex.sub(
+                            lambda m: f"{Color.BOLD}{Color.BRED}{m.group()}{Color.RESET}",
+                            line
+                        )
                     IOManager.write(prefix + line)
             return found
 
@@ -967,9 +1106,9 @@ class BuiltinRegistry:
                     if _search(lines, f if multi else ""):
                         found_any = True
                 except FileNotFoundError:
-                    IOManager.error(f"grep: {f}: No such file or directory")
+                    IOManager.error(Color.error(f"grep: {f}: No such file or directory"))
                 except PermissionError:
-                    IOManager.error(f"grep: {f}: Permission denied")
+                    IOManager.error(Color.error(f"grep: {f}: Permission denied"))
 
         return 0 if found_any else 1
 
@@ -991,7 +1130,9 @@ class BuiltinRegistry:
 
         def _print_head(lines, label):
             if label:
-                IOManager.write(f"==> {label} <==")
+                IOManager.write(
+                    f"{Color.BOLD}{Color.CYAN}==> {label} <=={Color.RESET}"
+                )
             for line in lines[:n]:
                 IOManager.write(line)
 
@@ -1011,7 +1152,7 @@ class BuiltinRegistry:
                     _print_head(data.decode("utf-8", errors="replace").splitlines(),
                                 f if len(files) > 1 else "")
                 except FileNotFoundError:
-                    IOManager.error(f"head: {f}: No such file or directory")
+                    IOManager.error(Color.error(f"head: {f}: No such file or directory"))
                     return 1
         return 0
 
@@ -1032,7 +1173,9 @@ class BuiltinRegistry:
 
         def _print_tail(lines, label):
             if label:
-                IOManager.write(f"==> {label} <==")
+                IOManager.write(
+                    f"{Color.BOLD}{Color.CYAN}==> {label} <=={Color.RESET}"
+                )
             for line in lines[-n:]:
                 IOManager.write(line)
 
@@ -1052,7 +1195,7 @@ class BuiltinRegistry:
                     _print_tail(data.decode("utf-8", errors="replace").splitlines(),
                                 f if len(files) > 1 else "")
                 except FileNotFoundError:
-                    IOManager.error(f"tail: {f}: No such file or directory")
+                    IOManager.error(Color.error(f"tail: {f}: No such file or directory"))
                     return 1
         return 0
 
@@ -1068,9 +1211,9 @@ class BuiltinRegistry:
             w = len(text.split())
             c = len(text)
             parts = []
-            if count_lines: parts.append(f"{l:>8}")
-            if count_words: parts.append(f"{w:>8}")
-            if count_chars: parts.append(f"{c:>8}")
+            if count_lines: parts.append(Color.cyan(f"{l:>8}"))
+            if count_words: parts.append(Color.yellow(f"{w:>8}"))
+            if count_chars: parts.append(Color.green(f"{c:>8}"))
             return " ".join(parts), l, w, c
 
         if not files:
@@ -1080,6 +1223,13 @@ class BuiltinRegistry:
             return 0
 
         totals = [0, 0, 0]
+        # header
+        cols = []
+        if count_lines: cols.append(Color.dim(f"{'lines':>8}"))
+        if count_words: cols.append(Color.dim(f"{'words':>8}"))
+        if count_chars: cols.append(Color.dim(f"{'chars':>8}"))
+        IOManager.write(" ".join(cols) + Color.dim("  file"))
+
         for f in files:
             resolved = self._shell.kernel.vfs.resolve(f)
             try:
@@ -1092,52 +1242,60 @@ class BuiltinRegistry:
                 os.close(fd)
                 text = data.decode("utf-8", errors="replace")
                 summary, l, w, c = _count(text)
-                IOManager.write(f"{summary}  {f}")
+                IOManager.write(f"{summary}  {Color.bcyan(f)}")
                 totals[0] += l; totals[1] += w; totals[2] += c
             except FileNotFoundError:
-                IOManager.error(f"wc: {f}: No such file or directory")
+                IOManager.error(Color.error(f"wc: {f}: No such file or directory"))
                 return 1
 
         if len(files) > 1:
             parts = []
-            if count_lines: parts.append(f"{totals[0]:>8}")
-            if count_words: parts.append(f"{totals[1]:>8}")
-            if count_chars: parts.append(f"{totals[2]:>8}")
-            IOManager.write(" ".join(parts) + "  total")
+            if count_lines: parts.append(Color.bold(Color.cyan(f"{totals[0]:>8}")))
+            if count_words: parts.append(Color.bold(Color.yellow(f"{totals[1]:>8}")))
+            if count_chars: parts.append(Color.bold(Color.green(f"{totals[2]:>8}")))
+            IOManager.write(" ".join(parts) + Color.dim("  total"))
         return 0
 
     def _which(self, args: list[str]) -> int:
         """which <command> ..."""
         if not args:
-            IOManager.error("which: missing argument")
+            IOManager.error(Color.error("which: missing argument"))
             return 1
         rc = 0
         for name in args:
             found = EnvManager.resolve_command(name)
             if found:
-                IOManager.write(found)
+                IOManager.write(f"{Color.green(name)}: {Color.cyan(found)}")
             else:
-                IOManager.error(f"which: {name} not found")
+                IOManager.error(Color.warn(f"which: {name}: not found"))
                 rc = 1
         return rc
 
     def _type(self, args: list[str]) -> int:
         """type <name> — show whether name is builtin, alias, or external"""
         if not args:
-            IOManager.error("type: missing argument")
+            IOManager.error(Color.error("type: missing argument"))
             return 1
         rc = 0
         for name in args:
             if self.has(name):
-                IOManager.write(f"{name} is a shell builtin")
+                IOManager.write(
+                    f"{Color.bold(name)} is a {Color.yellow('shell builtin')}"
+                )
             elif AliasStore.get(name):
-                IOManager.write(f"{name} is aliased to '{AliasStore.get(name)}'")
+                exp = AliasStore.get(name)
+                IOManager.write(
+                    f"{Color.bold(name)} is aliased to "
+                    f"{Color.cyan(repr(exp))}"
+                )
             else:
                 found = EnvManager.resolve_command(name)
                 if found:
-                    IOManager.write(f"{name} is {found}")
+                    IOManager.write(
+                        f"{Color.bold(name)} is {Color.green(found)}"
+                    )
                 else:
-                    IOManager.error(f"type: {name}: not found")
+                    IOManager.error(Color.warn(f"type: {name}: not found"))
                     rc = 1
         return rc
 
@@ -1245,7 +1403,7 @@ class Shell:
       5. update $?  and loop
     """
 
-    VERSION = "0.1.0"
+    VERSION = "0.0.0b3"
 
     def __init__(self, kernel):
         self.kernel     = kernel
@@ -1259,6 +1417,41 @@ class Shell:
         self.builtins   = BuiltinRegistry(self)
         self.dispatcher = Dispatcher(self)
 
+    # --- Windows ANSI enabler ---
+
+    @staticmethod
+    def _enable_windows_ansi() -> bool:
+        """
+        Enable ANSI/VT100 escape processing on Windows via SetConsoleMode.
+        Requires Windows 10 build 1511+. Works in cmd.exe, PowerShell,
+        and Windows Terminal.
+        Returns True if successfully enabled, False if not supported.
+        """
+        if not IS_WINDOWS:
+            return True
+        try:
+            import ctypes, ctypes.wintypes
+            kernel32   = ctypes.windll.kernel32
+            STD_OUTPUT = -11
+            ENABLE_VT  = 0x0004
+            handle = kernel32.GetStdHandle(STD_OUTPUT)
+            if handle == -1:
+                return False
+            mode = ctypes.wintypes.DWORD()
+            if not kernel32.GetConsoleMode(handle, ctypes.byref(mode)):
+                return False
+            if not kernel32.SetConsoleMode(handle, mode.value | ENABLE_VT):
+                return False
+            # Set stdout to UTF-8 so box-drawing chars render correctly
+            import io
+            sys.stdout = io.TextIOWrapper(
+                sys.stdout.buffer, encoding="utf-8",
+                errors="replace", line_buffering=True,
+            )
+            return True
+        except Exception:
+            return False
+
     # --- prompt ---
 
     def _prompt(self) -> str:
@@ -1271,29 +1464,36 @@ class Shell:
         if cwd.startswith(home):
             cwd = "~" + cwd[len(home):]
 
+        # Windows: ANSI codes work directly after _enable_windows_ansi().
+        #   No \001..\002 wrappers — pyreadline3 handles width on its own.
+        # Unix: \001..\002 wrappers are mandatory so GNU readline counts
+        #   only visible characters when calculating cursor position.
         if IS_WINDOWS:
-            marker = "#" if os.environ.get("ELEVATED") else "$"
-            return f"{user}@{host}:{cwd}{marker} "
+            R  = "\033[0m"
+            G  = "\033[32m"
+            B  = "\033[34m"
+            Y  = "\033[33m"
+            RD = "\033[31m"
+            try:
+                import ctypes
+                is_admin = bool(ctypes.windll.shell32.IsUserAnAdmin())
+            except Exception:
+                is_admin = False
+            marker = f"{RD}#{R}" if is_admin else f"{G}${R}"
+        else:
+            def _c(code: str) -> str:
+                return f"\001{code}\002"
+            R  = _c("\033[0m")
+            G  = _c("\033[32m")
+            B  = _c("\033[34m")
+            Y  = _c("\033[33m")
+            RD = _c("\033[31m")
+            try:
+                is_root = os.geteuid() == 0
+            except AttributeError:
+                is_root = False
+            marker = f"{RD}#{R}" if is_root else f"{G}${R}"
 
-        # Wrap every ANSI escape in \001 ... \002 so readline does not
-        # count the invisible bytes toward the visible prompt width.
-        # Without these markers the cursor jumps to the wrong column
-        # and escape codes print as raw text like [32m on some terminals.
-        def _c(code: str) -> str:
-            return f"\001{code}\002"
-
-        R  = _c("\033[0m")
-        G  = _c("\033[32m")
-        B  = _c("\033[34m")
-        Y  = _c("\033[33m")
-        RD = _c("\033[31m")
-
-        try:
-            is_root = os.geteuid() == 0
-        except AttributeError:
-            is_root = False
-
-        marker = f"{RD}#{R}" if is_root else f"{G}${R}"
         return f"{G}{user}{R}@{B}{host}{R}:{Y}{cwd}{R}{marker} "
 
     # --- line execution (called by REPL and `source`) ---
@@ -1441,13 +1641,18 @@ class Shell:
     # --- banner ---
 
     def _banner(self) -> None:
-        IOManager.write(f"\033[1;32mlinux++\033[0m v{self.VERSION}  "
-                        f"(type \033[1mhelp\033[0m for built-in commands, "
-                        f"\033[1mexit\033[0m to quit)")
+        IOManager.write(
+            f"\033[1;32mlinux++\033[0m v{self.VERSION}  "
+            f"(type \033[1mhelp\033[0m for built-in commands, "
+            f"\033[1mexit\033[0m to quit)"
+        )
 
     # --- main REPL loop ---
 
     def run(self) -> int:
+        # Enable ANSI color processing on Windows before the first print
+        ansi_ok = self._enable_windows_ansi()
+
         self._banner()
         self.history.load()
 

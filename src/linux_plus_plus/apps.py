@@ -904,6 +904,25 @@ EXAMPLES
 
     # connect from another machine:
     ssh user@your-ip -p 2222""",
+
+    "e2eeftp_client": """\
+NAME
+    e2eeftp_client - connect to a e2eeftp server.
+    
+SYNOPSIS
+    e2eeftp_client <host> [port]
+    
+SUBCOMMANDS
+    ls/list                     list all the files in the server.
+    hlist                       get all the commandes supported by the server.
+    get <file-path>             download a file from the server.
+    put/send/upload <file-path> upload a file to the server.
+    delete <file-path>          delete a file in the server.
+    exit                        exit e2eeftp session.
+    
+EXAMPLES
+    e2eeftp_client 192.168.1.10 2121
+    e2eeftp_client localhost 2121"""
 }
 
 
@@ -1927,6 +1946,159 @@ class _SSHServerInterface:
 
 
 # ===========================================================================
+# SSHDaemon  — SSH server using paramiko (with fallback info)
+# ===========================================================================
+
+class E2eeftpClient:
+    """"""
+
+    def __init__(self, host: str, port:int):
+        self._host = host
+        self._port = port
+
+    def run_interactive(self, command: Optional[str] = None) -> int:
+        try:
+            from e2eeftp import e2eeftpClient
+            return self._e2eeftp_session(e2eeftpClient, command)
+        except ImportError:
+            IOManager.error("e2eeftp not found can't run.")
+            return 1
+        
+    def _e2eeftp_session(self, e2eeftp_client, command: Optional[str] = None) -> int:
+        # instantiate client with documented defaults 
+        try:
+            client = e2eeftp_client(host=self._host, port=self._port, logging=False)
+        except Exception as e:
+            IOManager.error(f"e2eeftp: failed to create client: {e}")
+            return 1
+
+        # helper to read input via IOManager if available
+        def _read(prompt: str) -> str:
+            if hasattr(IOManager, 'read_input'):
+                return IOManager.read_input(prompt)
+            try:
+                return input(prompt)
+            except EOFError:
+                return ""
+
+        # If a single command was provided, try to execute it and exit.
+        if command:
+            parts = command.split()
+            cmd = parts[0].lower()
+            args = parts[1:]
+            try:
+                if cmd == 'ls' or cmd == 'list':
+                    files = client.list_files()
+                    if files:
+                        for f in files:
+                            IOManager.write(f)
+                    return 0
+                if cmd == 'hlist':
+                    h = client.hlist()
+                    if h:
+                        for item in h:
+                            IOManager.write(item)
+                    return 0
+                if cmd == 'get':
+                    if not args:
+                        IOManager.error('get: usage: get <filename>')
+                        return 1
+                    return client.get(args[0])
+                if cmd in ('put', 'send', 'upload'):
+                    if not args:
+                        IOManager.error('put: usage: put <local_path>')
+                        return 1
+                    return client.send(args[0])
+                if cmd == 'delete':
+                    if not args:
+                        IOManager.error('delete: usage: delete <filename>')
+                        return 1
+                    return client.delete(args[0])
+            except Exception as e:
+                IOManager.error(f"e2eeftp: {e}")
+                return 1
+
+        IOManager.write("Type 'help' for commands, 'quit' to exit.")
+        try:
+            while True:
+                raw = _read("e2eeftp> ")
+                if raw is None:
+                    break
+                raw = raw.strip()
+                if not raw:
+                    continue
+                parts = raw.split()
+                cmd = parts[0].lower()
+                args = parts[1:]
+
+                if cmd in ("quit", "bye", "exit"):
+                    break
+                if cmd == 'help':
+                    IOManager.write("commands: list hlist get put delete help quit")
+                    continue
+
+                try:
+                    if cmd in ('ls', 'list'):
+                        files = client.list_files()
+                        if files:
+                            for f in files:
+                                IOManager.write(f)
+                        else:
+                            IOManager.write("(no files)")
+
+                    elif cmd == 'hlist':
+                        h = client.hlist()
+                        if h:
+                            for item in h:
+                                IOManager.write(item)
+                        else:
+                            IOManager.write("(no commands)")
+
+                    elif cmd == 'get':
+                        if not args:
+                            IOManager.error('get: usage: get <filename>')
+                            continue
+                        rc = client.get(args[0])
+                        IOManager.write(f"get returned: {rc}")
+
+                    elif cmd in ('put', 'send', 'upload'):
+                        if not args:
+                            IOManager.error('put: usage: put <local_path>')
+                            continue
+                        path = args[0]
+                        if not os.path.isfile(path):
+                            IOManager.error(f"put: local file not found: {path}")
+                            continue
+                        rc = client.send(path)
+                        IOManager.write(f"send returned: {rc}")
+
+                    elif cmd == 'delete':
+                        if not args:
+                            IOManager.error('delete: usage: delete <filename>')
+                            continue
+                        rc = client.delete(args[0])
+                        IOManager.write(f"delete returned: {rc}")
+
+                    else:
+                        IOManager.error(f"unknown command: {cmd}")
+
+                except Exception as e:
+                    IOManager.error(f"e2eeftp error: {e}")
+
+        finally:
+            # try graceful close if provided
+            for closer in ("close", "disconnect", "quit", "stop"):
+                if hasattr(client, closer):
+                    try:
+                        getattr(client, closer)()
+                    except Exception:
+                        pass
+            IOManager.write("Goodbye.")
+        return 0
+        
+
+
+# ===========================================================================
 # Apps — register everything into the shell
 # ===========================================================================
 
@@ -2047,8 +2219,8 @@ def main(args):
             return 1
 
         # parse  [user@]host  [port]  [command...]
-        target  = args[0]
-        rest    = args[1:]
+        target = args[0]
+        rest = args[1:]
 
         # split user@host
         if "@" in target:
@@ -2067,17 +2239,37 @@ def main(args):
         command = " ".join(rest) if rest else None
 
         return SSHClient(host, user, port).run_interactive(command)
+    
+    def _e2eeftp_client(args: list[str]) -> int:
+        if not args:
+            IOManager.error(
+                "e2eeftp: usage: e2eeftp [host] [port]\n"
+                "  examples:\n"
+                "    e2eeftp 127.0.0.1 5050\n"
+            )
+
+        # Parse [host] [port]
+        host = args[0] if args else "127.0.0.1"
+        port = int(args[1]) if len(args) > 1 else 5050
+        rest = args[2:]
+
+        # remaining args = remote command (optional)
+        command = " ".join(rest) if rest else None
+
+        return E2eeftpClient(host, port).run_interactive(command)
 
     # --- register all ---
-    shell.builtins.register("lpp",        _lpp)
-    shell.builtins.register("man",        _man)
-    shell.builtins.register("edit",       _edit)
-    shell.builtins.register("ftp",        _ftp)
-    shell.builtins.register("sysinfo",    _sysinfo)
-    shell.builtins.register("neofetch",   _sysinfo)
-    shell.builtins.register("sh",         _sh)
-    shell.builtins.register("pkg-create", _pkg_create)
-    shell.builtins.register("ssh",        _ssh)
+    shell.builtins.register("lpp",            _lpp)
+    shell.builtins.register("man",            _man)
+    shell.builtins.register("lppedit",           _edit)
+    shell.builtins.register("ftp",            _ftp)
+    shell.builtins.register("sysinfo",        _sysinfo)
+    shell.builtins.register("neofetch",       _sysinfo)
+    shell.builtins.register("sh",             _sh)
+    shell.builtins.register("pkg-create",     _pkg_create)
+    shell.builtins.register("ssh",            _ssh)
+    shell.builtins.register("e2eeftp_client", _e2eeftp_client)
+
 
     # --- sshd (SSH daemon) ---
     _sshd_instance = SSHDaemon(shell)
@@ -2125,7 +2317,7 @@ def main():
     k.boot()
 
     shell = Shell(k)
-    register_all(shell)         # attach Layer 5
+    register_all(shell) # attach Layer 5
 
     sys.exit(shell.run())
 
