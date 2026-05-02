@@ -299,7 +299,7 @@ EXAMPLES
     lpp list
     lpp remove mypkg""",
 
-    "edit": """\
+    "lppedit": """\
 NAME
     edit — open the linux++ text editor
 
@@ -706,7 +706,7 @@ def main(args):
     # --- register all ---
     shell.builtins.register("lpp",        _lpp)
     shell.builtins.register("man",        _man)
-    shell.builtins.register("edit",       _edit)
+    shell.builtins.register("lppedit",       _edit)
     shell.builtins.register("ftp",        _ftp)
     shell.builtins.register("sysinfo",    _sysinfo)
     shell.builtins.register("neofetch",   _sysinfo)
