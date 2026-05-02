@@ -1,4 +1,7 @@
+![logo](linux_plus_plus.ico)
+
 # linux++
 A simple terminal OS made in python. 
 
-# Quick Start
+# architecture
+![Alt Text](linux_plus_plus_architecture.svg)   

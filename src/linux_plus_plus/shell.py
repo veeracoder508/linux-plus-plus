@@ -174,7 +174,7 @@ class TT(Enum):
     BG        = auto()   # &  (background)
     LPAREN    = auto()   # (
     RPAREN    = auto()   # )
-    EOF       = auto()   # End Of File
+    EOF       = auto()
 
 
 @dataclass

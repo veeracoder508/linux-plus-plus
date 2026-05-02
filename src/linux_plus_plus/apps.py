@@ -2186,6 +2186,29 @@ def main(args):
 
     shell.builtins.register("sshd", _sshd)
 
+    # --- license ---
+    def _license(args: list[str]) -> int:
+        """Display the project's LICENSE file contents."""
+        # try a few likely locations: package root, project root, cwd
+        candidates = [
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "LICENSE")),
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "LICENSE")),
+            os.path.abspath(os.path.join(os.getcwd(), "LICENSE")),
+        ]
+        for p in candidates:
+            if os.path.exists(p):
+                try:
+                    with open(p, encoding="utf-8") as f:
+                        IOManager.write(f.read())
+                    return 0
+                except Exception as e:
+                    IOManager.error(f"license: error reading LICENSE: {e}")
+                    return 1
+        IOManager.error("license: LICENSE file not found")
+        return 1
+
+    shell.builtins.register("license", _license)
+
     # load previously installed packages
     pm.load_installed()
 
