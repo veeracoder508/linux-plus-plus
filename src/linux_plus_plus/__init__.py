@@ -1,3 +1,3 @@
 """A simple terminal operating system."""
 
-__version__ = '0.0.0b1'
+__version__ = '0.0.0b3'
