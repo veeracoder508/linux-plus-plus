@@ -1,13 +1,30 @@
 """
-linux++ — Kernel (Layer 3)
-===========================
-Pure Python standard library only. No third-party deps.
-Depends on Layer 1 (HAL) and Layer 2 (Stdlib).
+# linux++ — Kernel (Layer 3)
 
-Subsystems:
-  - VirtualFilesystem (VFS)  : path resolution, inode tree, mounts
-  - ProcessManager           : process tracking, jobs, fork/exec/wait
-  - SyscallRouter            : single dispatch point for all kernel calls
+This module contains the core platform-agnostic "kernel" logic used by the
+linux++ project. It exposes a small, testable set of subsystems implemented
+purely in the Python standard library and intended to be used by the higher
+layers (shell and user applications).
+
+Key responsibilities provided here:
+- VirtualFilesystem (VFS): a lightweight virtual view over the host filesystem
+    with path resolution, mounting, and basic file manipulation helpers.
+- ProcessManager: spawning and tracking of foreground and background
+    subprocesses, simple job control, and pipeline execution.
+- SyscallRouter: a single dispatch façade that exposes the kernel services to
+    the shell and application layers using stable, high-level call semantics.
+
+Design constraints and notes:
+- Only the Python standard library is used here so the kernel can be bundled
+    or embedded easily.
+- Platform-specific details are delegated to the HAL/Layer-1 when required.
+- The code intentionally maps directly to host filesystem and subprocess APIs
+    rather than emulating an OS — it is a convenience layer for building
+    higher-level shells and tools.
+
+The public API is primarily the `Kernel` class and the `SyscallRouter` object
+available as `Kernel.syscall` after boot. The module also provides a small
+`main()` self-test harness that exercises the most important functionality.
 """
 
 import os
@@ -33,20 +50,59 @@ except ImportError:
 # ===========================================================================
 
 class INodeType(Enum):
+    """Type discriminator for VirtualFilesystem entries.
+
+    The VFS returns lightweight `INode` objects which contain a `inode_type`
+    value from this enumeration. Consumers should inspect the type before
+    performing operations that require a directory vs. a regular file or a
+    symlink.
+
+    Members:
+    - FILE: regular file containing data.
+    - DIR: directory container.
+    - SYMLINK: symbolic link to another filesystem path.
+    - MOUNT: logical mount point within the VFS mapping table.
+    """
+
     FILE    = auto()
+    """Represents a standard data-containing file on the host filesystem."""
     DIR     = auto()
+    """Represents a directory, which acts as a container for other inodes."""
     SYMLINK = auto()
+    """Represents a symbolic link that points to another path in the filesystem."""
     MOUNT   = auto()
+    """Represents a logical mount point used to map host directories into the VFS tree."""
 
 
 class INode:
-    """
-    Lightweight inode — metadata only, no data stored in memory.
-    Data lives on the real host filesystem; we track the path and type.
+    """Metadata container representing a path exposed by the VFS.
+
+    This object intentionally keeps a minimal surface: it describes the
+    physical host `path`, the semantic `inode_type` (see `INodeType`) and an
+    optional `mount_point` which records the virtual location where the host
+    path is mounted.
+
+    Attributes:
+    - path (str): absolute, resolved host filesystem path backing this inode.
+    - inode_type (INodeType): classification of the entry.
+    - mount_point (str): virtual mount point path when this node is coming from
+        a mounted host directory; otherwise an empty string.
+
+    The class implements `__repr__` to aid debugging and logging. No file IO
+    is performed by constructing an `INode` — use `VirtualFilesystem.stat()` to
+    obtain validated instances.
     """
     __slots__ = ("path", "inode_type", "mount_point")
 
     def __init__(self, path: str, inode_type: INodeType, mount_point: str = ""):
+        """Initializes an INode object.
+
+        Args:
+            path (str): The absolute physical path to the entry on the host system.
+            inode_type (INodeType): The type of the entry (FILE, DIR, SYMLINK, or MOUNT).
+            mount_point (str, optional): The virtual path where this node is 
+                exposed within the linux++ VFS. Defaults to "".
+        """
         self.path        = path
         self.inode_type  = inode_type
         self.mount_point = mount_point
@@ -56,15 +112,21 @@ class INode:
 
 
 class VirtualFilesystem:
-    """
-    Maintains the linux++ view of the filesystem:
-      - current working directory (cwd)
-      - mount table (virtual path -> real path)
-      - path resolution (handles . .. ~ symlinks)
-      - directory listing with inode info
-      - basic file operations routed through os.*
+    """A small virtual filesystem abstraction over the host filesystem.
 
-    Uses only: os, stat — pure CPython builtins.
+    Responsibilities:
+    - Maintain a current working directory (`cwd`) independent of callers.
+    - Provide deterministic resolution of paths (tilde expansion, relative
+        resolution, normalization and symlink resolution).
+    - Maintain a simple mount table that maps virtual prefixes to real host
+        directories.
+    - Offer convenience helpers for common file operations (`read`, `write`,
+        `mkdir`, `listdir`, etc.) that raise the usual Python exceptions on
+        errors.
+
+    This class is NOT a full POSIX VFS implementation — it intentionally
+    delegates to the host `os` and `stat` modules and focuses on providing a
+    predictable API for the linux++ kernel and shell.
     """
 
     def __init__(self):
@@ -79,6 +141,14 @@ class VirtualFilesystem:
         return self._cwd
 
     def chdir(self, path: str) -> None:
+        """Change the VFS current working directory.
+
+        The argument `path` is resolved using `resolve()` semantics (tilde,
+        relative segments and symlinks). If the resolved target is not a
+        directory a `FileNotFoundError` is raised. On success the VFS's `cwd`
+        is updated and the host process `os.chdir` is invoked so subprocesses
+        inherit the same working directory.
+        """
         resolved = self.resolve(path)
         if not os.path.isdir(resolved):
             raise FileNotFoundError(f"cd: no such directory: {path}")
@@ -90,8 +160,17 @@ class VirtualFilesystem:
 
     def resolve(self, path: str) -> str:
         """
-        Resolve a path to an absolute real path.
-        Handles: ~  .  ..  relative paths  symlinks
+                Resolve a path to an absolute, normalized host filesystem path.
+
+                Semantics:
+                - Empty strings return the current working directory.
+                - Leading `~` is expanded using `os.path.expanduser`.
+                - Relative paths are interpreted relative to the VFS `cwd`.
+                - `.` and `..` segments are normalized.
+                - Symlinks are resolved to their real, underlying paths when
+                    possible.
+
+                Returns a string suitable for passing to standard `os` functions.
         """
         path = path.strip()
         if not path:
@@ -118,8 +197,15 @@ class VirtualFilesystem:
 
     def resolve_virtual(self, vpath: str) -> str:
         """
-        Translate a virtual mount path to its real host path.
-        e.g. if /data is mounted at /mnt/usb, /data/file -> /mnt/usb/file
+        Translate a virtual path (one that may start with a mount prefix) to
+        the corresponding real host path.
+
+        The method walks the mount table to find the longest matching virtual
+        prefix and rewrites the path to the underlying real directory. If no
+        mount matches the original path the input is returned unchanged.
+
+        Example: with mount `/data` -> `/mnt/usb`, resolving `/data/file.txt`
+        produces `/mnt/usb/file.txt`.
         """
         for virtual, real in sorted(self._mounts.items(), reverse=True):
             if vpath.startswith(virtual):
@@ -138,6 +224,11 @@ class VirtualFilesystem:
             self._mounts[virtual_path] = real_path
 
     def umount(self, virtual_path: str) -> None:
+        """Remove a mount entry previously added with `mount()`.
+
+        Unmounting root (`/`) is not permitted. If the mount point does not
+        exist the method is a no-op.
+        """
         if virtual_path == "/":
             raise PermissionError("Cannot unmount root")
         self._mounts.pop(virtual_path, None)
@@ -148,7 +239,11 @@ class VirtualFilesystem:
     # --- inode lookup ---
 
     def stat(self, path: str) -> INode:
-        """Return an INode for path. Raises FileNotFoundError if missing."""
+        """Return an `INode` describing `path`.
+
+        The path is resolved and `os.stat` is used to determine the filesystem
+        type. A `FileNotFoundError` propagates when the target does not exist.
+        """
         resolved = self.resolve(path)
         st = os.stat(resolved)
         mode = st.st_mode
@@ -163,6 +258,11 @@ class VirtualFilesystem:
         return INode(resolved, inode_type)
 
     def exists(self, path: str) -> bool:
+        """Return True if `path` exists (file or directory), False otherwise.
+
+        This is a convenience wrapper around `stat()` that converts common
+        exceptions into a boolean result.
+        """
         try:
             self.stat(path)
             return True
@@ -172,7 +272,12 @@ class VirtualFilesystem:
     # --- directory listing ---
 
     def listdir(self, path: str = ".") -> list[INode]:
-        """List directory contents as INodes."""
+        """List directory entries and return `INode` objects for each entry.
+
+        The returned list is sorted with directories first and then by name
+        (case-insensitive). Permission errors are raised to mirror host
+        behavior so callers can present friendly messages to users.
+        """
         resolved = self.resolve(path)
         entries = []
         try:
@@ -197,6 +302,12 @@ class VirtualFilesystem:
     # --- file operations ---
 
     def mkdir(self, path: str, parents: bool = False) -> None:
+        """Create a directory at `path`.
+
+        If `parents` is True the call mirrors `mkdir -p` semantics and will
+        create intermediate directories as needed. Errors from the underlying
+        `os` functions (e.g. FileExistsError, PermissionError) propagate.
+        """
         resolved = self.resolve(path)
         if parents:
             os.makedirs(resolved, exist_ok=True)
@@ -204,6 +315,13 @@ class VirtualFilesystem:
             os.mkdir(resolved)
 
     def remove(self, path: str, recursive: bool = False) -> None:
+        """Remove a file or directory.
+
+        If `path` resolves to a directory and `recursive` is False the method
+        will call `os.rmdir` (which fails if the directory is non-empty). When
+        `recursive` is True the directory tree is removed using `shutil.rmtree`.
+        For non-directory targets `os.unlink` is used.
+        """
         resolved = self.resolve(path)
         if os.path.isdir(resolved):
             if not recursive:
@@ -215,18 +333,41 @@ class VirtualFilesystem:
             os.unlink(resolved)
 
     def rename(self, src: str, dst: str) -> None:
+        """Move or rename a filesystem entry from `src` to `dst`.
+
+        Both paths are resolved using `resolve()` semantics. The call maps
+        directly to `os.rename` and will raise the same exceptions when
+        operations fail (permission errors, missing parents, etc.).
+        """
         os.rename(self.resolve(src), self.resolve(dst))
 
     def copy(self, src: str, dst: str) -> None:
+        """Copy a file from `src` to `dst` preserving metadata where possible.
+
+        This uses `shutil.copy2` under the hood; directories are not supported
+        by this helper and will raise an exception if attempted.
+        """
         import shutil
         shutil.copy2(self.resolve(src), self.resolve(dst))
 
     def touch(self, path: str) -> None:
+        """Create an empty file at `path` or update its modification time.
+
+        The helper opens the file with `os.O_CREAT` which creates a new file if
+        it does not exist and otherwise truncates/updates timestamps depending
+        on platform semantics. Permissions for a new file are set to `0o644`.
+        """
         resolved = self.resolve(path)
         fd = os.open(resolved, os.O_CREAT | os.O_WRONLY, 0o644)
         os.close(fd)
 
     def read(self, path: str, encoding: str = "utf-8") -> str:
+        """Read and return the contents of `path` as a string.
+
+        The file is opened using low-level `os` file descriptors and read in
+        binary chunks to avoid implicit newline conversions. The resulting
+        bytes are decoded with the supplied `encoding` (defaults to UTF-8).
+        """
         resolved = self.resolve(path)
         fd = os.open(resolved, os.O_RDONLY)
         try:
@@ -241,6 +382,12 @@ class VirtualFilesystem:
             os.close(fd)
 
     def write(self, path: str, content: str, encoding: str = "utf-8") -> None:
+        """Write `content` to `path`, replacing any existing data.
+
+        The file is created with mode `0o644` when necessary. `content` is
+        encoded with `encoding` before writing. Permission errors and other
+        host-level exceptions propagate to the caller.
+        """
         resolved = self.resolve(path)
         flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
         fd = os.open(resolved, flags, 0o644)
@@ -250,6 +397,11 @@ class VirtualFilesystem:
             os.close(fd)
 
     def append(self, path: str, content: str, encoding: str = "utf-8") -> None:
+        """Append `content` to `path`, creating the file if necessary.
+
+        The helper opens the file in append mode so writes are atomic with
+        respect to the file offset on POSIX-like systems.
+        """
         resolved = self.resolve(path)
         flags = os.O_WRONLY | os.O_CREAT | os.O_APPEND
         fd = os.open(resolved, flags, 0o644)

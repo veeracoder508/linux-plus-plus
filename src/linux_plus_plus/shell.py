@@ -1,16 +1,24 @@
 """
-linux++ — Shell / REPL (Layer 4)
-==================================
-Pure Python standard library only. No third-party deps.
-Depends on Layer 1 (HAL), Layer 2 (Stdlib), Layer 3 (Kernel).
+# linux++ — Shell / REPL (Layer 4)
 
-Components:
-  - Lexer          : tokenise raw input into words, operators, strings
-  - Parser         : build a CommandAST (pipes, redirects, &&, ||, ;, &)
-  - Expander       : variable/tilde/glob expansion before execution
-  - Dispatcher     : route commands to builtins or kernel exec
-  - History        : persistent command history (~/.linuxpp_history)
-  - Shell          : the REPL loop — prompt, read, parse, execute
+This module implements a small, dependency-free interactive shell used by
+linux++. It is written only with the Python standard library and composes
+functionality from the lower layers (HAL, Stdlib, Kernel) to provide a
+usable command-line experience.
+
+Primary components:
+- Lexer: tokenises a raw input line into words, operators and quoted strings.
+- Parser: produces a lightweight AST representing pipelines, redirections
+    and boolean operators.
+- Expander: performs tilde, variable and glob expansion prior to execution.
+- Dispatcher: decides whether a command runs as a builtin or via the
+    kernel's exec facilities and handles input/output redirection.
+- History & Readline shim: persistent history and tab-completion support.
+- Shell: the main REPL loop, prompt rendering and high-level orchestration.
+
+The module exposes a `Shell` class which can be instantiated with a
+`Kernel` instance to provide a full interactive experience, and a `main()`
+entry point that boots a kernel and runs the REPL.
 """
 
 import os
@@ -54,10 +62,16 @@ from dataclasses import dataclass, field
 # ---------------------------------------------------------------------------
 
 class Color:
-    """
-    Central color palette for linux++ output.
-    All builtins use this — never raw ANSI strings.
-    On Windows, colors are enabled by Shell._enable_windows_ansi() at boot.
+    """ANSI color utilities and small rendering helpers.
+
+    This class centralises color escape sequences and provides convenience
+    wrappers such as `Color.red(text)` to ensure consistent use of colors
+    across the codebase. The `strip()` helper removes ANSI codes for
+    situations where raw, unstyled output is required (pipes or redirections).
+
+    Note: On Windows the shell attempts to enable VT100 escape processing
+    at startup; if that fails colors will still be present but may not render
+    correctly in legacy consoles.
     """
     # styles
     BOLD      = "\033[1m"
@@ -146,7 +160,8 @@ class Color:
     def strip(text: str) -> str:
         """Remove all ANSI codes from a string (for pipes/redirects)."""
         return re.sub(r'\033\[[0-9;]*m', '', text)
-from enum    import Enum, auto
+
+from enum import Enum, auto
 
 try:
     from .hal    import IS_WINDOWS
@@ -191,14 +206,14 @@ class LexerError(Exception):
 
 
 class Lexer:
-    """
-    Tokenise a shell input line.
-    Handles:
-      - single-quoted strings   'no $expansion'
-      - double-quoted strings   "with $expansion"
-      - escape sequences        \n  \t  \\  \"
-      - all shell operators     | || > >> < && ; & ( )
-      - comments                # …
+    """Convert a shell input line into a sequence of `Token` objects.
+
+    The lexer recognises shell-like tokens including words, single- and
+    double-quoted strings (with escaping), redirection operators, pipes,
+    background markers and boolean operators (`&&`, `||`). It treats `#`
+    as the start of a comment to end-of-line. The output is a list of
+    `Token` instances terminated by a `TT.EOF` token suitable for the
+    `Parser` to consume.
     """
 
     def tokenise(self, text: str) -> list[Token]:
@@ -315,9 +330,13 @@ class Lexer:
 # ===========================================================================
 
 class SyntaxHighlighter:
-    """
-    Token-based syntax highlighter for the linux++ shell.
-    Preserves whitespace and highlights according to command context.
+    """Produce a coloured, token-aware preview of a command line.
+
+    The highlighter is intentionally lightweight and targets the shell's
+    prompt preview and help screens — it preserves original whitespace and
+    applies colours by token type (strings, variables, flags, operators).
+    Users may enable a preview mode to see highlighted output prior to
+    execution.
     """
 
     @staticmethod
@@ -408,14 +427,13 @@ class ParseError(Exception):
 
 
 class Parser:
-    """
-    Recursive-descent parser for the token stream produced by Lexer.
+    """Recursive-descent parser that converts tokens into a command AST.
 
-    Grammar (simplified):
-        command_list  := pipeline ( (';'|'&&'|'||') pipeline )*
-        pipeline      := simple_cmd ( '|' simple_cmd )* ['&']
-        simple_cmd    := WORD* redirect*
-        redirect      := ('>'|'>>'|'<') WORD
+    The parser implements a small grammar capturing lists of pipelines joined
+    by `;`, `&&` and `||`, pipelines of simple commands separated by `|`,
+    and redirections (`>`, `>>`, `<`). The resulting AST uses
+    `SimpleCommand`, `Pipeline` and `CommandList` dataclasses which are easy
+    to traverse by the shell execution logic.
     """
 
     def __init__(self, tokens: list[Token]):
@@ -490,12 +508,14 @@ class Parser:
 # ===========================================================================
 
 class Expander:
-    """
-    Expand words before execution:
-      - tilde:    ~ -> home dir
-      - variables: $VAR  ${VAR}  $?  $$  $#
-      - globs:    *  ?  [abc]
-    Uses only: os, glob, re — pure builtins.
+    """Perform tilde, variable and glob expansion on command words.
+
+    Expansion semantics mirror common shell behaviour:
+    - `~` and `~/...` are expanded via `os.path.expanduser`.
+    - Variables are expanded for `$VAR` and `${VAR}` forms and special
+        tokens like `$?` (last return code) and `$$` (shell PID) are supported.
+    - Globbing (`*`, `?`, `[...]`) is performed using the `glob` module and
+        preserves non-matching patterns by returning the original word.
     """
 
     def __init__(self, last_rc: int = 0):
@@ -545,9 +565,11 @@ class Expander:
 # ===========================================================================
 
 class History:
-    """
-    Persistent readline history stored in ~/.linuxpp_history.
-    Uses only: readline, atexit, os — pure builtins.
+    """Manage persistent command history via the `readline` API.
+
+    The history file defaults to `~/.linuxpp_history` and is written on exit
+    using `atexit`. The class provides helpers to load/save history and to
+    enumerate current entries for the `history` builtin.
     """
 
     DEFAULT_PATH = os.path.join(os.path.expanduser("~"), ".linuxpp_history")
@@ -587,9 +609,13 @@ class History:
 # ===========================================================================
 
 class BuiltinRegistry:
-    """
-    Holds the built-in commands that run inside the shell process.
-    Layer 5 registers additional builtins via register().
+    """Registry and dispatcher for shell-builtins executed in-process.
+
+    Builtin functions run inside the shell process (not as external
+    subprocesses), allowing them to modify shell state (for example `cd`,
+    `export` and `alias`). The registry maps command names to callables and
+    registers a core set of builtins on construction. Additional commands may
+    be registered by higher layers.
     """
 
     def __init__(self, shell: "Shell"):
@@ -1374,12 +1400,16 @@ class BuiltinRegistry:
 # ===========================================================================
 
 class Dispatcher:
-    """
-    For each SimpleCommand, decides:
-      1. Is it a builtin?  -> run inside shell process
-      2. Is it in PATH?    -> exec via kernel
-      3. Neither           -> error
-    Handles redirections around the call.
+    """Decide how to execute a `SimpleCommand` and perform I/O handling.
+
+    The dispatcher is responsible for:
+    - Determining whether a command is a builtin and invoking it directly,
+        capturing output when required for pipes or redirections.
+    - Invoking external commands via the kernel syscall interface.
+    - Applying input redirections (`<`) and output redirections (`>`, `>>`).
+
+    The public `dispatch()` method returns a `(returncode, stdout, stderr)`
+    tuple. When `capture=False` output is streamed directly to `IOManager`.
     """
 
     def __init__(self, shell: "Shell"):
@@ -1461,15 +1491,17 @@ class Dispatcher:
 # ===========================================================================
 
 class Shell:
-    """
-    The linux++ REPL.
+    """The main linux++ Read-Eval-Print Loop (REPL) implementation.
 
-    Loop:
-      1. render prompt
-      2. read input line
-      3. lex -> parse -> expand
-      4. dispatch (builtin or kernel exec)
-      5. update $?  and loop
+    Responsibilities:
+    - Render a contextual prompt with username, host and working directory.
+    - Read lines (with optional readline support and tab-completion).
+    - Tokenise, parse and expand commands then dispatch them for execution.
+    - Maintain shell state such as last return code, history and environment
+        variables updated by builtins.
+
+    The class is intentionally small and delegates filesystem and process
+    handling to the kernel via `kernel.syscall`.
     """
 
     VERSION = "0.0.0b3"

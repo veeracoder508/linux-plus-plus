@@ -1,19 +1,29 @@
 """
-linux++ — User Applications (Layer 5)
-=======================================
-Pure Python standard library only. No third-party deps.
-Depends on Layer 1-4 (HAL, Stdlib, Kernel, Shell).
+# linux++ — User Applications (Layer 5)
 
-Applications:
-  - PackageManager  : lpp install / remove / list / search
-  - TextEditor      : edit <file>       (nano-style terminal editor)
-  - ManSystem       : man <command>     (built-in manual pages)
-  - FTPClient       : ftp <host>        (file transfer over FTP)
-  - SSHClient       : ssh [user@]host   (SSH client, paramiko + fallback)
-  - SSHDaemon       : sshd start|stop   (SSH server via paramiko)
-  - SysInfo         : sysinfo / neofetch
-  - ScriptRunner    : sh <script.lpp>
-  - Apps            : registers everything into the shell
+This module bundles higher-level user-facing applications and helpers that
+register into the shell as built-in commands. It depends on the lower layers
+(HAL, Stdlib, Kernel and Shell) and intentionally keeps implementations in
+pure Python using the standard library where possible. Some components may
+optionally use third-party libraries when available (e.g. `paramiko` for
+SSH features) but fall back gracefully.
+
+Responsibilities and noteworthy apps provided here:
+- PackageManager (`lpp`): install, remove, list and search linux++ packages.
+- TextEditor (`edit`): a small terminal text editor for editing files.
+- ManSystem (`man`): built-in manual pages for bundled commands.
+- FTPClient (`ftp`): interactive FTP client for file transfers.
+- SSHClient / SSHDaemon (`ssh` / `sshd`): optional SSH client and server
+    integrations with fallbacks to system tools when third-party libraries are
+    not installed.
+- SysInfo (`sysinfo`, `neofetch`): display system information in a friendly
+    format.
+- ScriptRunner (`sh`): execute a linux++ script file line-by-line in the
+    current shell context.
+
+The module exposes `register_all(shell)` which attaches the commands to the
+provided `Shell` instance. This design lets the shell remain lightweight and
+loads applications on demand during startup.
 """
 
 import os
@@ -489,10 +499,32 @@ EXAMPLES
     ssh user@your-ip -p 2222""",
 }
 
+"""Collection of built-in manual pages used by `ManSystem`.
+
+Each key is a command name and each value is the plain-text manual page
+content. The `man` builtin uses this dictionary to present usage and examples
+for the shell's built-in commands and commonly bundled apps.
+"""
+
 class ManSystem:
+    """Simple manual-page viewer for bundled application topics.
+
+    `ManSystem` looks up text in the `MAN_PAGES` mapping and presents it to
+    the user. On non-Windows platforms a lightweight pager interaction is
+    provided so long pages can be read screen-by-screen.
+    """
 
     @staticmethod
     def show(topic: str) -> int:
+        """Display the manual page for `topic`.
+
+        The function normalises the requested topic name and looks it up in
+        `MAN_PAGES`. If found, the page is displayed either directly (on
+        Windows) or with a simple `-- More --` pager on POSIX-like systems.
+
+        Returns 0 when the page was shown successfully, or 1 if the topic was
+        not found.
+        """
         topic = topic.lower().strip()
         page = MAN_PAGES.get(topic)
         if not page:
@@ -526,8 +558,17 @@ class ManSystem:
 
 def register_all(shell: "Shell") -> None:
     """
-    Called once after Shell + Kernel are booted.
-    Attaches all Layer 5 applications as shell builtins.
+    Register Layer 5 applications and builtins into the provided `shell`.
+
+    This function is invoked once at startup after the `Kernel` and `Shell`
+    instances are created. It creates application helpers (package manager,
+    script runner, sshd instance, etc.) and registers top-level commands
+    such as `lpp`, `man`, `edit`, `ftp`, `sysinfo`, `sh`, `ssh` and `sshd`.
+
+    The function mutates the supplied `shell` by calling
+    `shell.builtins.register(name, callable)` for each command. It also
+    performs any necessary package initialization such as loading installed
+    packages via the package manager.
     """
     kernel  = shell.kernel
     pm      = PackageManager(shell)

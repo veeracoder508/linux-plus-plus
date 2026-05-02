@@ -1,3 +1,5 @@
+"""Contains all the code for all the applications in the terminal."""
+
 from .ftp_client import FTPClient
 from .ssh_client import SSHClient
 from .script_runner import ScriptRunner

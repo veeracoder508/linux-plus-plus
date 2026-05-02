@@ -1,13 +1,25 @@
 """
-linux++ — Standard Library (Layer 2)
-=====================================
-Pure Python standard library only. No third-party deps.
-Depends only on Layer 1 (HAL). All higher layers import from here.
+# linux++ — Standard Library (Layer 2)
 
-Modules:
-  - IOManager      : file & stream I/O
-  - SignalHandler  : interrupt / signal management
-  - EnvManager     : environment variables, PATH, config
+This module provides a compact, dependency-free standard library for the
+linux++ project. It intentionally exposes a small, stable façade used by the
+upper layers (shell, kernel and applications) and concentrates common
+utility code that would otherwise be duplicated across the codebase.
+
+Key components:
+- `IOManager`: unified helpers for terminal and file I/O, low-level pipe
+    helpers and convenience redirect context managers.
+- `SignalHandler`: small multi-callback signal dispatcher and helpers for
+    registering Ctrl+C and termination handlers.
+- `EnvManager`: environment and configuration handling (PATH resolution,
+    config file loading and a merged view of local and host environment).
+- `AliasStore`: shell alias table with safe expansion semantics.
+
+Design goals:
+- Use only Python standard library modules so this layer is easy to test and
+    bundle.
+- Keep interfaces minimal and explicit — callers should not rely on hidden
+    side-effects.
 """
 
 import os
@@ -35,9 +47,20 @@ except ImportError:
 # ---------------------------------------------------------------------------
 
 class IOManager:
-    """
-    Handles all I/O for linux++.
-    Uses only: os, sys, io — pure CPython builtins.
+    """High-level I/O primitives used across linux++.
+
+    `IOManager` centralises common I/O operations so higher-level code can
+    work with text and files in a consistent way without repeatedly dealing
+    with low-level `os` file descriptors. The class provides:
+    - stdout/stderr helpers (`write`, `error`),
+    - blocking line and full-stdin readers for pipelines,
+    - low-level file operations using `os.open`/`os.read` to avoid
+        implicit buffering differences across platforms,
+    - pipe helpers returning raw file descriptors for use with `os.pipe()`,
+    - context managers for temporarily redirecting `sys.stdin`/`sys.stdout`.
+
+    All methods use only standard library facilities so this module remains
+    portable and easy to unit-test.
     """
 
     # --- stdout / stderr ---
@@ -54,7 +77,11 @@ class IOManager:
 
     @staticmethod
     def read_line(prompt: str = "") -> str:
-        """Read one line from stdin. Returns '' on EOF."""
+        """Read a single line from standard input using `input()`.
+
+        Returns an empty string on EOF to make callers' control flow simpler
+        (no exception handling required).
+        """
         try:
             return input(prompt)
         except EOFError:
@@ -62,7 +89,11 @@ class IOManager:
 
     @staticmethod
     def read_all_stdin() -> str:
-        """Drain stdin completely (useful for pipes)."""
+        """Read and return the entire contents of standard input.
+
+        Useful when the shell or a builtin should consume piped input
+        completely before processing.
+        """
         return sys.stdin.read()
 
     # --- file I/O (low-level os module, no pathlib/shutil) ---
@@ -80,7 +111,12 @@ class IOManager:
 
     @staticmethod
     def read_file(path: str, encoding: str = "utf-8") -> str:
-        """Read entire file as text."""
+        """Read the entire file `path` and return its contents decoded.
+
+        The implementation uses low-level `os.read` to avoid differences in
+        platform newline handling and to give predictable memory behaviour for
+        moderately-sized files. Caller receives a decoded `str`.
+        """
         fd = os.open(path, os.O_RDONLY)
         try:
             chunks = []
@@ -95,7 +131,11 @@ class IOManager:
 
     @staticmethod
     def write_file(path: str, content: str, encoding: str = "utf-8") -> None:
-        """Write (overwrite) a file."""
+        """Write `content` to `path`, creating or truncating the file.
+
+        New files are created with mode `0o644`. Exceptions from the host
+        filesystem (e.g. PermissionError, OSError) propagate to the caller.
+        """
         flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
         fd = os.open(path, flags, 0o644)
         try:
@@ -105,7 +145,11 @@ class IOManager:
 
     @staticmethod
     def append_file(path: str, content: str, encoding: str = "utf-8") -> None:
-        """Append to a file."""
+        """Append `content` to `path`, creating it if necessary.
+
+        Uses `os.O_APPEND` to ensure writes are appended atomically on POSIX
+        systems.
+        """
         flags = os.O_WRONLY | os.O_CREAT | os.O_APPEND
         fd = os.open(path, flags, 0o644)
         try:
@@ -142,11 +186,20 @@ class IOManager:
 
     @staticmethod
     def pipe_write(write_fd: int, data: str, encoding: str = "utf-8") -> None:
+        """Write `data` to a pipe file descriptor and close it.
+
+        This helper encodes the string and ensures the write end of the pipe
+        is closed after writing to signal EOF to the reader.
+        """
         os.write(write_fd, data.encode(encoding))
         os.close(write_fd)
 
     @staticmethod
     def pipe_read(read_fd: int, encoding: str = "utf-8") -> str:
+        """Read all data from a pipe file descriptor and return decoded text.
+
+        The function closes the read end when finished.
+        """
         chunks = []
         while True:
             chunk = os.read(read_fd, 4096)
@@ -181,7 +234,12 @@ class IOManager:
 
 
 class _RedirectContext:
-    """Internal context manager for stdout/stdin redirection."""
+    """Context manager used by `IOManager` to temporarily redirect streams.
+
+    Restores the original stream on exit. The helper is intentionally small
+    and designed only for short-lived redirections used by the shell's
+    dispatcher and tests.
+    """
 
     def __init__(self, path: str, mode: str, original_stream, stream_name: str):
         self._path    = path
@@ -206,10 +264,14 @@ class _RedirectContext:
 # ---------------------------------------------------------------------------
 
 class SignalHandler:
-    """
-    Cross-platform signal handling.
-    Uses only: signal, os — pure Python builtins.
-    On Windows, only SIGINT and SIGTERM are available.
+    """A small, multi-callback signal dispatcher.
+
+    Python's `signal.signal()` allows a single handler per signal; this
+    helper enables multiple callbacks to be registered for the same signal
+    and calls them in registration order. It also provides convenience
+    methods for registering common handlers (e.g. `on_ctrl_c`). On Windows
+    platform support is limited to the signals available there (commonly
+    SIGINT and SIGTERM).
     """
 
     _handlers: dict[int, list[Callable]] = {}
@@ -235,12 +297,19 @@ class SignalHandler:
 
     @classmethod
     def on_ctrl_c(cls, handler: Callable) -> None:
-        """Register a Ctrl+C (SIGINT) handler."""
+        """Register a Ctrl+C (SIGINT) handler.
+
+        The handler will be called with the `(sig, frame)` signature just like
+        a normal signal handler.
+        """
         cls.register(signal.SIGINT, handler)
 
     @classmethod
     def on_terminate(cls, handler: Callable) -> None:
-        """Register SIGTERM handler (skipped silently on Windows)."""
+        """Register a SIGTERM handler when supported by the platform.
+
+        On Windows this is a no-op because SIGTERM is not always available.
+        """
         if not IS_WINDOWS:
             cls.register(signal.SIGTERM, handler)
 
@@ -285,13 +354,16 @@ class _BlockInterrupt:
 # ---------------------------------------------------------------------------
 
 class EnvManager:
-    """
-    Manages the linux++ environment.
-    Uses only: os, configparser — pure Python builtins.
+    """Environment and configuration helper for linux++.
 
-    Maintains two stores:
-      - os.environ   : real host environment (inherited by child processes)
-      - _local       : linux++ internal variables (not leaked to host)
+    `EnvManager` maintains a merged view of the host environment and a local
+    store used by the shell and applications. Local variables may shadow host
+    environment keys and can optionally be exported to `os.environ` so child
+    processes inherit them.
+
+    Responsibilities include PATH resolution, loading/saving a simple INI
+    config (`.linuxpprc`) and providing helpers such as `username()` and
+    `hostname()` used in prompt rendering.
     """
 
     _local: dict[str, str] = {}
@@ -300,7 +372,11 @@ class EnvManager:
 
     @classmethod
     def get(cls, key: str, default: str = "") -> str:
-        """Get a variable. Checks local store first, then os.environ."""
+        """Return the value for `key`, preferring the local store.
+
+        If the key is not present in the local store the method falls back to
+        `os.environ` and finally returns `default`.
+        """
         return cls._local.get(key) or os.environ.get(key, default)
 
     @classmethod
@@ -315,6 +391,10 @@ class EnvManager:
 
     @classmethod
     def unset(cls, key: str) -> None:
+        """Remove `key` from both the local store and host environment.
+
+        This operation is idempotent and will silently ignore missing keys.
+        """
         cls._local.pop(key, None)
         os.environ.pop(key, None)
 
@@ -329,7 +409,10 @@ class EnvManager:
 
     @classmethod
     def path_dirs(cls) -> list[str]:
-        """Return PATH as a list of directories."""
+        """Return the `PATH` environment variable split into directories.
+
+        Uses `;` on Windows and `:` on POSIX-like platforms.
+        """
         raw = cls.get("PATH", "")
         sep = ";" if IS_WINDOWS else ":"
         return [d for d in raw.split(sep) if d]
@@ -400,7 +483,11 @@ class EnvManager:
 
     @classmethod
     def save_config(cls, path: Optional[str] = None) -> None:
-        """Write current env + aliases back to .linuxpprc."""
+        """Write current local env and aliases to a .linuxpprc file.
+
+        The method writes the local variables (lowercased) under the `[env]`
+        section and current aliases under `[aliases]`.
+        """
         if path is None:
             path = os.path.join(os.path.expanduser("~"), ".linuxpprc")
 
@@ -419,14 +506,20 @@ class EnvManager:
 
     @classmethod
     def home(cls) -> str:
+        """Return the configured home directory for the current user."""
         return os.path.expanduser("~")
 
     @classmethod
     def username(cls) -> str:
+        """Return a best-effort username used for prompts.
+
+        The method checks common environment keys and falls back to `user`.
+        """
         return cls.get("USER") or cls.get("USERNAME") or "user"
 
     @classmethod
     def hostname(cls) -> str:
+        """Return the system hostname used in prompt rendering."""
         import socket
         return socket.gethostname()
 
@@ -436,9 +529,11 @@ class EnvManager:
 # ---------------------------------------------------------------------------
 
 class AliasStore:
-    """
-    Simple alias store: maps short names to expanded command strings.
-    e.g.  ll -> ls -la
+    """A lightweight alias table used by the shell.
+
+    Aliases map a single token to an expanded command string. Expansion is
+    performed by `expand()` which supports recursive alias substitution with
+    a safety limit to avoid infinite loops.
     """
 
     _store: dict[str, str] = {}
@@ -461,9 +556,12 @@ class AliasStore:
 
     @classmethod
     def expand(cls, tokens: list[str]) -> list[str]:
-        """
-        If tokens[0] is an alias, replace it with the expanded tokens.
-        Handles recursive aliases up to 10 levels deep.
+        """Expand the head token using the alias table.
+
+        If the first token matches an alias the expansion string is split on
+        whitespace and substituted for the head token. The process repeats up
+        to 10 times to support chained aliases while avoiding accidental
+        infinite recursion.
         """
         seen = set()
         for _ in range(10):
@@ -485,14 +583,17 @@ class AliasStore:
 # ---------------------------------------------------------------------------
 
 class Stdlib:
-    """
-    Unified stdlib entry point.
+    """Facade providing convenient access to standard helpers.
 
-    Usage:
+    The `Stdlib` class is a small namespace bundling the `IOManager`,
+    `SignalHandler`, `EnvManager` and `AliasStore` under a single importable
+    symbol. It also exposes a `boot()` helper to load user config and set up
+    default signal handlers.
+
+    Example:
         from stdlib import Stdlib
-        Stdlib.io.write("Hello!")
-        Stdlib.env.set("EDITOR", "nano")
-        Stdlib.signals.on_ctrl_c(my_handler)
+        Stdlib.boot()
+        Stdlib.io.write("Hello")
     """
     io      = IOManager
     signals = SignalHandler

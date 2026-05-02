@@ -1,0 +1,1427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>linux_plus_plus.stdlib API documentation</title>
+<meta name="description" content="linux++ — Standard Library (Layer 2)
+Pure Python standard library only. No third-party deps.
+Depends only on Layer 1 (HAL). All higher layers import …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+darkMode: 'class',
+theme: {
+extend: {
+fontFamily: {
+sans: ['Inter', 'system-ui', 'sans-serif'],
+mono: ['JetBrains Mono', 'monospace']
+}
+}
+}
+}
+</script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+document.documentElement.classList.add('dark');
+</script>
+<style>
+/* 1. Scrollbar - Zinc Style */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #09090b; }
+::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+/* 2. Global Resets - Unified Zinc Palette */
+:root {
+--bg: #09090b !important;
+--text: #f4f4f5 !important;
+--accent: #3b82f6 !important;
+}
+html, body {
+background-color: #09090b !important;
+color: #f4f4f5 !important;
+font-family: 'Inter', system-ui, sans-serif !important;
+overflow-x: clip;
+scroll-behavior: smooth;
+}
+/* 3. Sidebar - Layout & Anti-Warping */
+#sidebar {
+width: 280px !important;
+min-width: 280px !important;
+max-width: 280px !important;
+flex: 0 0 280px !important;
+background-color: #0c0c0e !important;
+border-right: 1px solid #18181b !important;
+padding: 2.5rem 1.5rem !important;
+box-shadow: none !important;
+}
+#sidebar h1, #sidebar h2, #sidebar h3 {
+color: #fafafa !important;
+font-size: 0.875rem !important;
+font-weight: 600 !important;
+letter-spacing: -0.01em !important;
+border-bottom: none !important;
+margin-top: 1.5rem !important;
+margin-bottom: 0.75rem !important;
+padding: 0 !important;
+}
+#sidebar h1 { font-size: 1rem !important; margin-left: 0.5rem !important; }
+#sidebar ul { margin: 0 !important; padding: 0 !important; border: none !important; }
+#sidebar li { margin: 0 !important; padding: 0 !important; border: none !important; }
+#sidebar a {
+display: block !important;
+color: #a1a1aa !important;
+text-decoration: none !important;
+margin-bottom: 0.25rem !important;
+padding: 0.4rem 0.75rem !important;
+border-radius: 0.5rem !important;
+font-size: 0.875rem !important;
+transition: all 0.2s ease !important;
+white-space: normal !important;
+overflow-wrap: anywhere !important;
+word-break: break-word !important;
+line-height: 1.4 !important;
+}
+#sidebar a:hover {
+background-color: #18181b !important;
+color: #3b82f6 !important;
+}
+#sidebar code {
+padding: 0;
+margin: 0;
+}
+/* 4. Main Content - Balanced Spacing */
+#content {
+flex: 1 !important;
+min-width: 0 !important;
+padding: 3rem 4rem !important;
+max-width: 64rem !important;
+margin: 0 auto !important;
+border-left: none !important;
+}
+#content h1.title {
+font-size: 2.5rem !important;
+font-weight: 800 !important;
+letter-spacing: -0.04em !important;
+color: #ffffff !important;
+margin-bottom: 2rem !important;
+}
+#content h2.section-title {
+font-size: 1.25rem !important;
+font-weight: 600 !important;
+color: #f4f4f5 !important;
+border-bottom: 1px solid #18181b !important;
+padding-bottom: 0.75rem !important;
+margin-top: 3rem !important;
+margin-bottom: 1.5rem !important;
+}
+/* 5. Signatures (dt) - Code Container */
+dt {
+background-color: #111113 !important;
+border: 1px solid #27272a !important;
+border-radius: 0.75rem !important;
+padding: 1rem 1.25rem !important;
+margin-top: 1.5rem !important;
+margin-bottom: 1rem !important;
+font-family: 'JetBrains Mono', monospace !important;
+font-size: 0.875rem !important;
+color: #e4e4e7 !important;
+line-height: 1.6 !important;
+overflow-x: auto !important;
+white-space: pre-wrap !important;
+}
+dt .name {
+color: #60a5fa !important;
+font-weight: 600 !important;
+background: transparent !important;
+}
+/* Source Code Expansion */
+details.source pre {
+background-color: #0a0a0a !important;
+border: 1px solid rgba(255, 255, 255, 0.1) !important;
+border-radius: 0.75rem !important;
+padding: 1.25rem !important;
+margin-top: 0.5rem !important;
+color: #d4d4d8 !important;
+overflow-x: auto !important;
+}
+details.source pre code {
+background-color: transparent !important;
+color: inherit !important;
+}
+/* Description Text */
+.desc {
+color: #a1a1aa !important;
+line-height: 1.625 !important;
+font-size: 1rem !important;
+}
+.desc code, p code {
+background-color: #18181b !important;
+/* Zinc-900 */
+border: 1px solid #27272a !important;
+padding: 0.2rem 0.4rem !important;
+border-radius: 0.375rem !important;
+color: #f4f4f5 !important;
+/* Zinc-100 */
+font-size: 0.9em !important;
+}
+.desc a { color: #60a5fa !important; text-decoration: none !important; }
+.desc a:hover { color: #fff !important; }
+/* Visibility Fixes (Targets & Code Links) */
+:target {
+background-color: rgba(59, 130, 246, 0.15) !important;
+color: inherit !important;
+}
+#content code.name,
+#content code.name a,
+#content .name,
+#content .name a {
+color: #60a5fa !important;
+text-decoration: none !important;
+}
+#content code.name a:hover,
+#content .name a:hover {
+color: #93c5fd !important;
+}
+#content code {
+color: #e4e4e7 !important;
+}
+</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>linux_plus_plus.stdlib</code></h1>
+</header>
+<section id="section-intro">
+<h1 id="linux-standard-library-layer-2">linux++ — Standard Library (Layer 2)</h1>
+<p>Pure Python standard library only. No third-party deps.
+Depends only on Layer 1 (HAL). All higher layers import from here.</p>
+<h2 id="modules">Modules</h2>
+<ul>
+<li>IOManager
+: file &amp; stream I/O</li>
+<li>SignalHandler
+: interrupt / signal management</li>
+<li>EnvManager
+: environment variables, PATH, config</li>
+</ul>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="linux_plus_plus.stdlib.main"><code class="name flex">
+<span>def <span class="ident">main</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main():
+    Stdlib.boot()
+    io  = Stdlib.io
+    env = Stdlib.env
+
+    io.write(&#34;=== linux++ stdlib self-test ===\n&#34;)
+
+    # IOManager
+    tmp = os.path.join(os.path.expanduser(&#34;~&#34;), &#34;_lpp_test.txt&#34;)
+    IOManager.write_file(tmp, &#34;hello from linux++\n&#34;)
+    IOManager.append_file(tmp, &#34;second line\n&#34;)
+    content = IOManager.read_file(tmp)
+    assert &#34;hello&#34; in content and &#34;second&#34; in content
+    os.unlink(tmp)
+    io.write(&#34;[IOManager]    read/write/append: OK&#34;)
+
+    # pipe
+    r, w = IOManager.make_pipe()
+    IOManager.pipe_write(w, &#34;ping&#34;)
+    result = IOManager.pipe_read(r)
+    assert result == &#34;ping&#34;
+    io.write(&#34;[IOManager]    pipe read/write:   OK&#34;)
+
+    # EnvManager
+    EnvManager.set(&#34;LPP_TEST&#34;, &#34;42&#34;)
+    assert EnvManager.get(&#34;LPP_TEST&#34;) == &#34;42&#34;
+    EnvManager.unset(&#34;LPP_TEST&#34;)
+    assert EnvManager.get(&#34;LPP_TEST&#34;) == &#34;&#34;
+    io.write(&#34;[EnvManager]   set/get/unset:     OK&#34;)
+
+    # PATH resolution
+    python_cmd = &#34;python3&#34; if not IS_WINDOWS else &#34;python&#34;
+    found = EnvManager.resolve_command(python_cmd)
+    io.write(f&#34;[EnvManager]   resolve python:    {found or &#39;not found&#39;}&#34;)
+
+    # AliasStore
+    AliasStore.set(&#34;ll&#34;, &#34;ls -la&#34;)
+    expanded = AliasStore.expand([&#34;ll&#34;, &#34;/tmp&#34;])
+    assert expanded == [&#34;ls&#34;, &#34;-la&#34;, &#34;/tmp&#34;]
+    io.write(&#34;[AliasStore]   alias expand:      OK&#34;)
+
+    # SignalHandler
+    io.write(&#34;[SignalHandler] registered SIGINT: OK&#34;)
+
+    io.write(&#34;\nAll stdlib tests passed.&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="linux_plus_plus.stdlib.AliasStore"><code class="flex name class">
+<span>class <span class="ident">AliasStore</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AliasStore:
+    &#34;&#34;&#34;
+    Simple alias store: maps short names to expanded command strings.
+    e.g.  ll -&gt; ls -la
+    &#34;&#34;&#34;
+
+    _store: dict[str, str] = {}
+
+    @classmethod
+    def set(cls, alias: str, expansion: str) -&gt; None:
+        cls._store[alias] = expansion
+
+    @classmethod
+    def get(cls, alias: str) -&gt; Optional[str]:
+        return cls._store.get(alias)
+
+    @classmethod
+    def unset(cls, alias: str) -&gt; None:
+        cls._store.pop(alias, None)
+
+    @classmethod
+    def all(cls) -&gt; dict[str, str]:
+        return dict(cls._store)
+
+    @classmethod
+    def expand(cls, tokens: list[str]) -&gt; list[str]:
+        &#34;&#34;&#34;
+        If tokens[0] is an alias, replace it with the expanded tokens.
+        Handles recursive aliases up to 10 levels deep.
+        &#34;&#34;&#34;
+        seen = set()
+        for _ in range(10):
+            if not tokens:
+                break
+            head = tokens[0]
+            if head in seen:
+                break
+            expansion = cls._store.get(head)
+            if expansion is None:
+                break
+            seen.add(head)
+            tokens = expansion.split() + tokens[1:]
+        return tokens</code></pre>
+</details>
+<div class="desc"><p>Simple alias store: maps short names to expanded command strings.
+e.g.
+ll -&gt; ls -la</p></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="linux_plus_plus.stdlib.AliasStore.all"><code class="name flex">
+<span>def <span class="ident">all</span></span>(<span>) ‑> dict[str, str]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.AliasStore.expand"><code class="name flex">
+<span>def <span class="ident">expand</span></span>(<span>tokens: list[str]) ‑> list[str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>If tokens[0] is an alias, replace it with the expanded tokens.
+Handles recursive aliases up to 10 levels deep.</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.AliasStore.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>alias: str) ‑> str | None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.AliasStore.set"><code class="name flex">
+<span>def <span class="ident">set</span></span>(<span>alias: str, expansion: str) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.AliasStore.unset"><code class="name flex">
+<span>def <span class="ident">unset</span></span>(<span>alias: str) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="linux_plus_plus.stdlib.EnvManager"><code class="flex name class">
+<span>class <span class="ident">EnvManager</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EnvManager:
+    &#34;&#34;&#34;
+    Manages the linux++ environment.
+    Uses only: os, configparser — pure Python builtins.
+
+    Maintains two stores:
+      - os.environ   : real host environment (inherited by child processes)
+      - _local       : linux++ internal variables (not leaked to host)
+    &#34;&#34;&#34;
+
+    _local: dict[str, str] = {}
+
+    # --- get / set / unset ---
+
+    @classmethod
+    def get(cls, key: str, default: str = &#34;&#34;) -&gt; str:
+        &#34;&#34;&#34;Get a variable. Checks local store first, then os.environ.&#34;&#34;&#34;
+        return cls._local.get(key) or os.environ.get(key, default)
+
+    @classmethod
+    def set(cls, key: str, value: str, export: bool = False) -&gt; None:
+        &#34;&#34;&#34;
+        Set a variable.
+        export=True also writes to os.environ (child processes inherit it).
+        &#34;&#34;&#34;
+        cls._local[key] = value
+        if export:
+            os.environ[key] = value
+
+    @classmethod
+    def unset(cls, key: str) -&gt; None:
+        cls._local.pop(key, None)
+        os.environ.pop(key, None)
+
+    @classmethod
+    def all(cls) -&gt; dict[str, str]:
+        &#34;&#34;&#34;Merged view: os.environ + local overrides.&#34;&#34;&#34;
+        merged = dict(os.environ)
+        merged.update(cls._local)
+        return merged
+
+    # --- PATH resolution ---
+
+    @classmethod
+    def path_dirs(cls) -&gt; list[str]:
+        &#34;&#34;&#34;Return PATH as a list of directories.&#34;&#34;&#34;
+        raw = cls.get(&#34;PATH&#34;, &#34;&#34;)
+        sep = &#34;;&#34; if IS_WINDOWS else &#34;:&#34;
+        return [d for d in raw.split(sep) if d]
+
+    @classmethod
+    def resolve_command(cls, name: str) -&gt; Optional[str]:
+        &#34;&#34;&#34;
+        Find the full path of a command by searching PATH.
+        Returns None if not found.
+        Uses only os.stat — no shutil.which.
+        &#34;&#34;&#34;
+        # If it already looks like a path, just check directly
+        if os.sep in name or (IS_WINDOWS and &#34;/&#34; in name):
+            return name if IOManager.file_exists(name) else None
+
+        extensions = [&#34;&#34;, &#34;.exe&#34;, &#34;.cmd&#34;, &#34;.bat&#34;] if IS_WINDOWS else [&#34;&#34;]
+
+        for directory in cls.path_dirs():
+            for ext in extensions:
+                candidate = os.path.join(directory, name + ext)
+                try:
+                    st = os.stat(candidate)
+                    # On Unix, check execute bit
+                    if not IS_WINDOWS:
+                        if st.st_mode &amp; 0o111:
+                            return candidate
+                    else:
+                        return candidate
+                except (FileNotFoundError, NotADirectoryError):
+                    continue
+        return None
+
+    # --- config file (.linuxpprc) ---
+
+    @classmethod
+    def load_config(cls, path: Optional[str] = None) -&gt; None:
+        &#34;&#34;&#34;
+        Load a .linuxpprc config file (INI format).
+        Defaults to ~/.linuxpprc
+
+        Example .linuxpprc:
+            [env]
+            EDITOR = nano
+            PAGER  = less
+
+            [aliases]
+            ll = ls -la
+            ..= cd ..
+        &#34;&#34;&#34;
+        if path is None:
+            path = os.path.join(os.path.expanduser(&#34;~&#34;), &#34;.linuxpprc&#34;)
+
+        if not IOManager.file_exists(path):
+            return
+
+        cfg = configparser.ConfigParser()
+        cfg.read(path, encoding=&#34;utf-8&#34;)
+
+        # Load [env] section into EnvManager
+        if cfg.has_section(&#34;env&#34;):
+            for key, value in cfg.items(&#34;env&#34;):
+                cls.set(key.upper(), value, export=True)
+
+        # Load [aliases] into AliasStore
+        if cfg.has_section(&#34;aliases&#34;):
+            for alias, expansion in cfg.items(&#34;aliases&#34;):
+                AliasStore.set(alias, expansion)
+
+    @classmethod
+    def save_config(cls, path: Optional[str] = None) -&gt; None:
+        &#34;&#34;&#34;Write current env + aliases back to .linuxpprc.&#34;&#34;&#34;
+        if path is None:
+            path = os.path.join(os.path.expanduser(&#34;~&#34;), &#34;.linuxpprc&#34;)
+
+        cfg = configparser.ConfigParser()
+
+        cfg[&#34;env&#34;] = {
+            k.lower(): v
+            for k, v in cls._local.items()
+        }
+        cfg[&#34;aliases&#34;] = dict(AliasStore._store)
+
+        with open(path, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f:
+            cfg.write(f)
+
+    # --- common helpers ---
+
+    @classmethod
+    def home(cls) -&gt; str:
+        return os.path.expanduser(&#34;~&#34;)
+
+    @classmethod
+    def username(cls) -&gt; str:
+        return cls.get(&#34;USER&#34;) or cls.get(&#34;USERNAME&#34;) or &#34;user&#34;
+
+    @classmethod
+    def hostname(cls) -&gt; str:
+        import socket
+        return socket.gethostname()</code></pre>
+</details>
+<div class="desc"><p>Manages the linux++ environment.
+Uses only: os, configparser — pure Python builtins.</p>
+<p>Maintains two stores:
+- os.environ
+: real host environment (inherited by child processes)
+- _local
+: linux++ internal variables (not leaked to host)</p></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="linux_plus_plus.stdlib.EnvManager.all"><code class="name flex">
+<span>def <span class="ident">all</span></span>(<span>) ‑> dict[str, str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Merged view: os.environ + local overrides.</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.EnvManager.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>key: str, default: str = '') ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get a variable. Checks local store first, then os.environ.</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.EnvManager.home"><code class="name flex">
+<span>def <span class="ident">home</span></span>(<span>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.EnvManager.hostname"><code class="name flex">
+<span>def <span class="ident">hostname</span></span>(<span>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.EnvManager.load_config"><code class="name flex">
+<span>def <span class="ident">load_config</span></span>(<span>path: str | None = None) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Load a .linuxpprc config file (INI format).
+Defaults to ~/.linuxpprc</p>
+<p>Example .linuxpprc:
+[env]
+EDITOR = nano
+PAGER
+= less</p>
+<pre><code>[aliases]
+ll = ls -la
+..= cd ..
+</code></pre></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.EnvManager.path_dirs"><code class="name flex">
+<span>def <span class="ident">path_dirs</span></span>(<span>) ‑> list[str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return PATH as a list of directories.</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.EnvManager.resolve_command"><code class="name flex">
+<span>def <span class="ident">resolve_command</span></span>(<span>name: str) ‑> str | None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Find the full path of a command by searching PATH.
+Returns None if not found.
+Uses only os.stat — no shutil.which.</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.EnvManager.save_config"><code class="name flex">
+<span>def <span class="ident">save_config</span></span>(<span>path: str | None = None) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Write current env + aliases back to .linuxpprc.</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.EnvManager.set"><code class="name flex">
+<span>def <span class="ident">set</span></span>(<span>key: str, value: str, export: bool = False) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set a variable.
+export=True also writes to os.environ (child processes inherit it).</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.EnvManager.unset"><code class="name flex">
+<span>def <span class="ident">unset</span></span>(<span>key: str) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.EnvManager.username"><code class="name flex">
+<span>def <span class="ident">username</span></span>(<span>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="linux_plus_plus.stdlib.IOManager"><code class="flex name class">
+<span>class <span class="ident">IOManager</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class IOManager:
+    &#34;&#34;&#34;
+    Handles all I/O for linux++.
+    Uses only: os, sys, io — pure CPython builtins.
+    &#34;&#34;&#34;
+
+    # --- stdout / stderr ---
+
+    @staticmethod
+    def write(text: str, end: str = &#34;\n&#34;) -&gt; None:
+        sys.stdout.write(text + end)
+        sys.stdout.flush()
+
+    @staticmethod
+    def error(text: str, end: str = &#34;\n&#34;) -&gt; None:
+        sys.stderr.write(text + end)
+        sys.stderr.flush()
+
+    @staticmethod
+    def read_line(prompt: str = &#34;&#34;) -&gt; str:
+        &#34;&#34;&#34;Read one line from stdin. Returns &#39;&#39; on EOF.&#34;&#34;&#34;
+        try:
+            return input(prompt)
+        except EOFError:
+            return &#34;&#34;
+
+    @staticmethod
+    def read_all_stdin() -&gt; str:
+        &#34;&#34;&#34;Drain stdin completely (useful for pipes).&#34;&#34;&#34;
+        return sys.stdin.read()
+
+    # --- file I/O (low-level os module, no pathlib/shutil) ---
+
+    @staticmethod
+    def open_file(path: str, mode: str = &#34;r&#34;, encoding: str = &#34;utf-8&#34;) -&gt; io.TextIOWrapper:
+        &#34;&#34;&#34;
+        Open a file and return a file object.
+        Caller is responsible for closing (use with `with`).
+        &#34;&#34;&#34;
+        binary_modes = {&#34;rb&#34;, &#34;wb&#34;, &#34;ab&#34;, &#34;r+b&#34;, &#34;w+b&#34;}
+        if mode in binary_modes:
+            return open(path, mode)
+        return open(path, mode, encoding=encoding)
+
+    @staticmethod
+    def read_file(path: str, encoding: str = &#34;utf-8&#34;) -&gt; str:
+        &#34;&#34;&#34;Read entire file as text.&#34;&#34;&#34;
+        fd = os.open(path, os.O_RDONLY)
+        try:
+            chunks = []
+            while True:
+                chunk = os.read(fd, 4096)
+                if not chunk:
+                    break
+                chunks.append(chunk)
+            return b&#34;&#34;.join(chunks).decode(encoding)
+        finally:
+            os.close(fd)
+
+    @staticmethod
+    def write_file(path: str, content: str, encoding: str = &#34;utf-8&#34;) -&gt; None:
+        &#34;&#34;&#34;Write (overwrite) a file.&#34;&#34;&#34;
+        flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
+        fd = os.open(path, flags, 0o644)
+        try:
+            os.write(fd, content.encode(encoding))
+        finally:
+            os.close(fd)
+
+    @staticmethod
+    def append_file(path: str, content: str, encoding: str = &#34;utf-8&#34;) -&gt; None:
+        &#34;&#34;&#34;Append to a file.&#34;&#34;&#34;
+        flags = os.O_WRONLY | os.O_CREAT | os.O_APPEND
+        fd = os.open(path, flags, 0o644)
+        try:
+            os.write(fd, content.encode(encoding))
+        finally:
+            os.close(fd)
+
+    @staticmethod
+    def read_lines(path: str, encoding: str = &#34;utf-8&#34;) -&gt; list[str]:
+        &#34;&#34;&#34;Read file as a list of lines (no trailing newlines).&#34;&#34;&#34;
+        return IOManager.read_file(path, encoding).splitlines()
+
+    @staticmethod
+    def file_exists(path: str) -&gt; bool:
+        try:
+            os.stat(path)
+            return True
+        except FileNotFoundError:
+            return False
+
+    @staticmethod
+    def file_size(path: str) -&gt; int:
+        return os.stat(path).st_size
+
+    # --- pipe I/O ---
+
+    @staticmethod
+    def make_pipe() -&gt; tuple[int, int]:
+        &#34;&#34;&#34;
+        Create an OS-level pipe.
+        Returns (read_fd, write_fd).
+        &#34;&#34;&#34;
+        return os.pipe()
+
+    @staticmethod
+    def pipe_write(write_fd: int, data: str, encoding: str = &#34;utf-8&#34;) -&gt; None:
+        os.write(write_fd, data.encode(encoding))
+        os.close(write_fd)
+
+    @staticmethod
+    def pipe_read(read_fd: int, encoding: str = &#34;utf-8&#34;) -&gt; str:
+        chunks = []
+        while True:
+            chunk = os.read(read_fd, 4096)
+            if not chunk:
+                break
+            chunks.append(chunk)
+        os.close(read_fd)
+        return b&#34;&#34;.join(chunks).decode(encoding)
+
+    # --- redirect helpers (used by shell for &gt; &gt;&gt; &lt;) ---
+
+    @staticmethod
+    def redirect_stdout_to_file(path: str):
+        &#34;&#34;&#34;
+        Context manager: redirects stdout to a file for the duration of the block.
+
+        Usage:
+            with IOManager.redirect_stdout_to_file(&#34;/tmp/out.txt&#34;):
+                IOManager.write(&#34;this goes to the file&#34;)
+        &#34;&#34;&#34;
+        return _RedirectContext(path, &#34;w&#34;, sys.stdout, &#34;stdout&#34;)
+
+    @staticmethod
+    def append_stdout_to_file(path: str):
+        &#34;&#34;&#34;Context manager: appends stdout to file (&gt;&gt;).&#34;&#34;&#34;
+        return _RedirectContext(path, &#34;a&#34;, sys.stdout, &#34;stdout&#34;)
+
+    @staticmethod
+    def redirect_stdin_from_file(path: str):
+        &#34;&#34;&#34;Context manager: reads stdin from file (&lt;).&#34;&#34;&#34;
+        return _RedirectContext(path, &#34;r&#34;, sys.stdin, &#34;stdin&#34;)</code></pre>
+</details>
+<div class="desc"><p>Handles all I/O for linux++.
+Uses only: os, sys, io — pure CPython builtins.</p></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="linux_plus_plus.stdlib.IOManager.append_file"><code class="name flex">
+<span>def <span class="ident">append_file</span></span>(<span>path: str, content: str, encoding: str = 'utf-8') ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def append_file(path: str, content: str, encoding: str = &#34;utf-8&#34;) -&gt; None:
+    &#34;&#34;&#34;Append to a file.&#34;&#34;&#34;
+    flags = os.O_WRONLY | os.O_CREAT | os.O_APPEND
+    fd = os.open(path, flags, 0o644)
+    try:
+        os.write(fd, content.encode(encoding))
+    finally:
+        os.close(fd)</code></pre>
+</details>
+<div class="desc"><p>Append to a file.</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.IOManager.append_stdout_to_file"><code class="name flex">
+<span>def <span class="ident">append_stdout_to_file</span></span>(<span>path: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def append_stdout_to_file(path: str):
+    &#34;&#34;&#34;Context manager: appends stdout to file (&gt;&gt;).&#34;&#34;&#34;
+    return _RedirectContext(path, &#34;a&#34;, sys.stdout, &#34;stdout&#34;)</code></pre>
+</details>
+<div class="desc"><p>Context manager: appends stdout to file (&gt;&gt;).</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.IOManager.error"><code class="name flex">
+<span>def <span class="ident">error</span></span>(<span>text: str, end: str = '\n') ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def error(text: str, end: str = &#34;\n&#34;) -&gt; None:
+    sys.stderr.write(text + end)
+    sys.stderr.flush()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.IOManager.file_exists"><code class="name flex">
+<span>def <span class="ident">file_exists</span></span>(<span>path: str) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def file_exists(path: str) -&gt; bool:
+    try:
+        os.stat(path)
+        return True
+    except FileNotFoundError:
+        return False</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.IOManager.file_size"><code class="name flex">
+<span>def <span class="ident">file_size</span></span>(<span>path: str) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def file_size(path: str) -&gt; int:
+    return os.stat(path).st_size</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.IOManager.make_pipe"><code class="name flex">
+<span>def <span class="ident">make_pipe</span></span>(<span>) ‑> tuple[int, int]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def make_pipe() -&gt; tuple[int, int]:
+    &#34;&#34;&#34;
+    Create an OS-level pipe.
+    Returns (read_fd, write_fd).
+    &#34;&#34;&#34;
+    return os.pipe()</code></pre>
+</details>
+<div class="desc"><p>Create an OS-level pipe.
+Returns (read_fd, write_fd).</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.IOManager.open_file"><code class="name flex">
+<span>def <span class="ident">open_file</span></span>(<span>path: str, mode: str = 'r', encoding: str = 'utf-8') ‑> _io.TextIOWrapper</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def open_file(path: str, mode: str = &#34;r&#34;, encoding: str = &#34;utf-8&#34;) -&gt; io.TextIOWrapper:
+    &#34;&#34;&#34;
+    Open a file and return a file object.
+    Caller is responsible for closing (use with `with`).
+    &#34;&#34;&#34;
+    binary_modes = {&#34;rb&#34;, &#34;wb&#34;, &#34;ab&#34;, &#34;r+b&#34;, &#34;w+b&#34;}
+    if mode in binary_modes:
+        return open(path, mode)
+    return open(path, mode, encoding=encoding)</code></pre>
+</details>
+<div class="desc"><p>Open a file and return a file object.
+Caller is responsible for closing (use with <code>with</code>).</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.IOManager.pipe_read"><code class="name flex">
+<span>def <span class="ident">pipe_read</span></span>(<span>read_fd: int, encoding: str = 'utf-8') ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def pipe_read(read_fd: int, encoding: str = &#34;utf-8&#34;) -&gt; str:
+    chunks = []
+    while True:
+        chunk = os.read(read_fd, 4096)
+        if not chunk:
+            break
+        chunks.append(chunk)
+    os.close(read_fd)
+    return b&#34;&#34;.join(chunks).decode(encoding)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.IOManager.pipe_write"><code class="name flex">
+<span>def <span class="ident">pipe_write</span></span>(<span>write_fd: int, data: str, encoding: str = 'utf-8') ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def pipe_write(write_fd: int, data: str, encoding: str = &#34;utf-8&#34;) -&gt; None:
+    os.write(write_fd, data.encode(encoding))
+    os.close(write_fd)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.IOManager.read_all_stdin"><code class="name flex">
+<span>def <span class="ident">read_all_stdin</span></span>(<span>) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def read_all_stdin() -&gt; str:
+    &#34;&#34;&#34;Drain stdin completely (useful for pipes).&#34;&#34;&#34;
+    return sys.stdin.read()</code></pre>
+</details>
+<div class="desc"><p>Drain stdin completely (useful for pipes).</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.IOManager.read_file"><code class="name flex">
+<span>def <span class="ident">read_file</span></span>(<span>path: str, encoding: str = 'utf-8') ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def read_file(path: str, encoding: str = &#34;utf-8&#34;) -&gt; str:
+    &#34;&#34;&#34;Read entire file as text.&#34;&#34;&#34;
+    fd = os.open(path, os.O_RDONLY)
+    try:
+        chunks = []
+        while True:
+            chunk = os.read(fd, 4096)
+            if not chunk:
+                break
+            chunks.append(chunk)
+        return b&#34;&#34;.join(chunks).decode(encoding)
+    finally:
+        os.close(fd)</code></pre>
+</details>
+<div class="desc"><p>Read entire file as text.</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.IOManager.read_line"><code class="name flex">
+<span>def <span class="ident">read_line</span></span>(<span>prompt: str = '') ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def read_line(prompt: str = &#34;&#34;) -&gt; str:
+    &#34;&#34;&#34;Read one line from stdin. Returns &#39;&#39; on EOF.&#34;&#34;&#34;
+    try:
+        return input(prompt)
+    except EOFError:
+        return &#34;&#34;</code></pre>
+</details>
+<div class="desc"><p>Read one line from stdin. Returns '' on EOF.</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.IOManager.read_lines"><code class="name flex">
+<span>def <span class="ident">read_lines</span></span>(<span>path: str, encoding: str = 'utf-8') ‑> list[str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def read_lines(path: str, encoding: str = &#34;utf-8&#34;) -&gt; list[str]:
+    &#34;&#34;&#34;Read file as a list of lines (no trailing newlines).&#34;&#34;&#34;
+    return IOManager.read_file(path, encoding).splitlines()</code></pre>
+</details>
+<div class="desc"><p>Read file as a list of lines (no trailing newlines).</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.IOManager.redirect_stdin_from_file"><code class="name flex">
+<span>def <span class="ident">redirect_stdin_from_file</span></span>(<span>path: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def redirect_stdin_from_file(path: str):
+    &#34;&#34;&#34;Context manager: reads stdin from file (&lt;).&#34;&#34;&#34;
+    return _RedirectContext(path, &#34;r&#34;, sys.stdin, &#34;stdin&#34;)</code></pre>
+</details>
+<div class="desc"><p>Context manager: reads stdin from file (&lt;).</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.IOManager.redirect_stdout_to_file"><code class="name flex">
+<span>def <span class="ident">redirect_stdout_to_file</span></span>(<span>path: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def redirect_stdout_to_file(path: str):
+    &#34;&#34;&#34;
+    Context manager: redirects stdout to a file for the duration of the block.
+
+    Usage:
+        with IOManager.redirect_stdout_to_file(&#34;/tmp/out.txt&#34;):
+            IOManager.write(&#34;this goes to the file&#34;)
+    &#34;&#34;&#34;
+    return _RedirectContext(path, &#34;w&#34;, sys.stdout, &#34;stdout&#34;)</code></pre>
+</details>
+<div class="desc"><p>Context manager: redirects stdout to a file for the duration of the block.</p>
+<h2 id="usage">Usage</h2>
+<p>with IOManager.redirect_stdout_to_file("/tmp/out.txt"):
+IOManager.write("this goes to the file")</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.IOManager.write"><code class="name flex">
+<span>def <span class="ident">write</span></span>(<span>text: str, end: str = '\n') ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def write(text: str, end: str = &#34;\n&#34;) -&gt; None:
+    sys.stdout.write(text + end)
+    sys.stdout.flush()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.IOManager.write_file"><code class="name flex">
+<span>def <span class="ident">write_file</span></span>(<span>path: str, content: str, encoding: str = 'utf-8') ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def write_file(path: str, content: str, encoding: str = &#34;utf-8&#34;) -&gt; None:
+    &#34;&#34;&#34;Write (overwrite) a file.&#34;&#34;&#34;
+    flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
+    fd = os.open(path, flags, 0o644)
+    try:
+        os.write(fd, content.encode(encoding))
+    finally:
+        os.close(fd)</code></pre>
+</details>
+<div class="desc"><p>Write (overwrite) a file.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="linux_plus_plus.stdlib.SignalHandler"><code class="flex name class">
+<span>class <span class="ident">SignalHandler</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SignalHandler:
+    &#34;&#34;&#34;
+    Cross-platform signal handling.
+    Uses only: signal, os — pure Python builtins.
+    On Windows, only SIGINT and SIGTERM are available.
+    &#34;&#34;&#34;
+
+    _handlers: dict[int, list[Callable]] = {}
+
+    @classmethod
+    def register(cls, sig: int, handler: Callable) -&gt; None:
+        &#34;&#34;&#34;
+        Register a callback for a signal.
+        Multiple callbacks per signal are supported (called in order).
+        &#34;&#34;&#34;
+        if sig not in cls._handlers:
+            cls._handlers[sig] = []
+            signal.signal(sig, cls._dispatch)
+        cls._handlers[sig].append(handler)
+
+    @classmethod
+    def _dispatch(cls, sig: int, frame) -&gt; None:
+        for handler in cls._handlers.get(sig, []):
+            try:
+                handler(sig, frame)
+            except Exception:
+                pass
+
+    @classmethod
+    def on_ctrl_c(cls, handler: Callable) -&gt; None:
+        &#34;&#34;&#34;Register a Ctrl+C (SIGINT) handler.&#34;&#34;&#34;
+        cls.register(signal.SIGINT, handler)
+
+    @classmethod
+    def on_terminate(cls, handler: Callable) -&gt; None:
+        &#34;&#34;&#34;Register SIGTERM handler (skipped silently on Windows).&#34;&#34;&#34;
+        if not IS_WINDOWS:
+            cls.register(signal.SIGTERM, handler)
+
+    @classmethod
+    def ignore(cls, sig: int) -&gt; None:
+        signal.signal(sig, signal.SIG_IGN)
+
+    @classmethod
+    def reset(cls, sig: int) -&gt; None:
+        signal.signal(sig, signal.SIG_DFL)
+        cls._handlers.pop(sig, None)
+
+    @classmethod
+    def reset_all(cls) -&gt; None:
+        for sig in list(cls._handlers):
+            cls.reset(sig)
+
+    # --- convenience: block SIGINT during critical sections ---
+
+    @staticmethod
+    def block_interrupt():
+        &#34;&#34;&#34;
+        Context manager that suppresses Ctrl+C for a block.
+
+        Usage:
+            with SignalHandler.block_interrupt():
+                save_state()  # won&#39;t be interrupted
+        &#34;&#34;&#34;
+        return _BlockInterrupt()</code></pre>
+</details>
+<div class="desc"><p>Cross-platform signal handling.
+Uses only: signal, os — pure Python builtins.
+On Windows, only SIGINT and SIGTERM are available.</p></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="linux_plus_plus.stdlib.SignalHandler.block_interrupt"><code class="name flex">
+<span>def <span class="ident">block_interrupt</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def block_interrupt():
+    &#34;&#34;&#34;
+    Context manager that suppresses Ctrl+C for a block.
+
+    Usage:
+        with SignalHandler.block_interrupt():
+            save_state()  # won&#39;t be interrupted
+    &#34;&#34;&#34;
+    return _BlockInterrupt()</code></pre>
+</details>
+<div class="desc"><p>Context manager that suppresses Ctrl+C for a block.</p>
+<h2 id="usage">Usage</h2>
+<p>with SignalHandler.block_interrupt():
+save_state()
+# won't be interrupted</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.SignalHandler.ignore"><code class="name flex">
+<span>def <span class="ident">ignore</span></span>(<span>sig: int) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.SignalHandler.on_ctrl_c"><code class="name flex">
+<span>def <span class="ident">on_ctrl_c</span></span>(<span>handler: Callable) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Register a Ctrl+C (SIGINT) handler.</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.SignalHandler.on_terminate"><code class="name flex">
+<span>def <span class="ident">on_terminate</span></span>(<span>handler: Callable) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Register SIGTERM handler (skipped silently on Windows).</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.SignalHandler.register"><code class="name flex">
+<span>def <span class="ident">register</span></span>(<span>sig: int, handler: Callable) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Register a callback for a signal.
+Multiple callbacks per signal are supported (called in order).</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.SignalHandler.reset"><code class="name flex">
+<span>def <span class="ident">reset</span></span>(<span>sig: int) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.SignalHandler.reset_all"><code class="name flex">
+<span>def <span class="ident">reset_all</span></span>(<span>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="linux_plus_plus.stdlib.Stdlib"><code class="flex name class">
+<span>class <span class="ident">Stdlib</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Stdlib:
+    &#34;&#34;&#34;
+    Unified stdlib entry point.
+
+    Usage:
+        from stdlib import Stdlib
+        Stdlib.io.write(&#34;Hello!&#34;)
+        Stdlib.env.set(&#34;EDITOR&#34;, &#34;nano&#34;)
+        Stdlib.signals.on_ctrl_c(my_handler)
+    &#34;&#34;&#34;
+    io      = IOManager
+    signals = SignalHandler
+    env     = EnvManager
+    aliases = AliasStore
+
+    @classmethod
+    def boot(cls) -&gt; None:
+        &#34;&#34;&#34;Initialize stdlib: load config, set up default signals.&#34;&#34;&#34;
+        cls.env.load_config()
+
+        def _default_ctrl_c(sig, frame):
+            cls.io.write(&#34;\n[Ctrl+C]&#34;)
+
+        cls.signals.on_ctrl_c(_default_ctrl_c)</code></pre>
+</details>
+<div class="desc"><p>Unified stdlib entry point.</p>
+<h2 id="usage">Usage</h2>
+<p>from stdlib import Stdlib
+Stdlib.io.write("Hello!")
+Stdlib.env.set("EDITOR", "nano")
+Stdlib.signals.on_ctrl_c(my_handler)</p></div>
+<h3>Class variables</h3>
+<dl>
+<dt id="linux_plus_plus.stdlib.Stdlib.aliases"><code class="name">var <span class="ident">aliases</span></code></dt>
+<dd>
+<div class="desc"><p>Simple alias store: maps short names to expanded command strings.
+e.g.
+ll -&gt; ls -la</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.Stdlib.env"><code class="name">var <span class="ident">env</span></code></dt>
+<dd>
+<div class="desc"><p>Manages the linux++ environment.
+Uses only: os, configparser — pure Python builtins.</p>
+<p>Maintains two stores:
+- os.environ
+: real host environment (inherited by child processes)
+- _local
+: linux++ internal variables (not leaked to host)</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.Stdlib.io"><code class="name">var <span class="ident">io</span></code></dt>
+<dd>
+<div class="desc"><p>Handles all I/O for linux++.
+Uses only: os, sys, io — pure CPython builtins.</p></div>
+</dd>
+<dt id="linux_plus_plus.stdlib.Stdlib.signals"><code class="name">var <span class="ident">signals</span></code></dt>
+<dd>
+<div class="desc"><p>Cross-platform signal handling.
+Uses only: signal, os — pure Python builtins.
+On Windows, only SIGINT and SIGTERM are available.</p></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="linux_plus_plus.stdlib.Stdlib.boot"><code class="name flex">
+<span>def <span class="ident">boot</span></span>(<span>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Initialize stdlib: load config, set up default signals.</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul>
+<li><a href="#linux-standard-library-layer-2">linux++ — Standard Library (Layer 2)</a></li>
+</ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="linux_plus_plus" href="index.html">linux_plus_plus</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="linux_plus_plus.stdlib.main" href="#linux_plus_plus.stdlib.main">main</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="linux_plus_plus.stdlib.AliasStore" href="#linux_plus_plus.stdlib.AliasStore">AliasStore</a></code></h4>
+<ul class="">
+<li><code><a title="linux_plus_plus.stdlib.AliasStore.all" href="#linux_plus_plus.stdlib.AliasStore.all">all</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.AliasStore.expand" href="#linux_plus_plus.stdlib.AliasStore.expand">expand</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.AliasStore.get" href="#linux_plus_plus.stdlib.AliasStore.get">get</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.AliasStore.set" href="#linux_plus_plus.stdlib.AliasStore.set">set</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.AliasStore.unset" href="#linux_plus_plus.stdlib.AliasStore.unset">unset</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="linux_plus_plus.stdlib.EnvManager" href="#linux_plus_plus.stdlib.EnvManager">EnvManager</a></code></h4>
+<ul class="two-column">
+<li><code><a title="linux_plus_plus.stdlib.EnvManager.all" href="#linux_plus_plus.stdlib.EnvManager.all">all</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.EnvManager.get" href="#linux_plus_plus.stdlib.EnvManager.get">get</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.EnvManager.home" href="#linux_plus_plus.stdlib.EnvManager.home">home</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.EnvManager.hostname" href="#linux_plus_plus.stdlib.EnvManager.hostname">hostname</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.EnvManager.load_config" href="#linux_plus_plus.stdlib.EnvManager.load_config">load_config</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.EnvManager.path_dirs" href="#linux_plus_plus.stdlib.EnvManager.path_dirs">path_dirs</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.EnvManager.resolve_command" href="#linux_plus_plus.stdlib.EnvManager.resolve_command">resolve_command</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.EnvManager.save_config" href="#linux_plus_plus.stdlib.EnvManager.save_config">save_config</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.EnvManager.set" href="#linux_plus_plus.stdlib.EnvManager.set">set</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.EnvManager.unset" href="#linux_plus_plus.stdlib.EnvManager.unset">unset</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.EnvManager.username" href="#linux_plus_plus.stdlib.EnvManager.username">username</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="linux_plus_plus.stdlib.IOManager" href="#linux_plus_plus.stdlib.IOManager">IOManager</a></code></h4>
+<ul class="">
+<li><code><a title="linux_plus_plus.stdlib.IOManager.append_file" href="#linux_plus_plus.stdlib.IOManager.append_file">append_file</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.IOManager.append_stdout_to_file" href="#linux_plus_plus.stdlib.IOManager.append_stdout_to_file">append_stdout_to_file</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.IOManager.error" href="#linux_plus_plus.stdlib.IOManager.error">error</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.IOManager.file_exists" href="#linux_plus_plus.stdlib.IOManager.file_exists">file_exists</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.IOManager.file_size" href="#linux_plus_plus.stdlib.IOManager.file_size">file_size</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.IOManager.make_pipe" href="#linux_plus_plus.stdlib.IOManager.make_pipe">make_pipe</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.IOManager.open_file" href="#linux_plus_plus.stdlib.IOManager.open_file">open_file</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.IOManager.pipe_read" href="#linux_plus_plus.stdlib.IOManager.pipe_read">pipe_read</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.IOManager.pipe_write" href="#linux_plus_plus.stdlib.IOManager.pipe_write">pipe_write</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.IOManager.read_all_stdin" href="#linux_plus_plus.stdlib.IOManager.read_all_stdin">read_all_stdin</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.IOManager.read_file" href="#linux_plus_plus.stdlib.IOManager.read_file">read_file</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.IOManager.read_line" href="#linux_plus_plus.stdlib.IOManager.read_line">read_line</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.IOManager.read_lines" href="#linux_plus_plus.stdlib.IOManager.read_lines">read_lines</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.IOManager.redirect_stdin_from_file" href="#linux_plus_plus.stdlib.IOManager.redirect_stdin_from_file">redirect_stdin_from_file</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.IOManager.redirect_stdout_to_file" href="#linux_plus_plus.stdlib.IOManager.redirect_stdout_to_file">redirect_stdout_to_file</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.IOManager.write" href="#linux_plus_plus.stdlib.IOManager.write">write</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.IOManager.write_file" href="#linux_plus_plus.stdlib.IOManager.write_file">write_file</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="linux_plus_plus.stdlib.SignalHandler" href="#linux_plus_plus.stdlib.SignalHandler">SignalHandler</a></code></h4>
+<ul class="two-column">
+<li><code><a title="linux_plus_plus.stdlib.SignalHandler.block_interrupt" href="#linux_plus_plus.stdlib.SignalHandler.block_interrupt">block_interrupt</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.SignalHandler.ignore" href="#linux_plus_plus.stdlib.SignalHandler.ignore">ignore</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.SignalHandler.on_ctrl_c" href="#linux_plus_plus.stdlib.SignalHandler.on_ctrl_c">on_ctrl_c</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.SignalHandler.on_terminate" href="#linux_plus_plus.stdlib.SignalHandler.on_terminate">on_terminate</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.SignalHandler.register" href="#linux_plus_plus.stdlib.SignalHandler.register">register</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.SignalHandler.reset" href="#linux_plus_plus.stdlib.SignalHandler.reset">reset</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.SignalHandler.reset_all" href="#linux_plus_plus.stdlib.SignalHandler.reset_all">reset_all</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="linux_plus_plus.stdlib.Stdlib" href="#linux_plus_plus.stdlib.Stdlib">Stdlib</a></code></h4>
+<ul class="">
+<li><code><a title="linux_plus_plus.stdlib.Stdlib.aliases" href="#linux_plus_plus.stdlib.Stdlib.aliases">aliases</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.Stdlib.boot" href="#linux_plus_plus.stdlib.Stdlib.boot">boot</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.Stdlib.env" href="#linux_plus_plus.stdlib.Stdlib.env">env</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.Stdlib.io" href="#linux_plus_plus.stdlib.Stdlib.io">io</a></code></li>
+<li><code><a title="linux_plus_plus.stdlib.Stdlib.signals" href="#linux_plus_plus.stdlib.Stdlib.signals">signals</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

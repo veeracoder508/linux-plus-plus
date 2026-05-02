@@ -1,4 +1,6 @@
-from .apps import register_all
+"""The command line application to use linux++."""
+
+from .app import register_all
 from .kernel import Kernel
 from .shell import Shell
 import sys
