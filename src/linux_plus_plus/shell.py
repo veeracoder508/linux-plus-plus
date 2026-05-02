@@ -311,6 +311,63 @@ class Lexer:
 
 
 # ===========================================================================
+# Syntax Highlighter
+# ===========================================================================
+
+class SyntaxHighlighter:
+    """
+    Token-based syntax highlighter for the linux++ shell.
+    Preserves whitespace and highlights according to command context.
+    """
+
+    @staticmethod
+    def highlight(line: str, builtins: set = None) -> str:
+        if builtins is None:
+            builtins = set()
+
+        # Define token types for highlighting
+        token_spec = [
+            ('COMMENT',  r'#.*'),
+            ('STRING',   r'"[^"]*"|\'[^\']*\''),
+            ('VAR',      r'\$[A-Za-z0-9_?{}$#]+'),
+            ('FLAG',     r'--?[A-Za-z0-9-]+'),
+            ('OPERATOR', r'\|\||&&|>>|>|<|\||;|&|\(|\)'),
+            ('WORD',     r'[^\s|&>;()<"\']+'),
+            ('SPACE',    r'\s+'),
+        ]
+        tok_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_spec)
+        
+        result = []
+        is_first_word = True
+        
+        for mo in re.finditer(tok_regex, line):
+            kind = mo.lastgroup
+            val  = mo.group(kind)
+            
+            if kind == 'COMMENT':
+                result.append(Color.dim(val))
+            elif kind == 'STRING':
+                result.append(Color.byellow(val))
+            elif kind == 'VAR':
+                result.append(Color.bmagenta(val))
+            elif kind == 'FLAG':
+                result.append(Color.cyan(val))
+            elif kind == 'OPERATOR':
+                result.append(Color.bcyan(val))
+                is_first_word = True # Command likely follows
+            elif kind == 'WORD':
+                if is_first_word and val in builtins:
+                    result.append(Color.bgreen(val))
+                else:
+                    result.append(val)
+                is_first_word = False
+            else: # SPACE
+                result.append(val)
+        
+        return "".join(result)
+
+
+# ===========================================================================
 # AST nodes
 # ===========================================================================
 
@@ -586,6 +643,7 @@ class BuiltinRegistry:
         b["wc"]      = self._wc
         b["which"]   = self._which
         b["type"]    = self._type
+        b["highlight"] = self._highlight
 
     def _cd(self, args: list[str]) -> int:
         target = args[0] if args else os.path.expanduser("~")
@@ -824,8 +882,12 @@ class BuiltinRegistry:
                 except PermissionError:
                     IOManager.error(f"ls: cannot open '{target}': Permission denied")
                     return 1
+                except FileNotFoundError as e:
+                    IOManager.error(Color.error(f"ls: {e}"))
+                    return 1
                 entries = sorted(raw, key=str.lower)
                 is_single_file = False
+                
 
             if len(paths) > 1:
                 IOManager.write(f"{target}:")
@@ -1299,6 +1361,13 @@ class BuiltinRegistry:
                     rc = 1
         return rc
 
+    def _highlight(self, args: list[str]) -> int:
+        if not args:
+            IOManager.error(Color.error("highlight: usage: highlight <cmd>"))
+            return 1
+        line = " ".join(args)
+        IOManager.write(SyntaxHighlighter.highlight(line, set(self._builtins.keys())))
+
 
 # ===========================================================================
 # Dispatcher  — decide where each command goes
@@ -1502,6 +1571,11 @@ class Shell:
         line = line.strip()
         if not line or line.startswith("#"):
             return 0
+
+        # Syntax highlighting preview (if enabled)
+        if EnvManager.get("LPP_SYNTAX") == "1":
+            h = SyntaxHighlighter.highlight(line, set(self.builtins._builtins.keys()))
+            IOManager.write(f"{Color.dim('  >>')} {h}")
 
         try:
             tokens = self.lexer.tokenise(line)

@@ -336,12 +336,26 @@ SYNOPSIS
     sysinfo
 
 OPTIONS
-    -a   advanced mode
+    -a   advanced mode""",
+
+    "highlight": """\
+NAME
+    highlight - apply syntax highlighting to a command string
+
+SYNOPSIS
+    highlight <command_string>
 
 DESCRIPTION
-    Displays system information in a neofetch-style layout.
-    Advanced mode adds terminal resolution, local IP, CPU core counts,
-    process counts, boot time, and detailed platform metadata.""",
+    Analyzes the provided string and returns it with ANSI colors
+    identifying built-ins, operators, variables, and strings.
+
+EXAMPLES
+    highlight "ls -la | grep python"
+    highlight 'echo $USER > out.txt'
+
+DESCRIPTION
+    Displays system information in a neofetch-style layout. Advanced mode
+    adds terminal size, local IP, processor model, and detailed memory stats.""",
 
     "wc": """\
 NAME

@@ -7,6 +7,7 @@ import re
 try:
     from ..hal    import IS_WINDOWS, HAL
     from ..stdlib import IOManager, EnvManager
+    
 except ImportError:
     IS_WINDOWS = os.name == "nt"
     HAL = None
@@ -117,24 +118,38 @@ class SysInfo:
         except Exception:
             pass
 
+        # count installed packages
+        pkg_count = 0
+        pkg_dir = os.path.join(os.path.expanduser("~"), ".linuxpp", "packages")
+        if os.path.exists(pkg_dir):
+            try:
+                pkg_count = len([d for d in os.listdir(pkg_dir) if os.path.isdir(os.path.join(pkg_dir, d))])
+            except Exception:
+                pass
+
         sep = f"{C}{user}@{host}{R}"
         div = "─" * len(f"{user}@{host}")
         
         # Base info
         mem_percent = ""
+        cpu_usage = ""
         if HAL:
             m = HAL.system.memory()
             if m.get("percent"):
                 mem_percent = f" ({m['percent']}%)"
+            # Note: real-time CPU % often requires psutil; fallback to 0.0 if unknown
+            cpu_usage = f" ({HAL.system.info().get('cpu_usage', '0.0')}%)"
 
         info = [
             sep, div,
-            f"{C}OS {R}\t: {os_name} ({arch})",
-            f"{C}Shell {R}\t: {shell}",
-            f"{C}Python {R}\t: {py_ver}",
-            f"{C}Disk {R}\t: {disk}",
-            f"{C}Memory {R}\t: {mem}{mem_percent}",
-            f"{C}Uptime {R}\t: {uptime}",
+            f"{C}OS{R}          : {os_name} ({arch})",
+            f"{C}Host{R}        : {host}",
+            f"{C}Kernel{R}      : {platform.release()}",
+            f"{C}Uptime{R}      : {uptime}",
+            f"{C}Packages{R}    : {pkg_count} (lpp)",
+            f"{C}Shell{R}       : {shell}",
+            f"{C}Resolution{R}  : {HAL.terminal.get_size()[0]}x{HAL.terminal.get_size()[1]}" if HAL else f"{C}Shell{R}       : {shell}",
+            f"{C}Terminal{R}    : {os.environ.get('TERM', 'unknown')}",
         ]
 
         if advanced and HAL:
@@ -148,15 +163,15 @@ class SysInfo:
             boot_time = time.ctime(time.time() - up_secs) if up_secs else "Unknown"
 
             info.extend([
-                f"{C}Resolution{R}\t: {cols}x{rows}",
-                f"{C}Local IP {R}\t: {ip}",
-                f"{C}Processor {R}\t: {sys_info.get('processor', 'Unknown')}",
-                f"{C}CPU Cores {R}\t: {os.cpu_count()} threads",
-                f"{C}Processes {R}\t: {proc_count} running",
-                f"{C}RAM Avail {R}\t: {mem_info.get('available', 0)//1024//1024} MB",
-                f"{C}Platform {R}\t: {platform.platform()}",
-                f"{C}Boot Time {R}\t: {boot_time}",
-                f"{C}Compiler {R}\t: {platform.python_compiler()}",
+                f"{C}CPU{R}         : {sys_info.get('processor', 'Unknown')}{cpu_usage}",
+                f"{C}Cores{R}       : {os.cpu_count()} threads",
+                f"{C}Memory{R}      : {mem}{mem_percent}",
+                f"{C}Disk Usage{R}  : {disk}",
+                f"{C}Local IP{R}    : {ip}",
+                f"{C}Processes{R}   : {proc_count}",
+                f"{C}Python{R}      : {py_ver} ({platform.python_implementation()})",
+                f"{C}Boot Time{R}   : {boot_time}",
+                f"{C}Platform{R}    : {platform.platform()}",
             ])
 
         info.extend(["", SysInfo._color_blocks()])
