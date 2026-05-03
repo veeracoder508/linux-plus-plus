@@ -161,39 +161,48 @@ color: #60a5fa !important;
 font-weight: 600 !important;
 background: transparent !important;
 }
-/* Source Code Expansion */
-details.source pre {
+/* 6. Code Blocks & Preformatted Text */
+/* Targets ALL pre blocks, not just details.source */
+#content pre {
 background-color: #0a0a0a !important;
 border: 1px solid rgba(255, 255, 255, 0.1) !important;
 border-radius: 0.75rem !important;
 padding: 1.25rem !important;
-margin-top: 0.5rem !important;
+margin-top: 1rem !important;
+margin-bottom: 1rem !important;
 color: #d4d4d8 !important;
 overflow-x: auto !important;
 }
-details.source pre code {
+#content pre code {
 background-color: transparent !important;
+border: none !important;
+padding: 0 !important;
 color: inherit !important;
+font-size: inherit !important;
 }
-/* Description Text */
+/* 7. Description Text & Inline Code */
 .desc {
 color: #a1a1aa !important;
 line-height: 1.625 !important;
 font-size: 1rem !important;
 }
-.desc code, p code {
-background-color: #18181b !important;
-/* Zinc-900 */
+/* Includes li code to fix the Features list */
+#content p code, #content li code, .desc code {
+background-color: #18181b !important; /* Zinc-900 */
 border: 1px solid #27272a !important;
 padding: 0.2rem 0.4rem !important;
 border-radius: 0.375rem !important;
-color: #f4f4f5 !important;
-/* Zinc-100 */
+color: #f4f4f5 !important; /* Zinc-100 */
 font-size: 0.9em !important;
 }
-.desc a { color: #60a5fa !important; text-decoration: none !important; }
-.desc a:hover { color: #fff !important; }
-/* Visibility Fixes (Targets & Code Links) */
+/* 8. Links & Visibility Fixes */
+#content a {
+color: #60a5fa !important;
+text-decoration: none !important;
+}
+#content a:hover {
+color: #93c5fd !important;
+}
 :target {
 background-color: rgba(59, 130, 246, 0.15) !important;
 color: inherit !important;

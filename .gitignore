@@ -12,3 +12,7 @@ linux.py
 
 # pdoc3
 /my_temp
+
+# e2eeftp
+known_server.pub
+server_id.key
