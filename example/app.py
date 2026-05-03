@@ -1,4 +1,4 @@
-from src.linux_plus_plus.apps import main
+from src.linux_plus_plus.app import main
 
 
 if __name__ == "__main__":

@@ -49,9 +49,6 @@ img.putdata(new_pixels)
 # Saving as PNG is usually best for testing transparent outputs
 img.save("linux_plus_plus.ico")
 
-img.save("cleaned_transparent_icon.png")
-
-
 # If you want to save it directly back to an ICO format:
 # img.save("cleaned_icon.ico", format="ICO", sizes=[(16,16), (32,32), (64,64), (128,128), (256,256)])
 

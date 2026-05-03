@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>linux_plus_plus.apps.ssh_client API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+darkMode: 'class',
+theme: {
+extend: {
+fontFamily: {
+sans: ['Inter', 'system-ui', 'sans-serif'],
+mono: ['JetBrains Mono', 'monospace']
+}
+}
+}
+}
+</script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+document.documentElement.classList.add('dark');
+</script>
+<style>
+/* 1. Scrollbar - Zinc Style */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #09090b; }
+::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+/* 2. Global Resets - Unified Zinc Palette */
+:root {
+--bg: #09090b !important;
+--text: #f4f4f5 !important;
+--accent: #3b82f6 !important;
+}
+html, body {
+background-color: #09090b !important;
+color: #f4f4f5 !important;
+font-family: 'Inter', system-ui, sans-serif !important;
+overflow-x: clip;
+scroll-behavior: smooth;
+}
+/* 3. Sidebar - Layout & Anti-Warping */
+#sidebar {
+width: 280px !important;
+min-width: 280px !important;
+max-width: 280px !important;
+flex: 0 0 280px !important;
+background-color: #0c0c0e !important;
+border-right: 1px solid #18181b !important;
+padding: 2.5rem 1.5rem !important;
+box-shadow: none !important;
+}
+#sidebar h1, #sidebar h2, #sidebar h3 {
+color: #fafafa !important;
+font-size: 0.875rem !important;
+font-weight: 600 !important;
+letter-spacing: -0.01em !important;
+border-bottom: none !important;
+margin-top: 1.5rem !important;
+margin-bottom: 0.75rem !important;
+padding: 0 !important;
+}
+#sidebar h1 { font-size: 1rem !important; margin-left: 0.5rem !important; }
+#sidebar ul { margin: 0 !important; padding: 0 !important; border: none !important; }
+#sidebar li { margin: 0 !important; padding: 0 !important; border: none !important; }
+#sidebar a {
+display: block !important;
+color: #a1a1aa !important;
+text-decoration: none !important;
+margin-bottom: 0.25rem !important;
+padding: 0.4rem 0.75rem !important;
+border-radius: 0.5rem !important;
+font-size: 0.875rem !important;
+transition: all 0.2s ease !important;
+white-space: normal !important;
+overflow-wrap: anywhere !important;
+word-break: break-word !important;
+line-height: 1.4 !important;
+}
+#sidebar a:hover {
+background-color: #18181b !important;
+color: #3b82f6 !important;
+}
+#sidebar code {
+padding: 0;
+margin: 0;
+}
+/* 4. Main Content - Balanced Spacing */
+#content {
+flex: 1 !important;
+min-width: 0 !important;
+padding: 3rem 4rem !important;
+max-width: 64rem !important;
+margin: 0 auto !important;
+border-left: none !important;
+}
+/* Main Top Title */
+#content h1.title {
+font-size: 2.5rem !important;
+font-weight: 800 !important;
+letter-spacing: -0.04em !important;
+color: #ffffff !important;
+margin-bottom: 2rem !important;
+}
+/* Standard internal H1 tags generated by markdown */
+#content h1:not(.title) {
+font-size: 1.75rem !important;
+font-weight: 700 !important;
+color: #f4f4f5 !important;
+margin-top: 2.5rem !important;
+margin-bottom: 1.25rem !important;
+letter-spacing: -0.02em !important;
+}
+/* Standard internal H2 tags */
+#content h2 {
+font-size: 1.35rem !important;
+font-weight: 600 !important;
+color: #f4f4f5 !important;
+margin-top: 2.5rem !important;
+margin-bottom: 1rem !important;
+}
+#content h2.section-title {
+font-size: 1.25rem !important;
+border-bottom: 1px solid #18181b !important;
+padding-bottom: 0.75rem !important;
+margin-top: 3.5rem !important;
+margin-bottom: 1.5rem !important;
+}
+/* 5. Signatures (dt) - Code Container */
+dt {
+background-color: #111113 !important;
+border: 1px solid #27272a !important;
+border-radius: 0.75rem !important;
+padding: 1rem 1.25rem !important;
+margin-top: 1.5rem !important;
+margin-bottom: 1rem !important;
+font-family: 'JetBrains Mono', monospace !important;
+font-size: 0.875rem !important;
+color: #e4e4e7 !important;
+line-height: 1.6 !important;
+overflow-x: auto !important;
+white-space: pre-wrap !important;
+}
+dt .name {
+color: #60a5fa !important;
+font-weight: 600 !important;
+background: transparent !important;
+}
+/* 6. Code Blocks & Preformatted Text */
+#content pre {
+background-color: #0a0a0a !important;
+border: 1px solid rgba(255, 255, 255, 0.1) !important;
+border-radius: 0.75rem !important;
+padding: 1.25rem !important;
+margin-top: 1rem !important;
+margin-bottom: 1.5rem !important;
+color: #d4d4d8 !important;
+overflow-x: auto !important;
+}
+#content pre code {
+background-color: transparent !important;
+border: none !important;
+padding: 0 !important;
+color: inherit !important;
+font-size: inherit !important;
+}
+/* 7. Typography, Paragraphs & Lists */
+#content p,
+.desc {
+color: #d4d4d8 !important; /* Brighter body text */
+line-height: 1.75 !important; /* Better line gaping */
+margin-bottom: 1.25rem !important; /* Space between paragraphs */
+font-size: 1rem !important;
+}
+/* Restore List Styling in Main Content */
+#content ul {
+list-style-type: disc !important;
+padding-left: 1.5rem !important;
+margin-bottom: 1.5rem !important;
+color: #d4d4d8 !important;
+}
+#content li {
+margin-bottom: 0.5rem !important;
+line-height: 1.6 !important;
+}
+/* Inline Code Styling */
+#content p code, #content li code, .desc code {
+background-color: #18181b !important; /* Zinc-900 */
+border: 1px solid #27272a !important;
+padding: 0.2rem 0.4rem !important;
+border-radius: 0.375rem !important;
+color: #f4f4f5 !important; /* Zinc-100 */
+font-size: 0.9em !important;
+}
+/* 8. Links & Visibility Fixes */
+#content a {
+color: #60a5fa !important;
+text-decoration: none !important;
+}
+#content a:hover {
+color: #93c5fd !important;
+}
+:target {
+background-color: rgba(59, 130, 246, 0.15) !important;
+color: inherit !important;
+}
+#content code.name,
+#content code.name a,
+#content .name,
+#content .name a {
+color: #60a5fa !important;
+text-decoration: none !important;
+}
+#content code.name a:hover,
+#content .name a:hover {
+color: #93c5fd !important;
+}
+#content code {
+color: #e4e4e7 !important;
+}
+</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>linux_plus_plus.apps.ssh_client</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="linux_plus_plus.apps.ssh_client.SSHClient"><code class="flex name class">
+<span>class <span class="ident">SSHClient</span></span>
+<span>(</span><span>host: str, user: str, port: int = 22)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SSHClient:
+    &#34;&#34;&#34;
+    SSH client with two backends:
+
+    Backend 1 — system ssh binary (Unix primary):
+        Uses os.execvp to replace the process image with ssh.
+        Perfect PTY, terminal resize (SIGWINCH), Ctrl+C, colours — all work.
+        No extra deps needed on any Unix/macOS system.
+
+    Backend 2 — paramiko (Windows primary / Unix fallback):
+        pip install paramiko
+        Used when no system ssh binary is found.
+
+    Usage:
+        ssh [user@]host [port]          interactive session
+        ssh [user@]host [port] &lt;cmd&gt;    run single remote command
+    &#34;&#34;&#34;
+
+    def __init__(self, host: str, user: str, port: int = 22):
+        self._host = host
+        self._user = user
+        self._port = port
+
+    # ------------------------------------------------------------------
+    # Public entry point
+    # ------------------------------------------------------------------
+
+    def run_interactive(self, command: Optional[str] = None) -&gt; int:
+        import shutil
+        ssh_bin = shutil.which(&#34;ssh&#34;)
+
+        # On Unix, system ssh is far more reliable for PTY handling
+        if not IS_WINDOWS and ssh_bin:
+            return self._system_ssh(ssh_bin, command)
+
+        # Windows or no system ssh → paramiko
+        try:
+            import paramiko  # type: ignore
+            return self._paramiko_session(paramiko, command)
+        except ImportError:
+            if ssh_bin:
+                # Windows fallback: run as subprocess
+                return self._system_ssh(ssh_bin, command)
+            IOManager.error(
+                &#34;ssh: no ssh binary found and paramiko is not installed.\n&#34;
+                &#34;     Install paramiko:  pip install paramiko&#34;
+            )
+            return 1
+
+    # ------------------------------------------------------------------
+    # Backend 1 — system ssh binary
+    # ------------------------------------------------------------------
+
+    def _system_ssh(self, ssh_bin: str, command: Optional[str]) -&gt; int:
+        &#34;&#34;&#34;
+        On Unix: use os.execvp — replaces the current process image with ssh.
+        This gives a perfect native terminal experience with no wrapper overhead.
+        On Windows: use subprocess.run (execvp not available).
+        &#34;&#34;&#34;
+        import subprocess
+
+        cmd = [
+            ssh_bin,
+            &#34;-p&#34;, str(self._port),
+            &#34;-o&#34;, &#34;StrictHostKeyChecking=accept-new&#34;,
+            &#34;-o&#34;, &#34;ServerAliveInterval=30&#34;,
+            f&#34;{self._user}@{self._host}&#34;,
+        ]
+        if command:
+            # pass remote command as separate args (not shell-quoted string)
+            cmd += [&#34;--&#34;] + command.split()
+
+        try:
+            if IS_WINDOWS:
+                result = subprocess.run(cmd)
+                return result.returncode
+            else:
+                # execvp replaces this process — no subprocess overhead,
+                # no I/O redirection, the real terminal is used directly
+                os.execvp(ssh_bin, cmd)
+                # execvp never returns on success
+        except FileNotFoundError:
+            IOManager.error(f&#34;ssh: binary not found: {ssh_bin}&#34;)
+            return 127
+        except KeyboardInterrupt:
+            return 130
+        except Exception as e:
+            IOManager.error(f&#34;ssh: {e}&#34;)
+            return 1
+        return 0
+
+    # ------------------------------------------------------------------
+    # Backend 2 — paramiko
+    # ------------------------------------------------------------------
+
+    def _paramiko_session(self, paramiko, command: Optional[str]) -&gt; int:
+        import getpass
+
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+        # try key auth first, then password on second attempt
+        connected = False
+        for attempt in range(2):
+            try:
+                kw = dict(
+                    hostname=self._host,
+                    port=self._port,
+                    username=self._user,
+                    timeout=15,
+                    look_for_keys=(attempt == 0),
+                    allow_agent=(attempt == 0),
+                )
+                if attempt == 1:
+                    kw[&#34;password&#34;] = getpass.getpass(
+                        f&#34;{self._user}@{self._host}&#39;s password: &#34;
+                    )
+                    kw[&#34;look_for_keys&#34;] = False
+                client.connect(**kw)
+                connected = True
+                break
+            except paramiko.AuthenticationException:
+                if attempt == 1:
+                    IOManager.error(&#34;ssh: authentication failed&#34;)
+                    return 1
+            except paramiko.SSHException as e:
+                IOManager.error(f&#34;ssh: SSH error: {e}&#34;)
+                return 1
+            except socket.timeout:
+                IOManager.error(f&#34;ssh: connection timed out: {self._host}&#34;)
+                return 1
+            except OSError as e:
+                IOManager.error(f&#34;ssh: {e}&#34;)
+                return 1
+
+        if not connected:
+            return 1
+
+        IOManager.write(
+            f&#34;Connected to {self._user}@{self._host}:{self._port} &#34;
+            f&#34;(paramiko {paramiko.__version__})&#34;
+        )
+        try:
+            if command:
+                return self._paramiko_exec(client, command)
+            else:
+                return self._paramiko_pty(client)
+        finally:
+            try:
+                client.close()
+            except Exception:
+                pass
+
+    def _paramiko_exec(self, client, command: str) -&gt; int:
+        try:
+            _, stdout, stderr = client.exec_command(command, get_pty=False)
+            while True:
+                chunk = stdout.read(4096)
+                if not chunk:
+                    break
+                sys.stdout.buffer.write(chunk)
+                sys.stdout.buffer.flush()
+            err = stderr.read().decode(&#34;utf-8&#34;, errors=&#34;replace&#34;)
+            if err:
+                sys.stderr.write(err)
+            return stdout.channel.recv_exit_status()
+        except Exception as e:
+            IOManager.error(f&#34;ssh exec: {e}&#34;)
+            return 1
+
+    def _paramiko_pty(self, client) -&gt; int:
+        if IS_WINDOWS:
+            return self._paramiko_pty_windows(client)
+        return self._paramiko_pty_unix(client)
+
+    def _paramiko_pty_unix(self, client) -&gt; int:
+        import termios, tty, select as _sel, signal as _sig
+
+        try:
+            cols, rows = os.get_terminal_size()
+        except OSError:
+            cols, rows = 80, 24
+
+        chan = client.invoke_shell(term=&#34;xterm-256color&#34;, width=cols, height=rows)
+        chan.settimeout(0.0)
+
+        fd      = sys.stdin.fileno()
+        old_tty = termios.tcgetattr(fd)
+
+        def _resize(*_):
+            try:
+                c, r = os.get_terminal_size()
+                chan.resize_pty(width=c, height=r)
+            except Exception:
+                pass
+
+        old_winch = _sig.getsignal(_sig.SIGWINCH)
+        _sig.signal(_sig.SIGWINCH, _resize)
+
+        try:
+            tty.setraw(fd)
+            while True:
+                r, _, _ = _sel.select([chan, sys.stdin], [], [], 0.5)
+                if chan in r:
+                    try:
+                        data = chan.recv(4096)
+                        if not data:
+                            break
+                        sys.stdout.buffer.write(data)
+                        sys.stdout.buffer.flush()
+                    except Exception:
+                        break
+                if sys.stdin in r:
+                    try:
+                        key = os.read(fd, 256)
+                        if not key:
+                            break
+                        chan.sendall(key)
+                    except Exception:
+                        break
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_tty)
+            _sig.signal(_sig.SIGWINCH, old_winch)
+
+        sys.stdout.write(&#34;\r\nConnection closed.\r\n&#34;)
+        sys.stdout.flush()
+        return 0
+
+    def _paramiko_pty_windows(self, client) -&gt; int:
+        try:
+            cols, rows = os.get_terminal_size()
+        except OSError:
+            cols, rows = 80, 24
+
+        chan = client.invoke_shell(term=&#34;xterm-256color&#34;, width=cols, height=rows)
+        chan.settimeout(0.0)
+        stop = threading.Event()
+
+        def _send():
+            try:
+                while not stop.is_set():
+                    data = sys.stdin.buffer.read(1)
+                    if not data:
+                        break
+                    chan.sendall(data)
+            finally:
+                stop.set()
+
+        threading.Thread(target=_send, daemon=True).start()
+        try:
+            while not stop.is_set():
+                if chan.recv_ready():
+                    data = chan.recv(4096)
+                    if not data:
+                        break
+                    sys.stdout.buffer.write(data)
+                    sys.stdout.buffer.flush()
+                elif chan.closed:
+                    break
+                else:
+                    time.sleep(0.01)
+        except KeyboardInterrupt:
+            chan.send(b&#34;\x03&#34;)
+        finally:
+            stop.set()
+
+        sys.stdout.write(&#34;\r\nConnection closed.\r\n&#34;)
+        sys.stdout.flush()
+        return 0</code></pre>
+</details>
+<div class="desc"><p>SSH client with two backends:</p>
+<p>Backend 1 — system ssh binary (Unix primary):
+Uses os.execvp to replace the process image with ssh.
+Perfect PTY, terminal resize (SIGWINCH), Ctrl+C, colours — all work.
+No extra deps needed on any Unix/macOS system.</p>
+<p>Backend 2 — paramiko (Windows primary / Unix fallback):
+pip install paramiko
+Used when no system ssh binary is found.</p>
+<h2 id="usage">Usage</h2>
+<p>ssh [user@]host [port]
+interactive session
+ssh [user@]host [port] <cmd>
+run single remote command</p></div>
+<h3>Methods</h3>
+<dl>
+<dt id="linux_plus_plus.apps.ssh_client.SSHClient.run_interactive"><code class="name flex">
+<span>def <span class="ident">run_interactive</span></span>(<span>self, command: str | None = None) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run_interactive(self, command: Optional[str] = None) -&gt; int:
+    import shutil
+    ssh_bin = shutil.which(&#34;ssh&#34;)
+
+    # On Unix, system ssh is far more reliable for PTY handling
+    if not IS_WINDOWS and ssh_bin:
+        return self._system_ssh(ssh_bin, command)
+
+    # Windows or no system ssh → paramiko
+    try:
+        import paramiko  # type: ignore
+        return self._paramiko_session(paramiko, command)
+    except ImportError:
+        if ssh_bin:
+            # Windows fallback: run as subprocess
+            return self._system_ssh(ssh_bin, command)
+        IOManager.error(
+            &#34;ssh: no ssh binary found and paramiko is not installed.\n&#34;
+            &#34;     Install paramiko:  pip install paramiko&#34;
+        )
+        return 1</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="linux_plus_plus.apps" href="index.html">linux_plus_plus.apps</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="linux_plus_plus.apps.ssh_client.SSHClient" href="#linux_plus_plus.apps.ssh_client.SSHClient">SSHClient</a></code></h4>
+<ul class="">
+<li><code><a title="linux_plus_plus.apps.ssh_client.SSHClient.run_interactive" href="#linux_plus_plus.apps.ssh_client.SSHClient.run_interactive">run_interactive</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

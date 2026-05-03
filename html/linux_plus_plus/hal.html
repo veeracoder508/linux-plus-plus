@@ -1,0 +1,2863 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>linux_plus_plus.hal API documentation</title>
+<meta name="description" content="linux++ — Hardware Abstraction Layer (HAL) (Layer 1) …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+darkMode: 'class',
+theme: {
+extend: {
+fontFamily: {
+sans: ['Inter', 'system-ui', 'sans-serif'],
+mono: ['JetBrains Mono', 'monospace']
+}
+}
+}
+}
+</script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+document.documentElement.classList.add('dark');
+</script>
+<style>
+/* 1. Scrollbar - Zinc Style */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #09090b; }
+::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+/* 2. Global Resets - Unified Zinc Palette */
+:root {
+--bg: #09090b !important;
+--text: #f4f4f5 !important;
+--accent: #3b82f6 !important;
+}
+html, body {
+background-color: #09090b !important;
+color: #f4f4f5 !important;
+font-family: 'Inter', system-ui, sans-serif !important;
+overflow-x: clip;
+scroll-behavior: smooth;
+}
+/* 3. Sidebar - Layout & Anti-Warping */
+#sidebar {
+width: 280px !important;
+min-width: 280px !important;
+max-width: 280px !important;
+flex: 0 0 280px !important;
+background-color: #0c0c0e !important;
+border-right: 1px solid #18181b !important;
+padding: 2.5rem 1.5rem !important;
+box-shadow: none !important;
+}
+#sidebar h1, #sidebar h2, #sidebar h3 {
+color: #fafafa !important;
+font-size: 0.875rem !important;
+font-weight: 600 !important;
+letter-spacing: -0.01em !important;
+border-bottom: none !important;
+margin-top: 1.5rem !important;
+margin-bottom: 0.75rem !important;
+padding: 0 !important;
+}
+#sidebar h1 { font-size: 1rem !important; margin-left: 0.5rem !important; }
+#sidebar ul { margin: 0 !important; padding: 0 !important; border: none !important; }
+#sidebar li { margin: 0 !important; padding: 0 !important; border: none !important; }
+#sidebar a {
+display: block !important;
+color: #a1a1aa !important;
+text-decoration: none !important;
+margin-bottom: 0.25rem !important;
+padding: 0.4rem 0.75rem !important;
+border-radius: 0.5rem !important;
+font-size: 0.875rem !important;
+transition: all 0.2s ease !important;
+white-space: normal !important;
+overflow-wrap: anywhere !important;
+word-break: break-word !important;
+line-height: 1.4 !important;
+}
+#sidebar a:hover {
+background-color: #18181b !important;
+color: #3b82f6 !important;
+}
+#sidebar code {
+padding: 0;
+margin: 0;
+}
+/* 4. Main Content - Balanced Spacing */
+#content {
+flex: 1 !important;
+min-width: 0 !important;
+padding: 3rem 4rem !important;
+max-width: 64rem !important;
+margin: 0 auto !important;
+border-left: none !important;
+}
+/* Main Top Title */
+#content h1.title {
+font-size: 2.5rem !important;
+font-weight: 800 !important;
+letter-spacing: -0.04em !important;
+color: #ffffff !important;
+margin-bottom: 2rem !important;
+}
+/* Standard internal H1 tags generated by markdown */
+#content h1:not(.title) {
+font-size: 1.75rem !important;
+font-weight: 700 !important;
+color: #f4f4f5 !important;
+margin-top: 2.5rem !important;
+margin-bottom: 1.25rem !important;
+letter-spacing: -0.02em !important;
+}
+/* Standard internal H2 tags */
+#content h2 {
+font-size: 1.35rem !important;
+font-weight: 600 !important;
+color: #f4f4f5 !important;
+margin-top: 2.5rem !important;
+margin-bottom: 1rem !important;
+}
+#content h2.section-title {
+font-size: 1.25rem !important;
+border-bottom: 1px solid #18181b !important;
+padding-bottom: 0.75rem !important;
+margin-top: 3.5rem !important;
+margin-bottom: 1.5rem !important;
+}
+/* 5. Signatures (dt) - Code Container */
+dt {
+background-color: #111113 !important;
+border: 1px solid #27272a !important;
+border-radius: 0.75rem !important;
+padding: 1rem 1.25rem !important;
+margin-top: 1.5rem !important;
+margin-bottom: 1rem !important;
+font-family: 'JetBrains Mono', monospace !important;
+font-size: 0.875rem !important;
+color: #e4e4e7 !important;
+line-height: 1.6 !important;
+overflow-x: auto !important;
+white-space: pre-wrap !important;
+}
+dt .name {
+color: #60a5fa !important;
+font-weight: 600 !important;
+background: transparent !important;
+}
+/* 6. Code Blocks & Preformatted Text */
+#content pre {
+background-color: #0a0a0a !important;
+border: 1px solid rgba(255, 255, 255, 0.1) !important;
+border-radius: 0.75rem !important;
+padding: 1.25rem !important;
+margin-top: 1rem !important;
+margin-bottom: 1.5rem !important;
+color: #d4d4d8 !important;
+overflow-x: auto !important;
+}
+#content pre code {
+background-color: transparent !important;
+border: none !important;
+padding: 0 !important;
+color: inherit !important;
+font-size: inherit !important;
+}
+/* 7. Typography, Paragraphs & Lists */
+#content p,
+.desc {
+color: #d4d4d8 !important; /* Brighter body text */
+line-height: 1.75 !important; /* Better line gaping */
+margin-bottom: 1.25rem !important; /* Space between paragraphs */
+font-size: 1rem !important;
+}
+/* Restore List Styling in Main Content */
+#content ul {
+list-style-type: disc !important;
+padding-left: 1.5rem !important;
+margin-bottom: 1.5rem !important;
+color: #d4d4d8 !important;
+}
+#content li {
+margin-bottom: 0.5rem !important;
+line-height: 1.6 !important;
+}
+/* Inline Code Styling */
+#content p code, #content li code, .desc code {
+background-color: #18181b !important; /* Zinc-900 */
+border: 1px solid #27272a !important;
+padding: 0.2rem 0.4rem !important;
+border-radius: 0.375rem !important;
+color: #f4f4f5 !important; /* Zinc-100 */
+font-size: 0.9em !important;
+}
+/* 8. Links & Visibility Fixes */
+#content a {
+color: #60a5fa !important;
+text-decoration: none !important;
+}
+#content a:hover {
+color: #93c5fd !important;
+}
+:target {
+background-color: rgba(59, 130, 246, 0.15) !important;
+color: inherit !important;
+}
+#content code.name,
+#content code.name a,
+#content .name,
+#content .name a {
+color: #60a5fa !important;
+text-decoration: none !important;
+}
+#content code.name a:hover,
+#content .name a:hover {
+color: #93c5fd !important;
+}
+#content code {
+color: #e4e4e7 !important;
+}
+</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>linux_plus_plus.hal</code></h1>
+</header>
+<section id="section-intro">
+<h1 id="linux-hardware-abstraction-layer-hal-layer-1">linux++ — Hardware Abstraction Layer (HAL) (Layer 1)</h1>
+<p>This module provides a compact Hardware Abstraction Layer used by the
+rest of the linux++ project. Higher layers (stdlib, kernel, shell and
+applications) import from this module to perform OS-dependent operations
+without touching platform-specific APIs directly.</p>
+<p>Responsibilities provided by HAL:
+- Terminal control (ANSI colours, clearing, terminal size)
+- Filesystem helpers and path normalization
+- Process execution and background process handling
+- Network helpers (hostname, local IP, ping)
+- System metadata (uptime, cpu, memory)
+- Signal registration utilities</p>
+<p>The implementation prefers small, well-documented helpers that use only the
+Python standard library so the HAL is easy to test and vendor into other
+projects. Where third-party functionality would be useful (psutil) the
+module falls back gracefully when it is not installed.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="linux_plus_plus.hal.main"><code class="name flex">
+<span>def <span class="ident">main</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main():
+    HAL.boot()
+
+    t = HAL.terminal
+    cols, rows = t.get_size()
+    t.write(f&#34;  Terminal: {cols}×{rows}&#34;)
+
+    disk = HAL.disk
+    t.write(f&#34;  Home dir: {disk.home()}&#34;)
+    t.write(f&#34;  CWD:      {disk.cwd()}&#34;)
+    usage = disk.disk_usage()
+    gb = 1024 ** 3
+    t.write(f&#34;  Disk:     {usage[&#39;used&#39;]/gb:.1f} GB used / {usage[&#39;total&#39;]/gb:.1f} GB total&#34;)
+
+    proc = HAL.process
+    result = proc.run([&#34;python3&#34; if not IS_WINDOWS else &#34;python&#34;, &#34;--version&#34;])
+    t.write(f&#34;  Python:   {result.stdout.strip() or result.stderr.strip()}&#34;)
+
+    net = HAL.network
+    t.write(f&#34;  IP:       {net.local_ip()}&#34;)
+
+    mem = HAL.system.memory()
+    if mem[&#34;total&#34;]:
+        t.write(f&#34;  RAM:      {mem[&#39;used&#39;]//1024//1024} MB used / {mem[&#39;total&#39;]//1024//1024} MB total&#34;)
+
+    t.write(f&#34;\n{t.GREEN}HAL self-test passed.{t.RESET}&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="linux_plus_plus.hal.DiskDriver"><code class="flex name class">
+<span>class <span class="ident">DiskDriver</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DiskDriver:
+    &#34;&#34;&#34;Filesystem abstraction and path utilities.
+
+    The DiskDriver provides a small set of deterministic filesystem
+    operations that return predictable Python types (for example, `listdir`
+    returns a list of dictionaries describing entries). Paths are expressed
+    and returned as POSIX-style strings (forward slashes) to simplify the
+    kernel&#39;s internal handling; conversion to platform-native paths happens
+    via pathlib under the hood.
+    &#34;&#34;&#34;
+
+    # Path separator — the kernel always works with forward slashes
+    # internally; we convert on the way out on Windows.
+    SEP = &#34;/&#34;
+
+    @staticmethod
+    def _to_path(p: str) -&gt; Path:
+        &#34;&#34;&#34;Return a `pathlib.Path` for the given string.
+
+        This helper centralises conversion so callers don&#39;t need to import
+        `pathlib` themselves.
+        &#34;&#34;&#34;
+        return Path(p)
+
+    # --- directory ---
+
+    @staticmethod
+    def cwd() -&gt; str:
+        &#34;&#34;&#34;Return the current working directory as a POSIX-style string.
+
+        Using forward slashes avoids platform-dependent path separators in
+        higher-level code and makes string comparisons predictable.
+        &#34;&#34;&#34;
+        return Path.cwd().as_posix()
+
+    @staticmethod
+    def chdir(path: str) -&gt; None:
+        &#34;&#34;&#34;Changes the current working directory of the process.
+
+        Args:
+            path (str): The destination directory path.
+        &#34;&#34;&#34;
+        os.chdir(path)
+
+    @staticmethod
+    def mkdir(path: str, parents: bool = True, exist_ok: bool = True) -&gt; None:
+        &#34;&#34;&#34;Create a directory at `path` with optional parent creation.
+
+        Mirrors `pathlib.Path.mkdir` semantics. Errors such as permission
+        denied propagate to the caller.
+        &#34;&#34;&#34;
+        Path(path).mkdir(parents=parents, exist_ok=exist_ok)
+
+    @staticmethod
+    def listdir(path: str) -&gt; list[dict]:
+        &#34;&#34;&#34;List a directory and return a typed description for each entry.
+
+        Each entry is a dictionary containing: `name`, `is_dir`, `is_file`,
+        `is_symlink`, `size`, and a human-readable `permissions` string.
+        Permission errors on individual entries are handled per-entry and do
+        not abort the overall listing.
+        &#34;&#34;&#34;
+        entries = []
+        for entry in Path(path).iterdir():
+            try:
+                st = entry.stat()
+                entries.append({
+                    &#34;name&#34;: entry.name,
+                    &#34;is_dir&#34;: entry.is_dir(),
+                    &#34;is_file&#34;: entry.is_file(),
+                    &#34;is_symlink&#34;: entry.is_symlink(),
+                    &#34;size&#34;: st.st_size,
+                    &#34;permissions&#34;: DiskDriver._perms(st.st_mode),
+                })
+            except PermissionError:
+                entries.append({
+                    &#34;name&#34;: entry.name,
+                    &#34;is_dir&#34;: False, &#34;is_file&#34;: False,
+                    &#34;is_symlink&#34;: False, &#34;size&#34;: 0,
+                    &#34;permissions&#34;: &#34;?????????&#34;,
+                })
+        return sorted(entries, key=lambda e: (not e[&#34;is_dir&#34;], e[&#34;name&#34;].lower()))
+
+    @staticmethod
+    def _perms(mode: int) -&gt; str:
+        &#34;&#34;&#34;Convert a numeric mode to a POSIX-style permission string.
+
+        Example: `0o755` -&gt; &#39;rwxr-xr-x&#39;.
+        &#34;&#34;&#34;
+        flags = [
+            (stat.S_IRUSR, &#34;r&#34;), (stat.S_IWUSR, &#34;w&#34;), (stat.S_IXUSR, &#34;x&#34;),
+            (stat.S_IRGRP, &#34;r&#34;), (stat.S_IWGRP, &#34;w&#34;), (stat.S_IXGRP, &#34;x&#34;),
+            (stat.S_IROTH, &#34;r&#34;), (stat.S_IWOTH, &#34;w&#34;), (stat.S_IXOTH, &#34;x&#34;),
+        ]
+        return &#34;&#34;.join(c if mode &amp; f else &#34;-&#34; for f, c in flags)
+
+    # --- file operations ---
+
+    @staticmethod
+    def exists(path: str) -&gt; bool:
+        &#34;&#34;&#34;Return True if the path exists on the filesystem.
+
+        This is a thin wrapper around `pathlib.Path.exists()` to keep the
+        DiskDriver surface small and consistent.
+        &#34;&#34;&#34;
+        return Path(path).exists()
+
+    @staticmethod
+    def is_file(path: str) -&gt; bool:
+        &#34;&#34;&#34;Check if it is a file
+
+        Args:
+            path (str): Path for the file.
+
+        Returns:
+            bool: If it is a file or not.
+        &#34;&#34;&#34;
+        return Path(path).is_file()
+
+    @staticmethod
+    def is_dir(path: str) -&gt; bool:
+        &#34;&#34;&#34;Check if it is a directory.
+
+        Args:
+            path (str): Path for the directory.
+
+        Returns:
+            bool: If it is a directory or not.
+        &#34;&#34;&#34;
+        return Path(path).is_dir()
+
+    @staticmethod
+    def read_text(path: str, encoding: str = &#34;utf-8&#34;) -&gt; str:
+        &#34;&#34;&#34;Read the entire contents of `path` and return it as a string.
+
+        Raises the same exceptions as `pathlib.Path.read_text()` on error.
+        &#34;&#34;&#34;
+        return Path(path).read_text(encoding=encoding)
+
+    @staticmethod
+    def write_text(path: str, content: str, encoding: str = &#34;utf-8&#34;) -&gt; None:
+        &#34;&#34;&#34;Writes a string to a file, overwriting existing content.
+
+        Args:
+            path (str): The path to the file.
+            content (str): The string content to write.
+            encoding (str, optional): The text encoding to use. Defaults to &#34;utf-8&#34;.
+        &#34;&#34;&#34;
+        Path(path).write_text(content, encoding=encoding)
+
+    @staticmethod
+    def append_text(path: str, content: str, encoding: str = &#34;utf-8&#34;) -&gt; None:
+        &#34;&#34;&#34;Appends a string to the end of a file.
+
+        Args:
+            path (str): The path to the file.
+            content (str): The string content to append.
+            encoding (str, optional): The text encoding to use. Defaults to &#34;utf-8&#34;.
+        &#34;&#34;&#34;
+        with open(path, &#34;a&#34;, encoding=encoding) as f:
+            f.write(content)
+
+    @staticmethod
+    def delete(path: str) -&gt; None:
+        &#34;&#34;&#34;Remove a file or directory tree rooted at `path`.
+
+        Directories are removed recursively using `shutil.rmtree`. The
+        operation may raise permission-related exceptions which the caller
+        should handle.
+        &#34;&#34;&#34;
+        p = Path(path)
+        if p.is_dir():
+            shutil.rmtree(p)
+        else:
+            p.unlink(missing_ok=True)
+
+    @staticmethod
+    def copy(src: str, dst: str) -&gt; None:
+        &#34;&#34;&#34;Copies a file from source to destination, preserving metadata.
+
+        Args:
+            src (str): The source file path.
+            dst (str): The destination path.
+        &#34;&#34;&#34;
+        shutil.copy2(src, dst)
+
+    @staticmethod
+    def move(src: str, dst: str) -&gt; None:
+        &#34;&#34;&#34;Moves or renames a file or directory.
+
+        Args:
+            src (str): The source path.
+            dst (str): The destination path.
+        &#34;&#34;&#34;
+        shutil.move(src, dst)
+
+    @staticmethod
+    def resolve(path: str) -&gt; str:
+        &#34;&#34;&#34;Resolve `path` to an absolute POSIX-style path string.
+
+        Uses `Path.resolve()` to expand symlinks and relative segments. The
+        returned string always uses forward slashes for internal consistency.
+        &#34;&#34;&#34;
+        return Path(path).resolve().as_posix()
+
+    @staticmethod
+    def join(*parts: str) -&gt; str:
+        &#34;&#34;&#34;Joins multiple path components into a single POSIX-style string.
+
+        Args:
+            *parts (str): Path components to join.
+
+        Returns:
+            str: The combined path using forward slashes.
+        &#34;&#34;&#34;
+        return Path(*parts).as_posix()
+
+    @staticmethod
+    def home() -&gt; str:
+        &#34;&#34;&#34;Returns the current user&#39;s home directory as a POSIX-style string.
+
+        Returns:
+            str: The home directory path.
+        &#34;&#34;&#34;
+        return Path.home().as_posix()
+
+    @staticmethod
+    def temp_dir() -&gt; str:
+        &#34;&#34;&#34;Returns the system&#39;s default temporary directory path.
+
+        Returns:
+            str: The temporary directory path.
+        &#34;&#34;&#34;
+        return tempfile.gettempdir()
+
+    @staticmethod
+    def disk_usage(path: str = &#34;/&#34;) -&gt; dict:
+        &#34;&#34;&#34;Return disk space metrics for the filesystem containing `path`.
+
+        The result is a dict with `total`, `used` and `free` properties in
+        bytes. On Windows the default path is `C:\\` when no path is provided.
+        &#34;&#34;&#34;
+        if IS_WINDOWS:
+            path = &#34;C:\\&#34;  # default to C: on Windows
+        usage = shutil.disk_usage(path)
+        return {
+            &#34;total&#34;: usage.total,
+            &#34;used&#34;:  usage.used,
+            &#34;free&#34;:  usage.free,
+        }</code></pre>
+</details>
+<div class="desc"><p>Filesystem abstraction and path utilities.</p>
+<p>The DiskDriver provides a small set of deterministic filesystem
+operations that return predictable Python types (for example, <code>listdir</code>
+returns a list of dictionaries describing entries). Paths are expressed
+and returned as POSIX-style strings (forward slashes) to simplify the
+kernel's internal handling; conversion to platform-native paths happens
+via pathlib under the hood.</p></div>
+<h3>Class variables</h3>
+<dl>
+<dt id="linux_plus_plus.hal.DiskDriver.SEP"><code class="name">var <span class="ident">SEP</span></code></dt>
+<dd>
+<div class="desc"><p>The type of the None singleton.</p></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="linux_plus_plus.hal.DiskDriver.append_text"><code class="name flex">
+<span>def <span class="ident">append_text</span></span>(<span>path: str, content: str, encoding: str = 'utf-8') ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def append_text(path: str, content: str, encoding: str = &#34;utf-8&#34;) -&gt; None:
+    &#34;&#34;&#34;Appends a string to the end of a file.
+
+    Args:
+        path (str): The path to the file.
+        content (str): The string content to append.
+        encoding (str, optional): The text encoding to use. Defaults to &#34;utf-8&#34;.
+    &#34;&#34;&#34;
+    with open(path, &#34;a&#34;, encoding=encoding) as f:
+        f.write(content)</code></pre>
+</details>
+<div class="desc"><p>Appends a string to the end of a file.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>path</code></strong> :&ensp;<code>str</code></dt>
+<dd>The path to the file.</dd>
+<dt><strong><code>content</code></strong> :&ensp;<code>str</code></dt>
+<dd>The string content to append.</dd>
+<dt><strong><code>encoding</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>The text encoding to use. Defaults to "utf-8".</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.DiskDriver.chdir"><code class="name flex">
+<span>def <span class="ident">chdir</span></span>(<span>path: str) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def chdir(path: str) -&gt; None:
+    &#34;&#34;&#34;Changes the current working directory of the process.
+
+    Args:
+        path (str): The destination directory path.
+    &#34;&#34;&#34;
+    os.chdir(path)</code></pre>
+</details>
+<div class="desc"><p>Changes the current working directory of the process.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>path</code></strong> :&ensp;<code>str</code></dt>
+<dd>The destination directory path.</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.DiskDriver.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>src: str, dst: str) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def copy(src: str, dst: str) -&gt; None:
+    &#34;&#34;&#34;Copies a file from source to destination, preserving metadata.
+
+    Args:
+        src (str): The source file path.
+        dst (str): The destination path.
+    &#34;&#34;&#34;
+    shutil.copy2(src, dst)</code></pre>
+</details>
+<div class="desc"><p>Copies a file from source to destination, preserving metadata.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>src</code></strong> :&ensp;<code>str</code></dt>
+<dd>The source file path.</dd>
+<dt><strong><code>dst</code></strong> :&ensp;<code>str</code></dt>
+<dd>The destination path.</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.DiskDriver.cwd"><code class="name flex">
+<span>def <span class="ident">cwd</span></span>(<span>) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def cwd() -&gt; str:
+    &#34;&#34;&#34;Return the current working directory as a POSIX-style string.
+
+    Using forward slashes avoids platform-dependent path separators in
+    higher-level code and makes string comparisons predictable.
+    &#34;&#34;&#34;
+    return Path.cwd().as_posix()</code></pre>
+</details>
+<div class="desc"><p>Return the current working directory as a POSIX-style string.</p>
+<p>Using forward slashes avoids platform-dependent path separators in
+higher-level code and makes string comparisons predictable.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.DiskDriver.delete"><code class="name flex">
+<span>def <span class="ident">delete</span></span>(<span>path: str) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def delete(path: str) -&gt; None:
+    &#34;&#34;&#34;Remove a file or directory tree rooted at `path`.
+
+    Directories are removed recursively using `shutil.rmtree`. The
+    operation may raise permission-related exceptions which the caller
+    should handle.
+    &#34;&#34;&#34;
+    p = Path(path)
+    if p.is_dir():
+        shutil.rmtree(p)
+    else:
+        p.unlink(missing_ok=True)</code></pre>
+</details>
+<div class="desc"><p>Remove a file or directory tree rooted at <code>path</code>.</p>
+<p>Directories are removed recursively using <code>shutil.rmtree</code>. The
+operation may raise permission-related exceptions which the caller
+should handle.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.DiskDriver.disk_usage"><code class="name flex">
+<span>def <span class="ident">disk_usage</span></span>(<span>path: str = '/') ‑> dict</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def disk_usage(path: str = &#34;/&#34;) -&gt; dict:
+    &#34;&#34;&#34;Return disk space metrics for the filesystem containing `path`.
+
+    The result is a dict with `total`, `used` and `free` properties in
+    bytes. On Windows the default path is `C:\\` when no path is provided.
+    &#34;&#34;&#34;
+    if IS_WINDOWS:
+        path = &#34;C:\\&#34;  # default to C: on Windows
+    usage = shutil.disk_usage(path)
+    return {
+        &#34;total&#34;: usage.total,
+        &#34;used&#34;:  usage.used,
+        &#34;free&#34;:  usage.free,
+    }</code></pre>
+</details>
+<div class="desc"><p>Return disk space metrics for the filesystem containing <code>path</code>.</p>
+<p>The result is a dict with <code>total</code>, <code>used</code> and <code>free</code> properties in
+bytes. On Windows the default path is <code>C:\</code> when no path is provided.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.DiskDriver.exists"><code class="name flex">
+<span>def <span class="ident">exists</span></span>(<span>path: str) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def exists(path: str) -&gt; bool:
+    &#34;&#34;&#34;Return True if the path exists on the filesystem.
+
+    This is a thin wrapper around `pathlib.Path.exists()` to keep the
+    DiskDriver surface small and consistent.
+    &#34;&#34;&#34;
+    return Path(path).exists()</code></pre>
+</details>
+<div class="desc"><p>Return True if the path exists on the filesystem.</p>
+<p>This is a thin wrapper around <code>pathlib.Path.exists()</code> to keep the
+DiskDriver surface small and consistent.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.DiskDriver.home"><code class="name flex">
+<span>def <span class="ident">home</span></span>(<span>) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def home() -&gt; str:
+    &#34;&#34;&#34;Returns the current user&#39;s home directory as a POSIX-style string.
+
+    Returns:
+        str: The home directory path.
+    &#34;&#34;&#34;
+    return Path.home().as_posix()</code></pre>
+</details>
+<div class="desc"><p>Returns the current user's home directory as a POSIX-style string.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>The home directory path.</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.DiskDriver.is_dir"><code class="name flex">
+<span>def <span class="ident">is_dir</span></span>(<span>path: str) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def is_dir(path: str) -&gt; bool:
+    &#34;&#34;&#34;Check if it is a directory.
+
+    Args:
+        path (str): Path for the directory.
+
+    Returns:
+        bool: If it is a directory or not.
+    &#34;&#34;&#34;
+    return Path(path).is_dir()</code></pre>
+</details>
+<div class="desc"><p>Check if it is a directory.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>path</code></strong> :&ensp;<code>str</code></dt>
+<dd>Path for the directory.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>If it is a directory or not.</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.DiskDriver.is_file"><code class="name flex">
+<span>def <span class="ident">is_file</span></span>(<span>path: str) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def is_file(path: str) -&gt; bool:
+    &#34;&#34;&#34;Check if it is a file
+
+    Args:
+        path (str): Path for the file.
+
+    Returns:
+        bool: If it is a file or not.
+    &#34;&#34;&#34;
+    return Path(path).is_file()</code></pre>
+</details>
+<div class="desc"><p>Check if it is a file</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>path</code></strong> :&ensp;<code>str</code></dt>
+<dd>Path for the file.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>If it is a file or not.</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.DiskDriver.join"><code class="name flex">
+<span>def <span class="ident">join</span></span>(<span>*parts: str) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def join(*parts: str) -&gt; str:
+    &#34;&#34;&#34;Joins multiple path components into a single POSIX-style string.
+
+    Args:
+        *parts (str): Path components to join.
+
+    Returns:
+        str: The combined path using forward slashes.
+    &#34;&#34;&#34;
+    return Path(*parts).as_posix()</code></pre>
+</details>
+<div class="desc"><p>Joins multiple path components into a single POSIX-style string.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>*parts</code></strong> :&ensp;<code>str</code></dt>
+<dd>Path components to join.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>The combined path using forward slashes.</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.DiskDriver.listdir"><code class="name flex">
+<span>def <span class="ident">listdir</span></span>(<span>path: str) ‑> list[dict]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def listdir(path: str) -&gt; list[dict]:
+    &#34;&#34;&#34;List a directory and return a typed description for each entry.
+
+    Each entry is a dictionary containing: `name`, `is_dir`, `is_file`,
+    `is_symlink`, `size`, and a human-readable `permissions` string.
+    Permission errors on individual entries are handled per-entry and do
+    not abort the overall listing.
+    &#34;&#34;&#34;
+    entries = []
+    for entry in Path(path).iterdir():
+        try:
+            st = entry.stat()
+            entries.append({
+                &#34;name&#34;: entry.name,
+                &#34;is_dir&#34;: entry.is_dir(),
+                &#34;is_file&#34;: entry.is_file(),
+                &#34;is_symlink&#34;: entry.is_symlink(),
+                &#34;size&#34;: st.st_size,
+                &#34;permissions&#34;: DiskDriver._perms(st.st_mode),
+            })
+        except PermissionError:
+            entries.append({
+                &#34;name&#34;: entry.name,
+                &#34;is_dir&#34;: False, &#34;is_file&#34;: False,
+                &#34;is_symlink&#34;: False, &#34;size&#34;: 0,
+                &#34;permissions&#34;: &#34;?????????&#34;,
+            })
+    return sorted(entries, key=lambda e: (not e[&#34;is_dir&#34;], e[&#34;name&#34;].lower()))</code></pre>
+</details>
+<div class="desc"><p>List a directory and return a typed description for each entry.</p>
+<p>Each entry is a dictionary containing: <code>name</code>, <code>is_dir</code>, <code>is_file</code>,
+<code>is_symlink</code>, <code>size</code>, and a human-readable <code>permissions</code> string.
+Permission errors on individual entries are handled per-entry and do
+not abort the overall listing.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.DiskDriver.mkdir"><code class="name flex">
+<span>def <span class="ident">mkdir</span></span>(<span>path: str, parents: bool = True, exist_ok: bool = True) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def mkdir(path: str, parents: bool = True, exist_ok: bool = True) -&gt; None:
+    &#34;&#34;&#34;Create a directory at `path` with optional parent creation.
+
+    Mirrors `pathlib.Path.mkdir` semantics. Errors such as permission
+    denied propagate to the caller.
+    &#34;&#34;&#34;
+    Path(path).mkdir(parents=parents, exist_ok=exist_ok)</code></pre>
+</details>
+<div class="desc"><p>Create a directory at <code>path</code> with optional parent creation.</p>
+<p>Mirrors <code>pathlib.Path.mkdir</code> semantics. Errors such as permission
+denied propagate to the caller.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.DiskDriver.move"><code class="name flex">
+<span>def <span class="ident">move</span></span>(<span>src: str, dst: str) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def move(src: str, dst: str) -&gt; None:
+    &#34;&#34;&#34;Moves or renames a file or directory.
+
+    Args:
+        src (str): The source path.
+        dst (str): The destination path.
+    &#34;&#34;&#34;
+    shutil.move(src, dst)</code></pre>
+</details>
+<div class="desc"><p>Moves or renames a file or directory.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>src</code></strong> :&ensp;<code>str</code></dt>
+<dd>The source path.</dd>
+<dt><strong><code>dst</code></strong> :&ensp;<code>str</code></dt>
+<dd>The destination path.</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.DiskDriver.read_text"><code class="name flex">
+<span>def <span class="ident">read_text</span></span>(<span>path: str, encoding: str = 'utf-8') ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def read_text(path: str, encoding: str = &#34;utf-8&#34;) -&gt; str:
+    &#34;&#34;&#34;Read the entire contents of `path` and return it as a string.
+
+    Raises the same exceptions as `pathlib.Path.read_text()` on error.
+    &#34;&#34;&#34;
+    return Path(path).read_text(encoding=encoding)</code></pre>
+</details>
+<div class="desc"><p>Read the entire contents of <code>path</code> and return it as a string.</p>
+<p>Raises the same exceptions as <code>pathlib.Path.read_text()</code> on error.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.DiskDriver.resolve"><code class="name flex">
+<span>def <span class="ident">resolve</span></span>(<span>path: str) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def resolve(path: str) -&gt; str:
+    &#34;&#34;&#34;Resolve `path` to an absolute POSIX-style path string.
+
+    Uses `Path.resolve()` to expand symlinks and relative segments. The
+    returned string always uses forward slashes for internal consistency.
+    &#34;&#34;&#34;
+    return Path(path).resolve().as_posix()</code></pre>
+</details>
+<div class="desc"><p>Resolve <code>path</code> to an absolute POSIX-style path string.</p>
+<p>Uses <code>Path.resolve()</code> to expand symlinks and relative segments. The
+returned string always uses forward slashes for internal consistency.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.DiskDriver.temp_dir"><code class="name flex">
+<span>def <span class="ident">temp_dir</span></span>(<span>) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def temp_dir() -&gt; str:
+    &#34;&#34;&#34;Returns the system&#39;s default temporary directory path.
+
+    Returns:
+        str: The temporary directory path.
+    &#34;&#34;&#34;
+    return tempfile.gettempdir()</code></pre>
+</details>
+<div class="desc"><p>Returns the system's default temporary directory path.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>The temporary directory path.</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.DiskDriver.write_text"><code class="name flex">
+<span>def <span class="ident">write_text</span></span>(<span>path: str, content: str, encoding: str = 'utf-8') ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def write_text(path: str, content: str, encoding: str = &#34;utf-8&#34;) -&gt; None:
+    &#34;&#34;&#34;Writes a string to a file, overwriting existing content.
+
+    Args:
+        path (str): The path to the file.
+        content (str): The string content to write.
+        encoding (str, optional): The text encoding to use. Defaults to &#34;utf-8&#34;.
+    &#34;&#34;&#34;
+    Path(path).write_text(content, encoding=encoding)</code></pre>
+</details>
+<div class="desc"><p>Writes a string to a file, overwriting existing content.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>path</code></strong> :&ensp;<code>str</code></dt>
+<dd>The path to the file.</dd>
+<dt><strong><code>content</code></strong> :&ensp;<code>str</code></dt>
+<dd>The string content to write.</dd>
+<dt><strong><code>encoding</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>The text encoding to use. Defaults to "utf-8".</dd>
+</dl></div>
+</dd>
+</dl>
+</dd>
+<dt id="linux_plus_plus.hal.HAL"><code class="flex name class">
+<span>class <span class="ident">HAL</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class HAL:
+    &#34;&#34;&#34;Unified Hardware Abstraction Layer (HAL) entry point.
+
+    The HAL class acts as a façade pattern, providing a single point of access 
+    to all OS-dependent subsystems. It ensures that Layer 3 (Kernel) and 
+    Layer 4 (Shell) remain platform-agnostic by delegating hardware tasks 
+    to specific drivers.
+
+    Attributes:
+        terminal (TerminalDriver): Handles I/O, colors, and terminal metadata.
+        disk (DiskDriver): Manages filesystem operations and path resolution.
+        process (ProcessDriver): Handles command execution and process lifecycle.
+        network (NetworkDriver): Provides basic network and connectivity info.
+        system (SystemInfoDriver): Exposes hardware and OS metadata.
+        signals (SignalDriver): Manages system-level interrupt handlers.
+        os_type (str): The detected host OS (linux, macos, or windows).
+    &#34;&#34;&#34;
+    terminal = TerminalDriver
+    disk = DiskDriver
+    process = ProcessDriver
+    network = NetworkDriver
+    system = SystemInfoDriver
+    signals = SignalDriver
+    os_type = CURRENT_OS
+
+    @staticmethod
+    def boot() -&gt; None:
+        &#34;&#34;&#34;Initializes the Hardware Abstraction Layer.
+
+        This method is called during the initial boot phase of the system. 
+        It prepares the environment by enabling ANSI support on Windows 
+        legacy consoles and prints a diagnostic banner identifying the 
+        host hardware and current user.
+        &#34;&#34;&#34;
+        TerminalDriver.enable_ansi_on_windows()
+        t = TerminalDriver
+        info = SystemInfoDriver.info()
+        t.write(
+            f&#34;{t.BOLD}{t.GREEN}linux++ HAL booted{t.RESET} &#34;
+            f&#34;on {t.CYAN}{info[&#39;os&#39;]}{t.RESET} &#34;
+            f&#34;({info[&#39;os_release&#39;]}) &#34;
+            f&#34;as {t.YELLOW}{info[&#39;username&#39;]}{t.RESET}@&#34;
+            f&#34;{t.BLUE}{info[&#39;hostname&#39;]}{t.RESET}&#34;
+        )</code></pre>
+</details>
+<div class="desc"><p>Unified Hardware Abstraction Layer (HAL) entry point.</p>
+<p>The HAL class acts as a façade pattern, providing a single point of access
+to all OS-dependent subsystems. It ensures that Layer 3 (Kernel) and
+Layer 4 (Shell) remain platform-agnostic by delegating hardware tasks
+to specific drivers.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>terminal</code></strong> :&ensp;<code><a title="linux_plus_plus.hal.TerminalDriver" href="#linux_plus_plus.hal.TerminalDriver">TerminalDriver</a></code></dt>
+<dd>Handles I/O, colors, and terminal metadata.</dd>
+<dt><strong><code>disk</code></strong> :&ensp;<code><a title="linux_plus_plus.hal.DiskDriver" href="#linux_plus_plus.hal.DiskDriver">DiskDriver</a></code></dt>
+<dd>Manages filesystem operations and path resolution.</dd>
+<dt><strong><code>process</code></strong> :&ensp;<code><a title="linux_plus_plus.hal.ProcessDriver" href="#linux_plus_plus.hal.ProcessDriver">ProcessDriver</a></code></dt>
+<dd>Handles command execution and process lifecycle.</dd>
+<dt><strong><code>network</code></strong> :&ensp;<code><a title="linux_plus_plus.hal.NetworkDriver" href="#linux_plus_plus.hal.NetworkDriver">NetworkDriver</a></code></dt>
+<dd>Provides basic network and connectivity info.</dd>
+<dt><strong><code>system</code></strong> :&ensp;<code><a title="linux_plus_plus.hal.SystemInfoDriver" href="#linux_plus_plus.hal.SystemInfoDriver">SystemInfoDriver</a></code></dt>
+<dd>Exposes hardware and OS metadata.</dd>
+<dt><strong><code>signals</code></strong> :&ensp;<code><a title="linux_plus_plus.hal.SignalDriver" href="#linux_plus_plus.hal.SignalDriver">SignalDriver</a></code></dt>
+<dd>Manages system-level interrupt handlers.</dd>
+<dt><strong><code>os_type</code></strong> :&ensp;<code>str</code></dt>
+<dd>The detected host OS (linux, macos, or windows).</dd>
+</dl></div>
+<h3>Class variables</h3>
+<dl>
+<dt id="linux_plus_plus.hal.HAL.disk"><code class="name">var <span class="ident">disk</span></code></dt>
+<dd>
+<div class="desc"><p>Filesystem abstraction and path utilities.</p>
+<p>The DiskDriver provides a small set of deterministic filesystem
+operations that return predictable Python types (for example, <code>listdir</code>
+returns a list of dictionaries describing entries). Paths are expressed
+and returned as POSIX-style strings (forward slashes) to simplify the
+kernel's internal handling; conversion to platform-native paths happens
+via pathlib under the hood.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.HAL.network"><code class="name">var <span class="ident">network</span></code></dt>
+<dd>
+<div class="desc"><p>Basic network information, OS-independent.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.HAL.os_type"><code class="name">var <span class="ident">os_type</span></code></dt>
+<dd>
+<div class="desc"><p>The type of the None singleton.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.HAL.process"><code class="name">var <span class="ident">process</span></code></dt>
+<dd>
+<div class="desc"><p>Runs external commands in an OS-independent way.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.HAL.signals"><code class="name">var <span class="ident">signals</span></code></dt>
+<dd>
+<div class="desc"><p>Registers and manages OS-level signal handlers in a uniform way across platforms.</p>
+<p>Signals are used to notify a process of external events, such as a user
+pressing Ctrl+C or the system requesting a shutdown. This driver
+abstracts the mapping between Python's signal module and OS-specific
+behaviors.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.HAL.system"><code class="name">var <span class="ident">system</span></code></dt>
+<dd>
+<div class="desc"><p>Provides a unified interface for retrieving hardware and operating system metadata.</p>
+<p>This driver abstracts the platform-specific complexities of gathering
+identifying information about the host, including CPU architecture,
+memory usage, and system uptime.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.HAL.terminal"><code class="name">var <span class="ident">terminal</span></code></dt>
+<dd>
+<div class="desc"><p>Cross-platform terminal utilities.</p>
+<p>The <code><a title="linux_plus_plus.hal.TerminalDriver" href="#linux_plus_plus.hal.TerminalDriver">TerminalDriver</a></code> exposes helpers for writing coloured text, clearing
+the screen, reading user input and querying terminal size. The class is
+deliberately lightweight and uses ANSI escape sequences on platforms
+that support them (Linux, macOS, and modern Windows terminals).</p></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="linux_plus_plus.hal.HAL.boot"><code class="name flex">
+<span>def <span class="ident">boot</span></span>(<span>) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def boot() -&gt; None:
+    &#34;&#34;&#34;Initializes the Hardware Abstraction Layer.
+
+    This method is called during the initial boot phase of the system. 
+    It prepares the environment by enabling ANSI support on Windows 
+    legacy consoles and prints a diagnostic banner identifying the 
+    host hardware and current user.
+    &#34;&#34;&#34;
+    TerminalDriver.enable_ansi_on_windows()
+    t = TerminalDriver
+    info = SystemInfoDriver.info()
+    t.write(
+        f&#34;{t.BOLD}{t.GREEN}linux++ HAL booted{t.RESET} &#34;
+        f&#34;on {t.CYAN}{info[&#39;os&#39;]}{t.RESET} &#34;
+        f&#34;({info[&#39;os_release&#39;]}) &#34;
+        f&#34;as {t.YELLOW}{info[&#39;username&#39;]}{t.RESET}@&#34;
+        f&#34;{t.BLUE}{info[&#39;hostname&#39;]}{t.RESET}&#34;
+    )</code></pre>
+</details>
+<div class="desc"><p>Initializes the Hardware Abstraction Layer.</p>
+<p>This method is called during the initial boot phase of the system.
+It prepares the environment by enabling ANSI support on Windows
+legacy consoles and prints a diagnostic banner identifying the
+host hardware and current user.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="linux_plus_plus.hal.NetworkDriver"><code class="flex name class">
+<span>class <span class="ident">NetworkDriver</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NetworkDriver:
+    &#34;&#34;&#34;Basic network information, OS-independent.&#34;&#34;&#34;
+
+    @staticmethod
+    def hostname() -&gt; str:
+        &#34;&#34;&#34;Retrieves the hostname of the local machine.
+
+        Returns:
+            str: The system hostname.
+        &#34;&#34;&#34;
+        import socket
+        return socket.gethostname()
+
+    @staticmethod
+    def local_ip() -&gt; str:
+        &#34;&#34;&#34;Determines the primary local IP address of the system.
+
+        This method uses a common socket trick: it creates a UDP connection to a 
+        public DNS server (8.8.8.8) to see which local interface the OS 
+        chooses to route the traffic through. No data is actually transmitted.
+
+        Returns:
+            str: The local IPv4 address, or &#39;127.0.0.1&#39; if offline or unreachable.
+        &#34;&#34;&#34;
+        import socket
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            # Connecting to an external IP doesn&#39;t send packets for UDP,
+            # but it does force the OS to pick an outgoing local address.
+            s.connect((&#34;8.8.8.8&#34;, 80))
+            ip = s.getsockname()[0]
+            s.close()
+            return ip
+        except Exception:
+            # Fallback if no network interface is active
+            return &#34;127.0.0.1&#34;
+
+    @staticmethod
+    def ping(host: str, count: int = 1) -&gt; bool:
+        &#34;&#34;&#34;Checks if a remote host is reachable via ICMP.
+
+        Args:
+            host (str): The destination IP or domain name.
+            count (int, optional): The number of packets to send. Defaults to 1.
+
+        Returns:
+            bool: True if at least one packet was received back, False otherwise.
+        &#34;&#34;&#34;
+        flag = &#34;-n&#34; if IS_WINDOWS else &#34;-c&#34;
+        try:
+            result = subprocess.run(
+                [&#34;ping&#34;, flag, str(count), host],
+                capture_output=True, timeout=5
+            )
+            return result.returncode == 0
+        except (subprocess.SubprocessError, TimeoutError):
+            return False</code></pre>
+</details>
+<div class="desc"><p>Basic network information, OS-independent.</p></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="linux_plus_plus.hal.NetworkDriver.hostname"><code class="name flex">
+<span>def <span class="ident">hostname</span></span>(<span>) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def hostname() -&gt; str:
+    &#34;&#34;&#34;Retrieves the hostname of the local machine.
+
+    Returns:
+        str: The system hostname.
+    &#34;&#34;&#34;
+    import socket
+    return socket.gethostname()</code></pre>
+</details>
+<div class="desc"><p>Retrieves the hostname of the local machine.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>The system hostname.</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.NetworkDriver.local_ip"><code class="name flex">
+<span>def <span class="ident">local_ip</span></span>(<span>) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def local_ip() -&gt; str:
+    &#34;&#34;&#34;Determines the primary local IP address of the system.
+
+    This method uses a common socket trick: it creates a UDP connection to a 
+    public DNS server (8.8.8.8) to see which local interface the OS 
+    chooses to route the traffic through. No data is actually transmitted.
+
+    Returns:
+        str: The local IPv4 address, or &#39;127.0.0.1&#39; if offline or unreachable.
+    &#34;&#34;&#34;
+    import socket
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        # Connecting to an external IP doesn&#39;t send packets for UDP,
+        # but it does force the OS to pick an outgoing local address.
+        s.connect((&#34;8.8.8.8&#34;, 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        # Fallback if no network interface is active
+        return &#34;127.0.0.1&#34;</code></pre>
+</details>
+<div class="desc"><p>Determines the primary local IP address of the system.</p>
+<p>This method uses a common socket trick: it creates a UDP connection to a
+public DNS server (8.8.8.8) to see which local interface the OS
+chooses to route the traffic through. No data is actually transmitted.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>The local IPv4 address, or '127.0.0.1' if offline or unreachable.</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.NetworkDriver.ping"><code class="name flex">
+<span>def <span class="ident">ping</span></span>(<span>host: str, count: int = 1) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def ping(host: str, count: int = 1) -&gt; bool:
+    &#34;&#34;&#34;Checks if a remote host is reachable via ICMP.
+
+    Args:
+        host (str): The destination IP or domain name.
+        count (int, optional): The number of packets to send. Defaults to 1.
+
+    Returns:
+        bool: True if at least one packet was received back, False otherwise.
+    &#34;&#34;&#34;
+    flag = &#34;-n&#34; if IS_WINDOWS else &#34;-c&#34;
+    try:
+        result = subprocess.run(
+            [&#34;ping&#34;, flag, str(count), host],
+            capture_output=True, timeout=5
+        )
+        return result.returncode == 0
+    except (subprocess.SubprocessError, TimeoutError):
+        return False</code></pre>
+</details>
+<div class="desc"><p>Checks if a remote host is reachable via ICMP.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>host</code></strong> :&ensp;<code>str</code></dt>
+<dd>The destination IP or domain name.</dd>
+<dt><strong><code>count</code></strong> :&ensp;<code>int</code>, optional</dt>
+<dd>The number of packets to send. Defaults to 1.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>True if at least one packet was received back, False otherwise.</dd>
+</dl></div>
+</dd>
+</dl>
+</dd>
+<dt id="linux_plus_plus.hal.OSType"><code class="flex name class">
+<span>class <span class="ident">OSType</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OSType:
+    &#34;&#34;&#34;Constants representing detected operating system types.
+
+    These string constants are used across the codebase to branch behavior
+    where necessary (for example, choosing the correct command-line flags
+    or enabling Windows-specific terminal features).
+    &#34;&#34;&#34;
+    LINUX = &#34;linux&#34;
+    MACOS = &#34;macos&#34;
+    WINDOWS = &#34;windows&#34;
+    UNKNOWN = &#34;unknown&#34;</code></pre>
+</details>
+<div class="desc"><p>Constants representing detected operating system types.</p>
+<p>These string constants are used across the codebase to branch behavior
+where necessary (for example, choosing the correct command-line flags
+or enabling Windows-specific terminal features).</p></div>
+<h3>Class variables</h3>
+<dl>
+<dt id="linux_plus_plus.hal.OSType.LINUX"><code class="name">var <span class="ident">LINUX</span></code></dt>
+<dd>
+<div class="desc"><p>The type of the None singleton.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.OSType.MACOS"><code class="name">var <span class="ident">MACOS</span></code></dt>
+<dd>
+<div class="desc"><p>The type of the None singleton.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.OSType.UNKNOWN"><code class="name">var <span class="ident">UNKNOWN</span></code></dt>
+<dd>
+<div class="desc"><p>The type of the None singleton.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.OSType.WINDOWS"><code class="name">var <span class="ident">WINDOWS</span></code></dt>
+<dd>
+<div class="desc"><p>The type of the None singleton.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="linux_plus_plus.hal.ProcessDriver"><code class="flex name class">
+<span>class <span class="ident">ProcessDriver</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ProcessDriver:
+    &#34;&#34;&#34;Runs external commands in an OS-independent way.&#34;&#34;&#34;
+
+    @staticmethod
+    def run(
+        command: list[str] | str,
+        cwd: Optional[str] = None,
+        env: Optional[dict] = None,
+        shell: bool = False,
+        timeout: Optional[float] = None,
+        capture: bool = True,
+    ) -&gt; ProcessResult:
+        &#34;&#34;&#34;Executes a command synchronously and waits for its completion.
+
+        This method wraps subprocess.run to provide a uniform interface for command
+        execution. It automatically handles Windows shell requirements for string
+        commands and provides robust error handling for common failure modes like
+        missing executables or timeouts.
+
+        Args:
+            command (list[str] | str): The command to execute, either as a list of 
+                arguments or a single string.
+            cwd (Optional[str]): Working directory to execute the command in.
+            env (Optional[dict]): Dictionary of environment variables to add to 
+                the process environment.
+            shell (bool): Whether to use the shell as the executable. Defaults to 
+                False (though forced True on Windows for string commands).
+            timeout (Optional[float]): Maximum time in seconds to wait for completion.
+            capture (bool): Whether to capture stdout and stderr. Defaults to True.
+
+        Returns:
+            ProcessResult: An object containing stdout, stderr, and the return code.
+        &#34;&#34;&#34;
+        merged_env = {**os.environ, **(env or {})}
+
+        # On Windows, string commands need shell=True to find built-ins
+        if IS_WINDOWS and isinstance(command, str):
+            shell = True
+
+        try:
+            result = subprocess.run(
+                command,
+                cwd=cwd,
+                env=merged_env,
+                shell=shell,
+                timeout=timeout,
+                capture_output=capture,
+                text=True,
+            )
+            return ProcessResult(
+                stdout=result.stdout or &#34;&#34;,
+                stderr=result.stderr or &#34;&#34;,
+                returncode=result.returncode,
+            )
+        except FileNotFoundError:
+            return ProcessResult(&#34;&#34;, f&#34;Command not found: {command}&#34;, 127)
+        except subprocess.TimeoutExpired:
+            return ProcessResult(&#34;&#34;, &#34;Process timed out&#34;, 124)
+        except Exception as e:
+            return ProcessResult(&#34;&#34;, str(e), 1)
+
+    @staticmethod
+    def spawn(
+        command: list[str] | str,
+        cwd:     Optional[str] = None,
+        env:     Optional[dict] = None,
+        shell:   bool = False,
+    ) -&gt; subprocess.Popen:
+        &#34;&#34;&#34;Starts a process asynchronously in the background.
+
+        Unlike &#39;run&#39;, this method does not wait for the process to finish. It 
+        returns the underlying subprocess.Popen object, allowing for manual 
+        monitoring or communication.
+
+        Args:
+            command (list[str] | str): The command to execute.
+            cwd (Optional[str]): Working directory for the process.
+            env (Optional[dict]): Environment variable overrides.
+            shell (bool): Whether to execute via the shell.
+
+        Returns:
+            subprocess.Popen: The handle to the background process.
+        &#34;&#34;&#34;
+        merged_env = {**os.environ, **(env or {})}
+        if IS_WINDOWS and isinstance(command, str):
+            shell = True
+        return subprocess.Popen(
+            command,
+            cwd=cwd,
+            env=merged_env,
+            shell=shell,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+
+    @staticmethod
+    def which(program: str) -&gt; Optional[str]:
+        &#34;&#34;&#34;Locates the absolute path of an executable in the system&#39;s PATH.
+
+        This mimics the behavior of the Unix &#39;which&#39; command.
+
+        Args:
+            program (str): The name of the program to find.
+
+        Returns:
+            Optional[str]: The absolute path to the executable if found, else None.
+        &#34;&#34;&#34;
+        return shutil.which(program)
+
+    @staticmethod
+    def pid() -&gt; int:
+        &#34;&#34;&#34;Returns the process identifier (PID) of the current process.
+
+        Returns:
+            int: The current process ID.
+        &#34;&#34;&#34;
+        return os.getpid()
+
+    @staticmethod
+    def kill(pid: int, force: bool = False) -&gt; bool:
+        &#34;&#34;&#34;Terminates a process given its PID.
+
+        On Windows, it uses &#39;taskkill&#39;. On Unix-like systems, it sends 
+        signals (SIGTERM/SIGKILL).
+
+        Args:
+            pid (int): The process ID to terminate.
+            force (bool): If True, forces immediate termination (SIGKILL).
+
+        Returns:
+            bool: True if the termination command was successfully sent, else False.
+        &#34;&#34;&#34;
+        try:
+            if IS_WINDOWS:
+                subprocess.run(
+                    [&#34;taskkill&#34;, &#34;/F&#34; if force else &#34;/T&#34;, &#34;/PID&#34;, str(pid)],
+                    capture_output=True
+                )
+            else:
+                sig = signal.SIGKILL if force else signal.SIGTERM
+                os.kill(pid, sig)
+            return True
+        except (ProcessLookupError, PermissionError):
+            return False
+
+    @staticmethod
+    def list_processes() -&gt; list[dict]:
+        &#34;&#34;&#34;Retrieves a list of currently running processes on the host system.
+
+        Uses &#39;tasklist&#39; on Windows and &#39;ps&#39; on Unix to gather basic process 
+        information (Name and PID).
+
+        Returns:
+            list[dict]: A list of dictionaries, each containing &#39;name&#39; and &#39;pid&#39;.
+        &#34;&#34;&#34;
+        if IS_WINDOWS:
+            result = subprocess.run(
+                [&#34;tasklist&#34;, &#34;/FO&#34;, &#34;CSV&#34;, &#34;/NH&#34;],
+                capture_output=True, text=True
+            )
+            processes = []
+            for line in result.stdout.strip().splitlines():
+                parts = line.strip(&#39;&#34;&#39;).split(&#39;&#34;,&#34;&#39;)
+                if len(parts) &gt;= 2:
+                    try:
+                        processes.append({
+                            &#34;name&#34;: parts[0],
+                            &#34;pid&#34;:  int(parts[1]),
+                        })
+                    except ValueError:
+                        pass
+            return processes
+        else:
+            result = subprocess.run(
+                [&#34;ps&#34;, &#34;-eo&#34;, &#34;pid,comm&#34;],
+                capture_output=True, text=True
+            )
+            processes = []
+            for line in result.stdout.strip().splitlines()[1:]:
+                parts = line.split(None, 1)
+                if len(parts) == 2:
+                    try:
+                        processes.append({
+                            &#34;pid&#34;:  int(parts[0]),
+                            &#34;name&#34;: parts[1].strip(),
+                        })
+                    except ValueError:
+                        pass
+            return processes</code></pre>
+</details>
+<div class="desc"><p>Runs external commands in an OS-independent way.</p></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="linux_plus_plus.hal.ProcessDriver.kill"><code class="name flex">
+<span>def <span class="ident">kill</span></span>(<span>pid: int, force: bool = False) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def kill(pid: int, force: bool = False) -&gt; bool:
+    &#34;&#34;&#34;Terminates a process given its PID.
+
+    On Windows, it uses &#39;taskkill&#39;. On Unix-like systems, it sends 
+    signals (SIGTERM/SIGKILL).
+
+    Args:
+        pid (int): The process ID to terminate.
+        force (bool): If True, forces immediate termination (SIGKILL).
+
+    Returns:
+        bool: True if the termination command was successfully sent, else False.
+    &#34;&#34;&#34;
+    try:
+        if IS_WINDOWS:
+            subprocess.run(
+                [&#34;taskkill&#34;, &#34;/F&#34; if force else &#34;/T&#34;, &#34;/PID&#34;, str(pid)],
+                capture_output=True
+            )
+        else:
+            sig = signal.SIGKILL if force else signal.SIGTERM
+            os.kill(pid, sig)
+        return True
+    except (ProcessLookupError, PermissionError):
+        return False</code></pre>
+</details>
+<div class="desc"><p>Terminates a process given its PID.</p>
+<p>On Windows, it uses 'taskkill'. On Unix-like systems, it sends
+signals (SIGTERM/SIGKILL).</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pid</code></strong> :&ensp;<code>int</code></dt>
+<dd>The process ID to terminate.</dd>
+<dt><strong><code>force</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, forces immediate termination (SIGKILL).</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>True if the termination command was successfully sent, else False.</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.ProcessDriver.list_processes"><code class="name flex">
+<span>def <span class="ident">list_processes</span></span>(<span>) ‑> list[dict]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def list_processes() -&gt; list[dict]:
+    &#34;&#34;&#34;Retrieves a list of currently running processes on the host system.
+
+    Uses &#39;tasklist&#39; on Windows and &#39;ps&#39; on Unix to gather basic process 
+    information (Name and PID).
+
+    Returns:
+        list[dict]: A list of dictionaries, each containing &#39;name&#39; and &#39;pid&#39;.
+    &#34;&#34;&#34;
+    if IS_WINDOWS:
+        result = subprocess.run(
+            [&#34;tasklist&#34;, &#34;/FO&#34;, &#34;CSV&#34;, &#34;/NH&#34;],
+            capture_output=True, text=True
+        )
+        processes = []
+        for line in result.stdout.strip().splitlines():
+            parts = line.strip(&#39;&#34;&#39;).split(&#39;&#34;,&#34;&#39;)
+            if len(parts) &gt;= 2:
+                try:
+                    processes.append({
+                        &#34;name&#34;: parts[0],
+                        &#34;pid&#34;:  int(parts[1]),
+                    })
+                except ValueError:
+                    pass
+        return processes
+    else:
+        result = subprocess.run(
+            [&#34;ps&#34;, &#34;-eo&#34;, &#34;pid,comm&#34;],
+            capture_output=True, text=True
+        )
+        processes = []
+        for line in result.stdout.strip().splitlines()[1:]:
+            parts = line.split(None, 1)
+            if len(parts) == 2:
+                try:
+                    processes.append({
+                        &#34;pid&#34;:  int(parts[0]),
+                        &#34;name&#34;: parts[1].strip(),
+                    })
+                except ValueError:
+                    pass
+        return processes</code></pre>
+</details>
+<div class="desc"><p>Retrieves a list of currently running processes on the host system.</p>
+<p>Uses 'tasklist' on Windows and 'ps' on Unix to gather basic process
+information (Name and PID).</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list[dict]</code></dt>
+<dd>A list of dictionaries, each containing 'name' and 'pid'.</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.ProcessDriver.pid"><code class="name flex">
+<span>def <span class="ident">pid</span></span>(<span>) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def pid() -&gt; int:
+    &#34;&#34;&#34;Returns the process identifier (PID) of the current process.
+
+    Returns:
+        int: The current process ID.
+    &#34;&#34;&#34;
+    return os.getpid()</code></pre>
+</details>
+<div class="desc"><p>Returns the process identifier (PID) of the current process.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>int</code></dt>
+<dd>The current process ID.</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.ProcessDriver.run"><code class="name flex">
+<span>def <span class="ident">run</span></span>(<span>command: list[str] | str,<br>cwd: str | None = None,<br>env: dict | None = None,<br>shell: bool = False,<br>timeout: float | None = None,<br>capture: bool = True) ‑> <a title="linux_plus_plus.hal.ProcessResult" href="#linux_plus_plus.hal.ProcessResult">ProcessResult</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def run(
+    command: list[str] | str,
+    cwd: Optional[str] = None,
+    env: Optional[dict] = None,
+    shell: bool = False,
+    timeout: Optional[float] = None,
+    capture: bool = True,
+) -&gt; ProcessResult:
+    &#34;&#34;&#34;Executes a command synchronously and waits for its completion.
+
+    This method wraps subprocess.run to provide a uniform interface for command
+    execution. It automatically handles Windows shell requirements for string
+    commands and provides robust error handling for common failure modes like
+    missing executables or timeouts.
+
+    Args:
+        command (list[str] | str): The command to execute, either as a list of 
+            arguments or a single string.
+        cwd (Optional[str]): Working directory to execute the command in.
+        env (Optional[dict]): Dictionary of environment variables to add to 
+            the process environment.
+        shell (bool): Whether to use the shell as the executable. Defaults to 
+            False (though forced True on Windows for string commands).
+        timeout (Optional[float]): Maximum time in seconds to wait for completion.
+        capture (bool): Whether to capture stdout and stderr. Defaults to True.
+
+    Returns:
+        ProcessResult: An object containing stdout, stderr, and the return code.
+    &#34;&#34;&#34;
+    merged_env = {**os.environ, **(env or {})}
+
+    # On Windows, string commands need shell=True to find built-ins
+    if IS_WINDOWS and isinstance(command, str):
+        shell = True
+
+    try:
+        result = subprocess.run(
+            command,
+            cwd=cwd,
+            env=merged_env,
+            shell=shell,
+            timeout=timeout,
+            capture_output=capture,
+            text=True,
+        )
+        return ProcessResult(
+            stdout=result.stdout or &#34;&#34;,
+            stderr=result.stderr or &#34;&#34;,
+            returncode=result.returncode,
+        )
+    except FileNotFoundError:
+        return ProcessResult(&#34;&#34;, f&#34;Command not found: {command}&#34;, 127)
+    except subprocess.TimeoutExpired:
+        return ProcessResult(&#34;&#34;, &#34;Process timed out&#34;, 124)
+    except Exception as e:
+        return ProcessResult(&#34;&#34;, str(e), 1)</code></pre>
+</details>
+<div class="desc"><p>Executes a command synchronously and waits for its completion.</p>
+<p>This method wraps subprocess.run to provide a uniform interface for command
+execution. It automatically handles Windows shell requirements for string
+commands and provides robust error handling for common failure modes like
+missing executables or timeouts.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>command</code></strong> :&ensp;<code>list[str] | str</code></dt>
+<dd>The command to execute, either as a list of
+arguments or a single string.</dd>
+<dt><strong><code>cwd</code></strong> :&ensp;<code>Optional[str]</code></dt>
+<dd>Working directory to execute the command in.</dd>
+<dt><strong><code>env</code></strong> :&ensp;<code>Optional[dict]</code></dt>
+<dd>Dictionary of environment variables to add to
+the process environment.</dd>
+<dt><strong><code>shell</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to use the shell as the executable. Defaults to
+False (though forced True on Windows for string commands).</dd>
+<dt><strong><code>timeout</code></strong> :&ensp;<code>Optional[float]</code></dt>
+<dd>Maximum time in seconds to wait for completion.</dd>
+<dt><strong><code>capture</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to capture stdout and stderr. Defaults to True.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="linux_plus_plus.hal.ProcessResult" href="#linux_plus_plus.hal.ProcessResult">ProcessResult</a></code></dt>
+<dd>An object containing stdout, stderr, and the return code.</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.ProcessDriver.spawn"><code class="name flex">
+<span>def <span class="ident">spawn</span></span>(<span>command: list[str] | str,<br>cwd: str | None = None,<br>env: dict | None = None,<br>shell: bool = False) ‑> subprocess.Popen</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def spawn(
+    command: list[str] | str,
+    cwd:     Optional[str] = None,
+    env:     Optional[dict] = None,
+    shell:   bool = False,
+) -&gt; subprocess.Popen:
+    &#34;&#34;&#34;Starts a process asynchronously in the background.
+
+    Unlike &#39;run&#39;, this method does not wait for the process to finish. It 
+    returns the underlying subprocess.Popen object, allowing for manual 
+    monitoring or communication.
+
+    Args:
+        command (list[str] | str): The command to execute.
+        cwd (Optional[str]): Working directory for the process.
+        env (Optional[dict]): Environment variable overrides.
+        shell (bool): Whether to execute via the shell.
+
+    Returns:
+        subprocess.Popen: The handle to the background process.
+    &#34;&#34;&#34;
+    merged_env = {**os.environ, **(env or {})}
+    if IS_WINDOWS and isinstance(command, str):
+        shell = True
+    return subprocess.Popen(
+        command,
+        cwd=cwd,
+        env=merged_env,
+        shell=shell,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )</code></pre>
+</details>
+<div class="desc"><p>Starts a process asynchronously in the background.</p>
+<p>Unlike 'run', this method does not wait for the process to finish. It
+returns the underlying subprocess.Popen object, allowing for manual
+monitoring or communication.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>command</code></strong> :&ensp;<code>list[str] | str</code></dt>
+<dd>The command to execute.</dd>
+<dt><strong><code>cwd</code></strong> :&ensp;<code>Optional[str]</code></dt>
+<dd>Working directory for the process.</dd>
+<dt><strong><code>env</code></strong> :&ensp;<code>Optional[dict]</code></dt>
+<dd>Environment variable overrides.</dd>
+<dt><strong><code>shell</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to execute via the shell.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>subprocess.Popen</code></dt>
+<dd>The handle to the background process.</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.ProcessDriver.which"><code class="name flex">
+<span>def <span class="ident">which</span></span>(<span>program: str) ‑> str | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def which(program: str) -&gt; Optional[str]:
+    &#34;&#34;&#34;Locates the absolute path of an executable in the system&#39;s PATH.
+
+    This mimics the behavior of the Unix &#39;which&#39; command.
+
+    Args:
+        program (str): The name of the program to find.
+
+    Returns:
+        Optional[str]: The absolute path to the executable if found, else None.
+    &#34;&#34;&#34;
+    return shutil.which(program)</code></pre>
+</details>
+<div class="desc"><p>Locates the absolute path of an executable in the system's PATH.</p>
+<p>This mimics the behavior of the Unix 'which' command.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>program</code></strong> :&ensp;<code>str</code></dt>
+<dd>The name of the program to find.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Optional[str]</code></dt>
+<dd>The absolute path to the executable if found, else None.</dd>
+</dl></div>
+</dd>
+</dl>
+</dd>
+<dt id="linux_plus_plus.hal.ProcessResult"><code class="flex name class">
+<span>class <span class="ident">ProcessResult</span></span>
+<span>(</span><span>stdout: str, stderr: str, returncode: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ProcessResult:
+    &#34;&#34;&#34;Encapsulates the result of an external process execution.&#34;&#34;&#34;
+
+    def __init__(self, stdout: str, stderr: str, returncode: int):
+        &#34;&#34;&#34;Initializes the process result.
+
+        Args:
+            stdout (str): The captured standard output.
+            stderr (str): The captured standard error.
+            returncode (int): The process exit code.
+        &#34;&#34;&#34;
+        self.stdout = stdout
+        self.stderr = stderr
+        self.returncode = returncode
+        self.ok = returncode == 0
+
+    def __repr__(self):
+        return f&#34;&lt;ProcessResult rc={self.returncode}&gt;&#34;</code></pre>
+</details>
+<div class="desc"><p>Encapsulates the result of an external process execution.</p>
+<p>Initializes the process result.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>stdout</code></strong> :&ensp;<code>str</code></dt>
+<dd>The captured standard output.</dd>
+<dt><strong><code>stderr</code></strong> :&ensp;<code>str</code></dt>
+<dd>The captured standard error.</dd>
+<dt><strong><code>returncode</code></strong> :&ensp;<code>int</code></dt>
+<dd>The process exit code.</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.SignalDriver"><code class="flex name class">
+<span>class <span class="ident">SignalDriver</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SignalDriver:
+    &#34;&#34;&#34;Registers and manages OS-level signal handlers in a uniform way across platforms.
+
+    Signals are used to notify a process of external events, such as a user 
+    pressing Ctrl+C or the system requesting a shutdown. This driver 
+    abstracts the mapping between Python&#39;s signal module and OS-specific 
+    behaviors.
+    &#34;&#34;&#34;
+
+    @staticmethod
+    def on_interrupt(handler) -&gt; None:
+        &#34;&#34;&#34;Registers a callback for the SIGINT signal (KeyboardInterrupt).
+
+        Triggered typically when the user presses Ctrl+C in the terminal.
+
+        Args:
+            handler (Callable): A function to call when the signal is received. 
+                The handler must accept two arguments: the signal number 
+                and the current stack frame.
+        &#34;&#34;&#34;
+        signal.signal(signal.SIGINT, handler)
+
+    @staticmethod
+    def on_terminate(handler) -&gt; None:
+        &#34;&#34;&#34;Registers a callback for the SIGTERM signal (Termination Request).
+
+        This signal is sent by the OS or other processes to request a graceful 
+        shutdown. Note that SIGTERM is generally not supported on Windows.
+
+        Args:
+            handler (Callable): A function to call when the signal is received.
+        &#34;&#34;&#34;
+        if not IS_WINDOWS:
+            signal.signal(signal.SIGTERM, handler)
+
+    @staticmethod
+    def ignore_interrupt() -&gt; None:
+        &#34;&#34;&#34;Sets the system to ignore Ctrl+C (SIGINT) signals.
+
+        Useful during critical sections of code where an unexpected 
+        interruption could cause data corruption or leave the system 
+        in an inconsistent state.
+        &#34;&#34;&#34;
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+    @staticmethod
+    def default_interrupt() -&gt; None:
+        &#34;&#34;&#34;Resets the Ctrl+C (SIGINT) handler to the default system behavior.
+
+        Typically, the default behavior for SIGINT is to raise a 
+        KeyboardInterrupt exception in the main thread.
+        &#34;&#34;&#34;
+        signal.signal(signal.SIGINT, signal.SIG_DFL)</code></pre>
+</details>
+<div class="desc"><p>Registers and manages OS-level signal handlers in a uniform way across platforms.</p>
+<p>Signals are used to notify a process of external events, such as a user
+pressing Ctrl+C or the system requesting a shutdown. This driver
+abstracts the mapping between Python's signal module and OS-specific
+behaviors.</p></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="linux_plus_plus.hal.SignalDriver.default_interrupt"><code class="name flex">
+<span>def <span class="ident">default_interrupt</span></span>(<span>) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def default_interrupt() -&gt; None:
+    &#34;&#34;&#34;Resets the Ctrl+C (SIGINT) handler to the default system behavior.
+
+    Typically, the default behavior for SIGINT is to raise a 
+    KeyboardInterrupt exception in the main thread.
+    &#34;&#34;&#34;
+    signal.signal(signal.SIGINT, signal.SIG_DFL)</code></pre>
+</details>
+<div class="desc"><p>Resets the Ctrl+C (SIGINT) handler to the default system behavior.</p>
+<p>Typically, the default behavior for SIGINT is to raise a
+KeyboardInterrupt exception in the main thread.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.SignalDriver.ignore_interrupt"><code class="name flex">
+<span>def <span class="ident">ignore_interrupt</span></span>(<span>) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def ignore_interrupt() -&gt; None:
+    &#34;&#34;&#34;Sets the system to ignore Ctrl+C (SIGINT) signals.
+
+    Useful during critical sections of code where an unexpected 
+    interruption could cause data corruption or leave the system 
+    in an inconsistent state.
+    &#34;&#34;&#34;
+    signal.signal(signal.SIGINT, signal.SIG_IGN)</code></pre>
+</details>
+<div class="desc"><p>Sets the system to ignore Ctrl+C (SIGINT) signals.</p>
+<p>Useful during critical sections of code where an unexpected
+interruption could cause data corruption or leave the system
+in an inconsistent state.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.SignalDriver.on_interrupt"><code class="name flex">
+<span>def <span class="ident">on_interrupt</span></span>(<span>handler) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def on_interrupt(handler) -&gt; None:
+    &#34;&#34;&#34;Registers a callback for the SIGINT signal (KeyboardInterrupt).
+
+    Triggered typically when the user presses Ctrl+C in the terminal.
+
+    Args:
+        handler (Callable): A function to call when the signal is received. 
+            The handler must accept two arguments: the signal number 
+            and the current stack frame.
+    &#34;&#34;&#34;
+    signal.signal(signal.SIGINT, handler)</code></pre>
+</details>
+<div class="desc"><p>Registers a callback for the SIGINT signal (KeyboardInterrupt).</p>
+<p>Triggered typically when the user presses Ctrl+C in the terminal.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>handler</code></strong> :&ensp;<code>Callable</code></dt>
+<dd>A function to call when the signal is received.
+The handler must accept two arguments: the signal number
+and the current stack frame.</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.SignalDriver.on_terminate"><code class="name flex">
+<span>def <span class="ident">on_terminate</span></span>(<span>handler) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def on_terminate(handler) -&gt; None:
+    &#34;&#34;&#34;Registers a callback for the SIGTERM signal (Termination Request).
+
+    This signal is sent by the OS or other processes to request a graceful 
+    shutdown. Note that SIGTERM is generally not supported on Windows.
+
+    Args:
+        handler (Callable): A function to call when the signal is received.
+    &#34;&#34;&#34;
+    if not IS_WINDOWS:
+        signal.signal(signal.SIGTERM, handler)</code></pre>
+</details>
+<div class="desc"><p>Registers a callback for the SIGTERM signal (Termination Request).</p>
+<p>This signal is sent by the OS or other processes to request a graceful
+shutdown. Note that SIGTERM is generally not supported on Windows.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>handler</code></strong> :&ensp;<code>Callable</code></dt>
+<dd>A function to call when the signal is received.</dd>
+</dl></div>
+</dd>
+</dl>
+</dd>
+<dt id="linux_plus_plus.hal.SystemInfoDriver"><code class="flex name class">
+<span>class <span class="ident">SystemInfoDriver</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SystemInfoDriver:
+    &#34;&#34;&#34;Provides a unified interface for retrieving hardware and operating system metadata.
+
+    This driver abstracts the platform-specific complexities of gathering 
+    identifying information about the host, including CPU architecture, 
+    memory usage, and system uptime.
+    &#34;&#34;&#34;
+
+    @staticmethod
+    def info() -&gt; dict:
+        &#34;&#34;&#34;Gathers a comprehensive set of system-wide metadata.
+
+        Combines data from the platform, network, and system drivers to create 
+        a snapshot of the current execution environment.
+
+        Returns:
+            dict: A dictionary containing &#39;os&#39;, &#39;os_version&#39;, &#39;machine&#39;, &#39;processor&#39;, 
+                  &#39;python&#39;, &#39;hostname&#39;, &#39;username&#39;, and &#39;uptime_secs&#39;.
+        &#34;&#34;&#34;
+        import time
+        return {
+            &#34;os&#34;: CURRENT_OS,
+            &#34;os_version&#34;: platform.version(),
+            &#34;os_release&#34;: platform.release(),
+            &#34;machine&#34;: platform.machine(),
+            &#34;processor&#34;: platform.processor() or &#34;unknown&#34;,
+            &#34;python&#34;: platform.python_version(),
+            &#34;hostname&#34;: NetworkDriver.hostname(),
+            &#34;username&#34;: SystemInfoDriver.username(),
+            &#34;uptime_secs&#34;: SystemInfoDriver._uptime(),
+        }
+
+    @staticmethod
+    def username() -&gt; str:
+        &#34;&#34;&#34;Retrieves the login name of the user currently running the process.
+
+        Attempts to use the standard &#39;getpass&#39; module first. If that fails, it 
+        falls back to common environment variables used across different OS types.
+
+        Returns:
+            str: The current username, or &#34;user&#34; as a final fallback.
+        &#34;&#34;&#34;
+        try:
+            import getpass
+            return getpass.getuser()
+        except Exception:
+            return os.environ.get(&#34;USER&#34;) or os.environ.get(&#34;USERNAME&#34;) or &#34;user&#34;
+
+    @staticmethod
+    def memory() -&gt; dict:
+        &#34;&#34;&#34;Returns memory usage statistics for the host system.
+
+        If the &#39;psutil&#39; library is installed, it provides real-time statistics. 
+        Otherwise, it returns a zeroed dictionary to prevent crashes.
+
+        Returns:
+            dict: A dictionary containing &#39;total&#39;, &#39;available&#39;, &#39;used&#39; (in bytes), 
+                  and &#39;percent&#39; (float).
+        &#34;&#34;&#34;
+        try:
+            import psutil
+            vm = psutil.virtual_memory()
+            return {
+                &#34;total&#34;: vm.total,
+                &#34;available&#34;: vm.available,
+                &#34;used&#34;: vm.used,
+                &#34;percent&#34;: vm.percent,
+            }
+        except ImportError:
+            return {&#34;total&#34;: 0, &#34;available&#34;: 0, &#34;used&#34;: 0, &#34;percent&#34;: 0.0}
+
+    @staticmethod
+    def _uptime() -&gt; float:
+        &#34;&#34;&#34;Calculates the system uptime in seconds.
+
+        This is a &#39;best-effort&#39; implementation. It prefers &#39;psutil&#39; for accuracy, 
+        but will attempt to parse &#39;/proc/uptime&#39; directly on Linux systems if 
+        psutil is missing.
+
+        Returns:
+            float: Total seconds since the system was booted, or 0.0 if unable to determine.
+        &#34;&#34;&#34;
+        try:
+            import psutil
+            return __import__(&#34;time&#34;).time() - psutil.boot_time()
+        except ImportError:
+            pass
+        if IS_LINUX := CURRENT_OS == OSType.LINUX:
+            try:
+                with open(&#34;/proc/uptime&#34;) as f:
+                    return float(f.read().split()[0])
+            except Exception:
+                pass
+        return 0.0</code></pre>
+</details>
+<div class="desc"><p>Provides a unified interface for retrieving hardware and operating system metadata.</p>
+<p>This driver abstracts the platform-specific complexities of gathering
+identifying information about the host, including CPU architecture,
+memory usage, and system uptime.</p></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="linux_plus_plus.hal.SystemInfoDriver.info"><code class="name flex">
+<span>def <span class="ident">info</span></span>(<span>) ‑> dict</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def info() -&gt; dict:
+    &#34;&#34;&#34;Gathers a comprehensive set of system-wide metadata.
+
+    Combines data from the platform, network, and system drivers to create 
+    a snapshot of the current execution environment.
+
+    Returns:
+        dict: A dictionary containing &#39;os&#39;, &#39;os_version&#39;, &#39;machine&#39;, &#39;processor&#39;, 
+              &#39;python&#39;, &#39;hostname&#39;, &#39;username&#39;, and &#39;uptime_secs&#39;.
+    &#34;&#34;&#34;
+    import time
+    return {
+        &#34;os&#34;: CURRENT_OS,
+        &#34;os_version&#34;: platform.version(),
+        &#34;os_release&#34;: platform.release(),
+        &#34;machine&#34;: platform.machine(),
+        &#34;processor&#34;: platform.processor() or &#34;unknown&#34;,
+        &#34;python&#34;: platform.python_version(),
+        &#34;hostname&#34;: NetworkDriver.hostname(),
+        &#34;username&#34;: SystemInfoDriver.username(),
+        &#34;uptime_secs&#34;: SystemInfoDriver._uptime(),
+    }</code></pre>
+</details>
+<div class="desc"><p>Gathers a comprehensive set of system-wide metadata.</p>
+<p>Combines data from the platform, network, and system drivers to create
+a snapshot of the current execution environment.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>A dictionary containing 'os', 'os_version', 'machine', 'processor',
+'python', 'hostname', 'username', and 'uptime_secs'.</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.SystemInfoDriver.memory"><code class="name flex">
+<span>def <span class="ident">memory</span></span>(<span>) ‑> dict</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def memory() -&gt; dict:
+    &#34;&#34;&#34;Returns memory usage statistics for the host system.
+
+    If the &#39;psutil&#39; library is installed, it provides real-time statistics. 
+    Otherwise, it returns a zeroed dictionary to prevent crashes.
+
+    Returns:
+        dict: A dictionary containing &#39;total&#39;, &#39;available&#39;, &#39;used&#39; (in bytes), 
+              and &#39;percent&#39; (float).
+    &#34;&#34;&#34;
+    try:
+        import psutil
+        vm = psutil.virtual_memory()
+        return {
+            &#34;total&#34;: vm.total,
+            &#34;available&#34;: vm.available,
+            &#34;used&#34;: vm.used,
+            &#34;percent&#34;: vm.percent,
+        }
+    except ImportError:
+        return {&#34;total&#34;: 0, &#34;available&#34;: 0, &#34;used&#34;: 0, &#34;percent&#34;: 0.0}</code></pre>
+</details>
+<div class="desc"><p>Returns memory usage statistics for the host system.</p>
+<p>If the 'psutil' library is installed, it provides real-time statistics.
+Otherwise, it returns a zeroed dictionary to prevent crashes.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>A dictionary containing 'total', 'available', 'used' (in bytes),
+and 'percent' (float).</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.SystemInfoDriver.username"><code class="name flex">
+<span>def <span class="ident">username</span></span>(<span>) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def username() -&gt; str:
+    &#34;&#34;&#34;Retrieves the login name of the user currently running the process.
+
+    Attempts to use the standard &#39;getpass&#39; module first. If that fails, it 
+    falls back to common environment variables used across different OS types.
+
+    Returns:
+        str: The current username, or &#34;user&#34; as a final fallback.
+    &#34;&#34;&#34;
+    try:
+        import getpass
+        return getpass.getuser()
+    except Exception:
+        return os.environ.get(&#34;USER&#34;) or os.environ.get(&#34;USERNAME&#34;) or &#34;user&#34;</code></pre>
+</details>
+<div class="desc"><p>Retrieves the login name of the user currently running the process.</p>
+<p>Attempts to use the standard 'getpass' module first. If that fails, it
+falls back to common environment variables used across different OS types.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>The current username, or "user" as a final fallback.</dd>
+</dl></div>
+</dd>
+</dl>
+</dd>
+<dt id="linux_plus_plus.hal.TerminalDriver"><code class="flex name class">
+<span>class <span class="ident">TerminalDriver</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TerminalDriver:
+    &#34;&#34;&#34;Cross-platform terminal utilities.
+
+    The `TerminalDriver` exposes helpers for writing coloured text, clearing
+    the screen, reading user input and querying terminal size. The class is
+    deliberately lightweight and uses ANSI escape sequences on platforms
+    that support them (Linux, macOS, and modern Windows terminals).
+    &#34;&#34;&#34;
+
+    # ANSI codes work on Linux/macOS and on modern Windows 10+ terminals
+    _ANSI = not IS_WINDOWS or os.environ.get(&#34;WT_SESSION&#34;) # Windows Terminal
+
+    RESET = &#34;\033[0m&#34; if _ANSI else &#34;&#34;
+    BOLD = &#34;\033[1m&#34; if _ANSI else &#34;&#34;
+    RED = &#34;\033[31m&#34; if _ANSI else &#34;&#34;
+    GREEN = &#34;\033[32m&#34; if _ANSI else &#34;&#34;
+    YELLOW = &#34;\033[33m&#34; if _ANSI else &#34;&#34;
+    BLUE = &#34;\033[34m&#34; if _ANSI else &#34;&#34;
+    CYAN = &#34;\033[36m&#34; if _ANSI else &#34;&#34;
+    WHITE = &#34;\033[37m&#34; if _ANSI else &#34;&#34;
+
+    @staticmethod
+    def enable_ansi_on_windows() -&gt; None:
+        &#34;&#34;&#34;Attempt to enable ANSI/VT processing on legacy Windows consoles.
+
+        When available this enables correct rendering of ANSI escape
+        sequences (colours, bold, etc.) in cmd.exe and PowerShell. Failure
+        is non-fatal and simply results in plain-text output.
+        &#34;&#34;&#34;
+        if IS_WINDOWS:
+            try:
+                import ctypes
+                kernel32 = ctypes.windll.kernel32
+                kernel32.SetConsoleMode(
+                    kernel32.GetStdHandle(-11), 7
+                )
+            except Exception:
+                pass  # Not fatal — colors just won&#39;t render
+
+    @staticmethod
+    def clear() -&gt; None:
+        &#34;&#34;&#34;Clear the terminal screen.&#34;&#34;&#34;
+        os.system(&#34;cls&#34; if IS_WINDOWS else &#34;clear&#34;)
+
+    @staticmethod
+    def get_size() -&gt; tuple[int, int]:
+        &#34;&#34;&#34;Return the terminal width and height as (columns, rows).
+
+        When the terminal size cannot be determined the method falls back to
+        a sensible default of 80×24.
+        &#34;&#34;&#34;
+        size = shutil.get_terminal_size(fallback=(80, 24))
+        return size.columns, size.lines
+
+    @staticmethod
+    def write(text: str, end: str = &#34;\n&#34;) -&gt; None:
+        &#34;&#34;&#34;Write `text` to standard output and flush immediately.
+
+        This helper centralises output formatting so higher layers can
+        substitute a different terminal driver during testing if required.
+        &#34;&#34;&#34;
+        sys.stdout.write(text + end)
+        sys.stdout.flush()
+
+    @staticmethod
+    def error(text: str) -&gt; None:
+        &#34;&#34;&#34;Display the error.
+
+        Args:
+            text (str): The error message.
+        &#34;&#34;&#34;
+        sys.stderr.write(text + &#34;\n&#34;)
+        sys.stderr.flush()
+
+    @staticmethod
+    def read_input(prompt: str = &#34;&#34;) -&gt; str:
+        &#34;&#34;&#34;Read a single line of input from the user, returning &#39;&#39; on EOF.
+
+        The method wraps `input()` to provide a consistent behaviour and
+        to make testing/replacement simpler.
+        &#34;&#34;&#34;
+        try:
+            return input(prompt)
+        except EOFError:
+            return &#34;&#34;</code></pre>
+</details>
+<div class="desc"><p>Cross-platform terminal utilities.</p>
+<p>The <code><a title="linux_plus_plus.hal.TerminalDriver" href="#linux_plus_plus.hal.TerminalDriver">TerminalDriver</a></code> exposes helpers for writing coloured text, clearing
+the screen, reading user input and querying terminal size. The class is
+deliberately lightweight and uses ANSI escape sequences on platforms
+that support them (Linux, macOS, and modern Windows terminals).</p></div>
+<h3>Class variables</h3>
+<dl>
+<dt id="linux_plus_plus.hal.TerminalDriver.BLUE"><code class="name">var <span class="ident">BLUE</span></code></dt>
+<dd>
+<div class="desc"><p>The type of the None singleton.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.TerminalDriver.BOLD"><code class="name">var <span class="ident">BOLD</span></code></dt>
+<dd>
+<div class="desc"><p>The type of the None singleton.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.TerminalDriver.CYAN"><code class="name">var <span class="ident">CYAN</span></code></dt>
+<dd>
+<div class="desc"><p>The type of the None singleton.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.TerminalDriver.GREEN"><code class="name">var <span class="ident">GREEN</span></code></dt>
+<dd>
+<div class="desc"><p>The type of the None singleton.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.TerminalDriver.RED"><code class="name">var <span class="ident">RED</span></code></dt>
+<dd>
+<div class="desc"><p>The type of the None singleton.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.TerminalDriver.RESET"><code class="name">var <span class="ident">RESET</span></code></dt>
+<dd>
+<div class="desc"><p>The type of the None singleton.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.TerminalDriver.WHITE"><code class="name">var <span class="ident">WHITE</span></code></dt>
+<dd>
+<div class="desc"><p>The type of the None singleton.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.TerminalDriver.YELLOW"><code class="name">var <span class="ident">YELLOW</span></code></dt>
+<dd>
+<div class="desc"><p>The type of the None singleton.</p></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="linux_plus_plus.hal.TerminalDriver.clear"><code class="name flex">
+<span>def <span class="ident">clear</span></span>(<span>) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def clear() -&gt; None:
+    &#34;&#34;&#34;Clear the terminal screen.&#34;&#34;&#34;
+    os.system(&#34;cls&#34; if IS_WINDOWS else &#34;clear&#34;)</code></pre>
+</details>
+<div class="desc"><p>Clear the terminal screen.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.TerminalDriver.enable_ansi_on_windows"><code class="name flex">
+<span>def <span class="ident">enable_ansi_on_windows</span></span>(<span>) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def enable_ansi_on_windows() -&gt; None:
+    &#34;&#34;&#34;Attempt to enable ANSI/VT processing on legacy Windows consoles.
+
+    When available this enables correct rendering of ANSI escape
+    sequences (colours, bold, etc.) in cmd.exe and PowerShell. Failure
+    is non-fatal and simply results in plain-text output.
+    &#34;&#34;&#34;
+    if IS_WINDOWS:
+        try:
+            import ctypes
+            kernel32 = ctypes.windll.kernel32
+            kernel32.SetConsoleMode(
+                kernel32.GetStdHandle(-11), 7
+            )
+        except Exception:
+            pass  # Not fatal — colors just won&#39;t render</code></pre>
+</details>
+<div class="desc"><p>Attempt to enable ANSI/VT processing on legacy Windows consoles.</p>
+<p>When available this enables correct rendering of ANSI escape
+sequences (colours, bold, etc.) in cmd.exe and PowerShell. Failure
+is non-fatal and simply results in plain-text output.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.TerminalDriver.error"><code class="name flex">
+<span>def <span class="ident">error</span></span>(<span>text: str) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def error(text: str) -&gt; None:
+    &#34;&#34;&#34;Display the error.
+
+    Args:
+        text (str): The error message.
+    &#34;&#34;&#34;
+    sys.stderr.write(text + &#34;\n&#34;)
+    sys.stderr.flush()</code></pre>
+</details>
+<div class="desc"><p>Display the error.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>text</code></strong> :&ensp;<code>str</code></dt>
+<dd>The error message.</dd>
+</dl></div>
+</dd>
+<dt id="linux_plus_plus.hal.TerminalDriver.get_size"><code class="name flex">
+<span>def <span class="ident">get_size</span></span>(<span>) ‑> tuple[int, int]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_size() -&gt; tuple[int, int]:
+    &#34;&#34;&#34;Return the terminal width and height as (columns, rows).
+
+    When the terminal size cannot be determined the method falls back to
+    a sensible default of 80×24.
+    &#34;&#34;&#34;
+    size = shutil.get_terminal_size(fallback=(80, 24))
+    return size.columns, size.lines</code></pre>
+</details>
+<div class="desc"><p>Return the terminal width and height as (columns, rows).</p>
+<p>When the terminal size cannot be determined the method falls back to
+a sensible default of 80×24.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.TerminalDriver.read_input"><code class="name flex">
+<span>def <span class="ident">read_input</span></span>(<span>prompt: str = '') ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def read_input(prompt: str = &#34;&#34;) -&gt; str:
+    &#34;&#34;&#34;Read a single line of input from the user, returning &#39;&#39; on EOF.
+
+    The method wraps `input()` to provide a consistent behaviour and
+    to make testing/replacement simpler.
+    &#34;&#34;&#34;
+    try:
+        return input(prompt)
+    except EOFError:
+        return &#34;&#34;</code></pre>
+</details>
+<div class="desc"><p>Read a single line of input from the user, returning '' on EOF.</p>
+<p>The method wraps <code>input()</code> to provide a consistent behaviour and
+to make testing/replacement simpler.</p></div>
+</dd>
+<dt id="linux_plus_plus.hal.TerminalDriver.write"><code class="name flex">
+<span>def <span class="ident">write</span></span>(<span>text: str, end: str = '\n') ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def write(text: str, end: str = &#34;\n&#34;) -&gt; None:
+    &#34;&#34;&#34;Write `text` to standard output and flush immediately.
+
+    This helper centralises output formatting so higher layers can
+    substitute a different terminal driver during testing if required.
+    &#34;&#34;&#34;
+    sys.stdout.write(text + end)
+    sys.stdout.flush()</code></pre>
+</details>
+<div class="desc"><p>Write <code>text</code> to standard output and flush immediately.</p>
+<p>This helper centralises output formatting so higher layers can
+substitute a different terminal driver during testing if required.</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul>
+<li><a href="#linux-hardware-abstraction-layer-hal-layer-1">linux++ — Hardware Abstraction Layer (HAL) (Layer 1)</a></li>
+</ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="linux_plus_plus" href="index.html">linux_plus_plus</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="linux_plus_plus.hal.main" href="#linux_plus_plus.hal.main">main</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="linux_plus_plus.hal.DiskDriver" href="#linux_plus_plus.hal.DiskDriver">DiskDriver</a></code></h4>
+<ul class="two-column">
+<li><code><a title="linux_plus_plus.hal.DiskDriver.SEP" href="#linux_plus_plus.hal.DiskDriver.SEP">SEP</a></code></li>
+<li><code><a title="linux_plus_plus.hal.DiskDriver.append_text" href="#linux_plus_plus.hal.DiskDriver.append_text">append_text</a></code></li>
+<li><code><a title="linux_plus_plus.hal.DiskDriver.chdir" href="#linux_plus_plus.hal.DiskDriver.chdir">chdir</a></code></li>
+<li><code><a title="linux_plus_plus.hal.DiskDriver.copy" href="#linux_plus_plus.hal.DiskDriver.copy">copy</a></code></li>
+<li><code><a title="linux_plus_plus.hal.DiskDriver.cwd" href="#linux_plus_plus.hal.DiskDriver.cwd">cwd</a></code></li>
+<li><code><a title="linux_plus_plus.hal.DiskDriver.delete" href="#linux_plus_plus.hal.DiskDriver.delete">delete</a></code></li>
+<li><code><a title="linux_plus_plus.hal.DiskDriver.disk_usage" href="#linux_plus_plus.hal.DiskDriver.disk_usage">disk_usage</a></code></li>
+<li><code><a title="linux_plus_plus.hal.DiskDriver.exists" href="#linux_plus_plus.hal.DiskDriver.exists">exists</a></code></li>
+<li><code><a title="linux_plus_plus.hal.DiskDriver.home" href="#linux_plus_plus.hal.DiskDriver.home">home</a></code></li>
+<li><code><a title="linux_plus_plus.hal.DiskDriver.is_dir" href="#linux_plus_plus.hal.DiskDriver.is_dir">is_dir</a></code></li>
+<li><code><a title="linux_plus_plus.hal.DiskDriver.is_file" href="#linux_plus_plus.hal.DiskDriver.is_file">is_file</a></code></li>
+<li><code><a title="linux_plus_plus.hal.DiskDriver.join" href="#linux_plus_plus.hal.DiskDriver.join">join</a></code></li>
+<li><code><a title="linux_plus_plus.hal.DiskDriver.listdir" href="#linux_plus_plus.hal.DiskDriver.listdir">listdir</a></code></li>
+<li><code><a title="linux_plus_plus.hal.DiskDriver.mkdir" href="#linux_plus_plus.hal.DiskDriver.mkdir">mkdir</a></code></li>
+<li><code><a title="linux_plus_plus.hal.DiskDriver.move" href="#linux_plus_plus.hal.DiskDriver.move">move</a></code></li>
+<li><code><a title="linux_plus_plus.hal.DiskDriver.read_text" href="#linux_plus_plus.hal.DiskDriver.read_text">read_text</a></code></li>
+<li><code><a title="linux_plus_plus.hal.DiskDriver.resolve" href="#linux_plus_plus.hal.DiskDriver.resolve">resolve</a></code></li>
+<li><code><a title="linux_plus_plus.hal.DiskDriver.temp_dir" href="#linux_plus_plus.hal.DiskDriver.temp_dir">temp_dir</a></code></li>
+<li><code><a title="linux_plus_plus.hal.DiskDriver.write_text" href="#linux_plus_plus.hal.DiskDriver.write_text">write_text</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="linux_plus_plus.hal.HAL" href="#linux_plus_plus.hal.HAL">HAL</a></code></h4>
+<ul class="two-column">
+<li><code><a title="linux_plus_plus.hal.HAL.boot" href="#linux_plus_plus.hal.HAL.boot">boot</a></code></li>
+<li><code><a title="linux_plus_plus.hal.HAL.disk" href="#linux_plus_plus.hal.HAL.disk">disk</a></code></li>
+<li><code><a title="linux_plus_plus.hal.HAL.network" href="#linux_plus_plus.hal.HAL.network">network</a></code></li>
+<li><code><a title="linux_plus_plus.hal.HAL.os_type" href="#linux_plus_plus.hal.HAL.os_type">os_type</a></code></li>
+<li><code><a title="linux_plus_plus.hal.HAL.process" href="#linux_plus_plus.hal.HAL.process">process</a></code></li>
+<li><code><a title="linux_plus_plus.hal.HAL.signals" href="#linux_plus_plus.hal.HAL.signals">signals</a></code></li>
+<li><code><a title="linux_plus_plus.hal.HAL.system" href="#linux_plus_plus.hal.HAL.system">system</a></code></li>
+<li><code><a title="linux_plus_plus.hal.HAL.terminal" href="#linux_plus_plus.hal.HAL.terminal">terminal</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="linux_plus_plus.hal.NetworkDriver" href="#linux_plus_plus.hal.NetworkDriver">NetworkDriver</a></code></h4>
+<ul class="">
+<li><code><a title="linux_plus_plus.hal.NetworkDriver.hostname" href="#linux_plus_plus.hal.NetworkDriver.hostname">hostname</a></code></li>
+<li><code><a title="linux_plus_plus.hal.NetworkDriver.local_ip" href="#linux_plus_plus.hal.NetworkDriver.local_ip">local_ip</a></code></li>
+<li><code><a title="linux_plus_plus.hal.NetworkDriver.ping" href="#linux_plus_plus.hal.NetworkDriver.ping">ping</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="linux_plus_plus.hal.OSType" href="#linux_plus_plus.hal.OSType">OSType</a></code></h4>
+<ul class="">
+<li><code><a title="linux_plus_plus.hal.OSType.LINUX" href="#linux_plus_plus.hal.OSType.LINUX">LINUX</a></code></li>
+<li><code><a title="linux_plus_plus.hal.OSType.MACOS" href="#linux_plus_plus.hal.OSType.MACOS">MACOS</a></code></li>
+<li><code><a title="linux_plus_plus.hal.OSType.UNKNOWN" href="#linux_plus_plus.hal.OSType.UNKNOWN">UNKNOWN</a></code></li>
+<li><code><a title="linux_plus_plus.hal.OSType.WINDOWS" href="#linux_plus_plus.hal.OSType.WINDOWS">WINDOWS</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="linux_plus_plus.hal.ProcessDriver" href="#linux_plus_plus.hal.ProcessDriver">ProcessDriver</a></code></h4>
+<ul class="two-column">
+<li><code><a title="linux_plus_plus.hal.ProcessDriver.kill" href="#linux_plus_plus.hal.ProcessDriver.kill">kill</a></code></li>
+<li><code><a title="linux_plus_plus.hal.ProcessDriver.list_processes" href="#linux_plus_plus.hal.ProcessDriver.list_processes">list_processes</a></code></li>
+<li><code><a title="linux_plus_plus.hal.ProcessDriver.pid" href="#linux_plus_plus.hal.ProcessDriver.pid">pid</a></code></li>
+<li><code><a title="linux_plus_plus.hal.ProcessDriver.run" href="#linux_plus_plus.hal.ProcessDriver.run">run</a></code></li>
+<li><code><a title="linux_plus_plus.hal.ProcessDriver.spawn" href="#linux_plus_plus.hal.ProcessDriver.spawn">spawn</a></code></li>
+<li><code><a title="linux_plus_plus.hal.ProcessDriver.which" href="#linux_plus_plus.hal.ProcessDriver.which">which</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="linux_plus_plus.hal.ProcessResult" href="#linux_plus_plus.hal.ProcessResult">ProcessResult</a></code></h4>
+</li>
+<li>
+<h4><code><a title="linux_plus_plus.hal.SignalDriver" href="#linux_plus_plus.hal.SignalDriver">SignalDriver</a></code></h4>
+<ul class="">
+<li><code><a title="linux_plus_plus.hal.SignalDriver.default_interrupt" href="#linux_plus_plus.hal.SignalDriver.default_interrupt">default_interrupt</a></code></li>
+<li><code><a title="linux_plus_plus.hal.SignalDriver.ignore_interrupt" href="#linux_plus_plus.hal.SignalDriver.ignore_interrupt">ignore_interrupt</a></code></li>
+<li><code><a title="linux_plus_plus.hal.SignalDriver.on_interrupt" href="#linux_plus_plus.hal.SignalDriver.on_interrupt">on_interrupt</a></code></li>
+<li><code><a title="linux_plus_plus.hal.SignalDriver.on_terminate" href="#linux_plus_plus.hal.SignalDriver.on_terminate">on_terminate</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="linux_plus_plus.hal.SystemInfoDriver" href="#linux_plus_plus.hal.SystemInfoDriver">SystemInfoDriver</a></code></h4>
+<ul class="">
+<li><code><a title="linux_plus_plus.hal.SystemInfoDriver.info" href="#linux_plus_plus.hal.SystemInfoDriver.info">info</a></code></li>
+<li><code><a title="linux_plus_plus.hal.SystemInfoDriver.memory" href="#linux_plus_plus.hal.SystemInfoDriver.memory">memory</a></code></li>
+<li><code><a title="linux_plus_plus.hal.SystemInfoDriver.username" href="#linux_plus_plus.hal.SystemInfoDriver.username">username</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="linux_plus_plus.hal.TerminalDriver" href="#linux_plus_plus.hal.TerminalDriver">TerminalDriver</a></code></h4>
+<ul class="">
+<li><code><a title="linux_plus_plus.hal.TerminalDriver.BLUE" href="#linux_plus_plus.hal.TerminalDriver.BLUE">BLUE</a></code></li>
+<li><code><a title="linux_plus_plus.hal.TerminalDriver.BOLD" href="#linux_plus_plus.hal.TerminalDriver.BOLD">BOLD</a></code></li>
+<li><code><a title="linux_plus_plus.hal.TerminalDriver.CYAN" href="#linux_plus_plus.hal.TerminalDriver.CYAN">CYAN</a></code></li>
+<li><code><a title="linux_plus_plus.hal.TerminalDriver.GREEN" href="#linux_plus_plus.hal.TerminalDriver.GREEN">GREEN</a></code></li>
+<li><code><a title="linux_plus_plus.hal.TerminalDriver.RED" href="#linux_plus_plus.hal.TerminalDriver.RED">RED</a></code></li>
+<li><code><a title="linux_plus_plus.hal.TerminalDriver.RESET" href="#linux_plus_plus.hal.TerminalDriver.RESET">RESET</a></code></li>
+<li><code><a title="linux_plus_plus.hal.TerminalDriver.WHITE" href="#linux_plus_plus.hal.TerminalDriver.WHITE">WHITE</a></code></li>
+<li><code><a title="linux_plus_plus.hal.TerminalDriver.YELLOW" href="#linux_plus_plus.hal.TerminalDriver.YELLOW">YELLOW</a></code></li>
+<li><code><a title="linux_plus_plus.hal.TerminalDriver.clear" href="#linux_plus_plus.hal.TerminalDriver.clear">clear</a></code></li>
+<li><code><a title="linux_plus_plus.hal.TerminalDriver.enable_ansi_on_windows" href="#linux_plus_plus.hal.TerminalDriver.enable_ansi_on_windows">enable_ansi_on_windows</a></code></li>
+<li><code><a title="linux_plus_plus.hal.TerminalDriver.error" href="#linux_plus_plus.hal.TerminalDriver.error">error</a></code></li>
+<li><code><a title="linux_plus_plus.hal.TerminalDriver.get_size" href="#linux_plus_plus.hal.TerminalDriver.get_size">get_size</a></code></li>
+<li><code><a title="linux_plus_plus.hal.TerminalDriver.read_input" href="#linux_plus_plus.hal.TerminalDriver.read_input">read_input</a></code></li>
+<li><code><a title="linux_plus_plus.hal.TerminalDriver.write" href="#linux_plus_plus.hal.TerminalDriver.write">write</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

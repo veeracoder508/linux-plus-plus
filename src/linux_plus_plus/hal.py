@@ -1,6 +1,5 @@
 """
-linux++ — Hardware Abstraction Layer (HAL) (Layer 1)
-=====================================================
+# linux++ — Hardware Abstraction Layer (HAL) (Layer 1)
 
 This module provides a compact Hardware Abstraction Layer used by the
 rest of the linux++ project. Higher layers (stdlib, kernel, shell and

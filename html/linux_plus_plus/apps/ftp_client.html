@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>linux_plus_plus.apps.ftp_client API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+darkMode: 'class',
+theme: {
+extend: {
+fontFamily: {
+sans: ['Inter', 'system-ui', 'sans-serif'],
+mono: ['JetBrains Mono', 'monospace']
+}
+}
+}
+}
+</script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+document.documentElement.classList.add('dark');
+</script>
+<style>
+/* 1. Scrollbar - Zinc Style */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #09090b; }
+::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+/* 2. Global Resets - Unified Zinc Palette */
+:root {
+--bg: #09090b !important;
+--text: #f4f4f5 !important;
+--accent: #3b82f6 !important;
+}
+html, body {
+background-color: #09090b !important;
+color: #f4f4f5 !important;
+font-family: 'Inter', system-ui, sans-serif !important;
+overflow-x: clip;
+scroll-behavior: smooth;
+}
+/* 3. Sidebar - Layout & Anti-Warping */
+#sidebar {
+width: 280px !important;
+min-width: 280px !important;
+max-width: 280px !important;
+flex: 0 0 280px !important;
+background-color: #0c0c0e !important;
+border-right: 1px solid #18181b !important;
+padding: 2.5rem 1.5rem !important;
+box-shadow: none !important;
+}
+#sidebar h1, #sidebar h2, #sidebar h3 {
+color: #fafafa !important;
+font-size: 0.875rem !important;
+font-weight: 600 !important;
+letter-spacing: -0.01em !important;
+border-bottom: none !important;
+margin-top: 1.5rem !important;
+margin-bottom: 0.75rem !important;
+padding: 0 !important;
+}
+#sidebar h1 { font-size: 1rem !important; margin-left: 0.5rem !important; }
+#sidebar ul { margin: 0 !important; padding: 0 !important; border: none !important; }
+#sidebar li { margin: 0 !important; padding: 0 !important; border: none !important; }
+#sidebar a {
+display: block !important;
+color: #a1a1aa !important;
+text-decoration: none !important;
+margin-bottom: 0.25rem !important;
+padding: 0.4rem 0.75rem !important;
+border-radius: 0.5rem !important;
+font-size: 0.875rem !important;
+transition: all 0.2s ease !important;
+white-space: normal !important;
+overflow-wrap: anywhere !important;
+word-break: break-word !important;
+line-height: 1.4 !important;
+}
+#sidebar a:hover {
+background-color: #18181b !important;
+color: #3b82f6 !important;
+}
+#sidebar code {
+padding: 0;
+margin: 0;
+}
+/* 4. Main Content - Balanced Spacing */
+#content {
+flex: 1 !important;
+min-width: 0 !important;
+padding: 3rem 4rem !important;
+max-width: 64rem !important;
+margin: 0 auto !important;
+border-left: none !important;
+}
+/* Main Top Title */
+#content h1.title {
+font-size: 2.5rem !important;
+font-weight: 800 !important;
+letter-spacing: -0.04em !important;
+color: #ffffff !important;
+margin-bottom: 2rem !important;
+}
+/* Standard internal H1 tags generated by markdown */
+#content h1:not(.title) {
+font-size: 1.75rem !important;
+font-weight: 700 !important;
+color: #f4f4f5 !important;
+margin-top: 2.5rem !important;
+margin-bottom: 1.25rem !important;
+letter-spacing: -0.02em !important;
+}
+/* Standard internal H2 tags */
+#content h2 {
+font-size: 1.35rem !important;
+font-weight: 600 !important;
+color: #f4f4f5 !important;
+margin-top: 2.5rem !important;
+margin-bottom: 1rem !important;
+}
+#content h2.section-title {
+font-size: 1.25rem !important;
+border-bottom: 1px solid #18181b !important;
+padding-bottom: 0.75rem !important;
+margin-top: 3.5rem !important;
+margin-bottom: 1.5rem !important;
+}
+/* 5. Signatures (dt) - Code Container */
+dt {
+background-color: #111113 !important;
+border: 1px solid #27272a !important;
+border-radius: 0.75rem !important;
+padding: 1rem 1.25rem !important;
+margin-top: 1.5rem !important;
+margin-bottom: 1rem !important;
+font-family: 'JetBrains Mono', monospace !important;
+font-size: 0.875rem !important;
+color: #e4e4e7 !important;
+line-height: 1.6 !important;
+overflow-x: auto !important;
+white-space: pre-wrap !important;
+}
+dt .name {
+color: #60a5fa !important;
+font-weight: 600 !important;
+background: transparent !important;
+}
+/* 6. Code Blocks & Preformatted Text */
+#content pre {
+background-color: #0a0a0a !important;
+border: 1px solid rgba(255, 255, 255, 0.1) !important;
+border-radius: 0.75rem !important;
+padding: 1.25rem !important;
+margin-top: 1rem !important;
+margin-bottom: 1.5rem !important;
+color: #d4d4d8 !important;
+overflow-x: auto !important;
+}
+#content pre code {
+background-color: transparent !important;
+border: none !important;
+padding: 0 !important;
+color: inherit !important;
+font-size: inherit !important;
+}
+/* 7. Typography, Paragraphs & Lists */
+#content p,
+.desc {
+color: #d4d4d8 !important; /* Brighter body text */
+line-height: 1.75 !important; /* Better line gaping */
+margin-bottom: 1.25rem !important; /* Space between paragraphs */
+font-size: 1rem !important;
+}
+/* Restore List Styling in Main Content */
+#content ul {
+list-style-type: disc !important;
+padding-left: 1.5rem !important;
+margin-bottom: 1.5rem !important;
+color: #d4d4d8 !important;
+}
+#content li {
+margin-bottom: 0.5rem !important;
+line-height: 1.6 !important;
+}
+/* Inline Code Styling */
+#content p code, #content li code, .desc code {
+background-color: #18181b !important; /* Zinc-900 */
+border: 1px solid #27272a !important;
+padding: 0.2rem 0.4rem !important;
+border-radius: 0.375rem !important;
+color: #f4f4f5 !important; /* Zinc-100 */
+font-size: 0.9em !important;
+}
+/* 8. Links & Visibility Fixes */
+#content a {
+color: #60a5fa !important;
+text-decoration: none !important;
+}
+#content a:hover {
+color: #93c5fd !important;
+}
+:target {
+background-color: rgba(59, 130, 246, 0.15) !important;
+color: inherit !important;
+}
+#content code.name,
+#content code.name a,
+#content .name,
+#content .name a {
+color: #60a5fa !important;
+text-decoration: none !important;
+}
+#content code.name a:hover,
+#content .name a:hover {
+color: #93c5fd !important;
+}
+#content code {
+color: #e4e4e7 !important;
+}
+</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>linux_plus_plus.apps.ftp_client</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="linux_plus_plus.apps.ftp_client.FTPClient"><code class="flex name class">
+<span>class <span class="ident">FTPClient</span></span>
+<span>(</span><span>host: str, port: int = 21)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FTPClient:
+    &#34;&#34;&#34;
+    Minimal FTP-style client using Python&#39;s ftplib (stdlib).
+    Falls back to a raw socket transfer protocol if ftplib is unavailable
+    (for custom linux++ servers).
+
+    Commands in interactive session:
+      ls [path]
+      cd &lt;path&gt;
+      get &lt;remote&gt; [local]
+      put &lt;local&gt; [remote]
+      pwd
+      quit / bye / exit
+    &#34;&#34;&#34;
+
+    def __init__(self, host: str, port: int = 21):
+        self._host = host
+        self._port = port
+        self._ftp  = None
+
+    def connect(self) -&gt; bool:
+        try:
+            import ftplib
+            self._ftp = ftplib.FTP()
+            self._ftp.connect(self._host, self._port, timeout=10)
+            banner = self._ftp.getwelcome()
+            IOManager.write(banner)
+            user = input(&#34;Name: &#34;)
+            pw   = input(&#34;Password: &#34;)
+            self._ftp.login(user, pw)
+            IOManager.write(f&#34;Logged in as {user}&#34;)
+            return True
+        except Exception as e:
+            IOManager.error(f&#34;ftp: connection failed: {e}&#34;)
+            return False
+
+    def run_interactive(self) -&gt; int:
+        if not self.connect():
+            return 1
+        IOManager.write(&#34;Type &#39;help&#39; for commands, &#39;quit&#39; to exit.&#34;)
+        while True:
+            try:
+                raw = input(&#34;ftp&gt; &#34;).strip()
+            except (EOFError, KeyboardInterrupt):
+                break
+            if not raw:
+                continue
+            parts = raw.split()
+            cmd   = parts[0].lower()
+            args  = parts[1:]
+
+            if cmd in (&#34;quit&#34;, &#34;bye&#34;, &#34;exit&#34;):
+                break
+            elif cmd == &#34;ls&#34;:
+                self._ls(args[0] if args else &#34;.&#34;)
+            elif cmd == &#34;cd&#34;:
+                self._cd(args[0] if args else &#34;/&#34;)
+            elif cmd == &#34;pwd&#34;:
+                self._pwd()
+            elif cmd == &#34;get&#34;:
+                if not args:
+                    IOManager.error(&#34;Usage: get &lt;remote&gt; [local]&#34;)
+                else:
+                    self._get(args[0], args[1] if len(args) &gt; 1 else None)
+            elif cmd == &#34;put&#34;:
+                if not args:
+                    IOManager.error(&#34;Usage: put &lt;local&gt; [remote]&#34;)
+                else:
+                    self._put(args[0], args[1] if len(args) &gt; 1 else None)
+            elif cmd == &#34;help&#34;:
+                IOManager.write(
+                    &#34;Commands: ls  cd  pwd  get  put  quit\n&#34;
+                    &#34;  ls [path]            list remote directory\n&#34;
+                    &#34;  cd &lt;path&gt;            change remote directory\n&#34;
+                    &#34;  pwd                  print remote working directory\n&#34;
+                    &#34;  get &lt;remote&gt; [local] download file\n&#34;
+                    &#34;  put &lt;local&gt; [remote] upload file&#34;
+                )
+            else:
+                IOManager.error(f&#34;ftp: unknown command {cmd!r}&#34;)
+
+        if self._ftp:
+            try: self._ftp.quit()
+            except Exception: pass
+        IOManager.write(&#34;Goodbye.&#34;)
+        return 0
+
+    def _ls(self, path: str) -&gt; None:
+        try:
+            self._ftp.dir(path)
+        except Exception as e:
+            IOManager.error(f&#34;ftp: ls: {e}&#34;)
+
+    def _cd(self, path: str) -&gt; None:
+        try:
+            self._ftp.cwd(path)
+            IOManager.write(f&#34;Remote: {self._ftp.pwd()}&#34;)
+        except Exception as e:
+            IOManager.error(f&#34;ftp: cd: {e}&#34;)
+
+    def _pwd(self) -&gt; None:
+        try:
+            IOManager.write(self._ftp.pwd())
+        except Exception as e:
+            IOManager.error(f&#34;ftp: pwd: {e}&#34;)
+
+    def _get(self, remote: str, local: Optional[str]) -&gt; None:
+        local = local or os.path.basename(remote)
+        try:
+            size = self._ftp.size(remote) or 0
+            received = [0]
+            start = time.time()
+
+            def _progress(block: bytes):
+                received[0] += len(block)
+                if size:
+                    pct = received[0] * 100 // size
+                    bar = &#34;#&#34; * (pct // 5) + &#34; &#34; * (20 - pct // 5)
+                    sys.stdout.write(f&#34;\r  [{bar}] {pct:3}%  {received[0]//1024}K&#34;)
+                    sys.stdout.flush()
+
+            with open(local, &#34;wb&#34;) as f:
+                self._ftp.retrbinary(f&#34;RETR {remote}&#34;, lambda b: (f.write(b), _progress(b)))
+            elapsed = time.time() - start
+            IOManager.write(f&#34;\n  {received[0]} bytes in {elapsed:.1f}s → {local}&#34;)
+        except Exception as e:
+            IOManager.error(f&#34;\nftp: get: {e}&#34;)
+
+    def _put(self, local: str, remote: Optional[str]) -&gt; None:
+        remote = remote or os.path.basename(local)
+        try:
+            size = os.path.getsize(local)
+            sent = [0]
+            start = time.time()
+
+            def _progress(block: bytes):
+                sent[0] += len(block)
+                if size:
+                    pct = sent[0] * 100 // size
+                    bar = &#34;#&#34; * (pct // 5) + &#34; &#34; * (20 - pct // 5)
+                    sys.stdout.write(f&#34;\r  [{bar}] {pct:3}%  {sent[0]//1024}K&#34;)
+                    sys.stdout.flush()
+
+            with open(local, &#34;rb&#34;) as f:
+                self._ftp.storbinary(f&#34;STOR {remote}&#34;, f, callback=_progress)
+            elapsed = time.time() - start
+            IOManager.write(f&#34;\n  Uploaded {sent[0]} bytes in {elapsed:.1f}s → {remote}&#34;)
+        except Exception as e:
+            IOManager.error(f&#34;\nftp: put: {e}&#34;)</code></pre>
+</details>
+<div class="desc"><p>Minimal FTP-style client using Python's ftplib (stdlib).
+Falls back to a raw socket transfer protocol if ftplib is unavailable
+(for custom linux++ servers).</p>
+<p>Commands in interactive session:
+ls [path]
+cd <path>
+get <remote> [local]
+put <local> [remote]
+pwd
+quit / bye / exit</p></div>
+<h3>Methods</h3>
+<dl>
+<dt id="linux_plus_plus.apps.ftp_client.FTPClient.connect"><code class="name flex">
+<span>def <span class="ident">connect</span></span>(<span>self) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def connect(self) -&gt; bool:
+    try:
+        import ftplib
+        self._ftp = ftplib.FTP()
+        self._ftp.connect(self._host, self._port, timeout=10)
+        banner = self._ftp.getwelcome()
+        IOManager.write(banner)
+        user = input(&#34;Name: &#34;)
+        pw   = input(&#34;Password: &#34;)
+        self._ftp.login(user, pw)
+        IOManager.write(f&#34;Logged in as {user}&#34;)
+        return True
+    except Exception as e:
+        IOManager.error(f&#34;ftp: connection failed: {e}&#34;)
+        return False</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="linux_plus_plus.apps.ftp_client.FTPClient.run_interactive"><code class="name flex">
+<span>def <span class="ident">run_interactive</span></span>(<span>self) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run_interactive(self) -&gt; int:
+    if not self.connect():
+        return 1
+    IOManager.write(&#34;Type &#39;help&#39; for commands, &#39;quit&#39; to exit.&#34;)
+    while True:
+        try:
+            raw = input(&#34;ftp&gt; &#34;).strip()
+        except (EOFError, KeyboardInterrupt):
+            break
+        if not raw:
+            continue
+        parts = raw.split()
+        cmd   = parts[0].lower()
+        args  = parts[1:]
+
+        if cmd in (&#34;quit&#34;, &#34;bye&#34;, &#34;exit&#34;):
+            break
+        elif cmd == &#34;ls&#34;:
+            self._ls(args[0] if args else &#34;.&#34;)
+        elif cmd == &#34;cd&#34;:
+            self._cd(args[0] if args else &#34;/&#34;)
+        elif cmd == &#34;pwd&#34;:
+            self._pwd()
+        elif cmd == &#34;get&#34;:
+            if not args:
+                IOManager.error(&#34;Usage: get &lt;remote&gt; [local]&#34;)
+            else:
+                self._get(args[0], args[1] if len(args) &gt; 1 else None)
+        elif cmd == &#34;put&#34;:
+            if not args:
+                IOManager.error(&#34;Usage: put &lt;local&gt; [remote]&#34;)
+            else:
+                self._put(args[0], args[1] if len(args) &gt; 1 else None)
+        elif cmd == &#34;help&#34;:
+            IOManager.write(
+                &#34;Commands: ls  cd  pwd  get  put  quit\n&#34;
+                &#34;  ls [path]            list remote directory\n&#34;
+                &#34;  cd &lt;path&gt;            change remote directory\n&#34;
+                &#34;  pwd                  print remote working directory\n&#34;
+                &#34;  get &lt;remote&gt; [local] download file\n&#34;
+                &#34;  put &lt;local&gt; [remote] upload file&#34;
+            )
+        else:
+            IOManager.error(f&#34;ftp: unknown command {cmd!r}&#34;)
+
+    if self._ftp:
+        try: self._ftp.quit()
+        except Exception: pass
+    IOManager.write(&#34;Goodbye.&#34;)
+    return 0</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="linux_plus_plus.apps" href="index.html">linux_plus_plus.apps</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="linux_plus_plus.apps.ftp_client.FTPClient" href="#linux_plus_plus.apps.ftp_client.FTPClient">FTPClient</a></code></h4>
+<ul class="">
+<li><code><a title="linux_plus_plus.apps.ftp_client.FTPClient.connect" href="#linux_plus_plus.apps.ftp_client.FTPClient.connect">connect</a></code></li>
+<li><code><a title="linux_plus_plus.apps.ftp_client.FTPClient.run_interactive" href="#linux_plus_plus.apps.ftp_client.FTPClient.run_interactive">run_interactive</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

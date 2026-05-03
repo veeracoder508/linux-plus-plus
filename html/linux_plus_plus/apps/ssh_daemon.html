@@ -1,0 +1,834 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>linux_plus_plus.apps.ssh_daemon API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+darkMode: 'class',
+theme: {
+extend: {
+fontFamily: {
+sans: ['Inter', 'system-ui', 'sans-serif'],
+mono: ['JetBrains Mono', 'monospace']
+}
+}
+}
+}
+</script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+document.documentElement.classList.add('dark');
+</script>
+<style>
+/* 1. Scrollbar - Zinc Style */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #09090b; }
+::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+/* 2. Global Resets - Unified Zinc Palette */
+:root {
+--bg: #09090b !important;
+--text: #f4f4f5 !important;
+--accent: #3b82f6 !important;
+}
+html, body {
+background-color: #09090b !important;
+color: #f4f4f5 !important;
+font-family: 'Inter', system-ui, sans-serif !important;
+overflow-x: clip;
+scroll-behavior: smooth;
+}
+/* 3. Sidebar - Layout & Anti-Warping */
+#sidebar {
+width: 280px !important;
+min-width: 280px !important;
+max-width: 280px !important;
+flex: 0 0 280px !important;
+background-color: #0c0c0e !important;
+border-right: 1px solid #18181b !important;
+padding: 2.5rem 1.5rem !important;
+box-shadow: none !important;
+}
+#sidebar h1, #sidebar h2, #sidebar h3 {
+color: #fafafa !important;
+font-size: 0.875rem !important;
+font-weight: 600 !important;
+letter-spacing: -0.01em !important;
+border-bottom: none !important;
+margin-top: 1.5rem !important;
+margin-bottom: 0.75rem !important;
+padding: 0 !important;
+}
+#sidebar h1 { font-size: 1rem !important; margin-left: 0.5rem !important; }
+#sidebar ul { margin: 0 !important; padding: 0 !important; border: none !important; }
+#sidebar li { margin: 0 !important; padding: 0 !important; border: none !important; }
+#sidebar a {
+display: block !important;
+color: #a1a1aa !important;
+text-decoration: none !important;
+margin-bottom: 0.25rem !important;
+padding: 0.4rem 0.75rem !important;
+border-radius: 0.5rem !important;
+font-size: 0.875rem !important;
+transition: all 0.2s ease !important;
+white-space: normal !important;
+overflow-wrap: anywhere !important;
+word-break: break-word !important;
+line-height: 1.4 !important;
+}
+#sidebar a:hover {
+background-color: #18181b !important;
+color: #3b82f6 !important;
+}
+#sidebar code {
+padding: 0;
+margin: 0;
+}
+/* 4. Main Content - Balanced Spacing */
+#content {
+flex: 1 !important;
+min-width: 0 !important;
+padding: 3rem 4rem !important;
+max-width: 64rem !important;
+margin: 0 auto !important;
+border-left: none !important;
+}
+/* Main Top Title */
+#content h1.title {
+font-size: 2.5rem !important;
+font-weight: 800 !important;
+letter-spacing: -0.04em !important;
+color: #ffffff !important;
+margin-bottom: 2rem !important;
+}
+/* Standard internal H1 tags generated by markdown */
+#content h1:not(.title) {
+font-size: 1.75rem !important;
+font-weight: 700 !important;
+color: #f4f4f5 !important;
+margin-top: 2.5rem !important;
+margin-bottom: 1.25rem !important;
+letter-spacing: -0.02em !important;
+}
+/* Standard internal H2 tags */
+#content h2 {
+font-size: 1.35rem !important;
+font-weight: 600 !important;
+color: #f4f4f5 !important;
+margin-top: 2.5rem !important;
+margin-bottom: 1rem !important;
+}
+#content h2.section-title {
+font-size: 1.25rem !important;
+border-bottom: 1px solid #18181b !important;
+padding-bottom: 0.75rem !important;
+margin-top: 3.5rem !important;
+margin-bottom: 1.5rem !important;
+}
+/* 5. Signatures (dt) - Code Container */
+dt {
+background-color: #111113 !important;
+border: 1px solid #27272a !important;
+border-radius: 0.75rem !important;
+padding: 1rem 1.25rem !important;
+margin-top: 1.5rem !important;
+margin-bottom: 1rem !important;
+font-family: 'JetBrains Mono', monospace !important;
+font-size: 0.875rem !important;
+color: #e4e4e7 !important;
+line-height: 1.6 !important;
+overflow-x: auto !important;
+white-space: pre-wrap !important;
+}
+dt .name {
+color: #60a5fa !important;
+font-weight: 600 !important;
+background: transparent !important;
+}
+/* 6. Code Blocks & Preformatted Text */
+#content pre {
+background-color: #0a0a0a !important;
+border: 1px solid rgba(255, 255, 255, 0.1) !important;
+border-radius: 0.75rem !important;
+padding: 1.25rem !important;
+margin-top: 1rem !important;
+margin-bottom: 1.5rem !important;
+color: #d4d4d8 !important;
+overflow-x: auto !important;
+}
+#content pre code {
+background-color: transparent !important;
+border: none !important;
+padding: 0 !important;
+color: inherit !important;
+font-size: inherit !important;
+}
+/* 7. Typography, Paragraphs & Lists */
+#content p,
+.desc {
+color: #d4d4d8 !important; /* Brighter body text */
+line-height: 1.75 !important; /* Better line gaping */
+margin-bottom: 1.25rem !important; /* Space between paragraphs */
+font-size: 1rem !important;
+}
+/* Restore List Styling in Main Content */
+#content ul {
+list-style-type: disc !important;
+padding-left: 1.5rem !important;
+margin-bottom: 1.5rem !important;
+color: #d4d4d8 !important;
+}
+#content li {
+margin-bottom: 0.5rem !important;
+line-height: 1.6 !important;
+}
+/* Inline Code Styling */
+#content p code, #content li code, .desc code {
+background-color: #18181b !important; /* Zinc-900 */
+border: 1px solid #27272a !important;
+padding: 0.2rem 0.4rem !important;
+border-radius: 0.375rem !important;
+color: #f4f4f5 !important; /* Zinc-100 */
+font-size: 0.9em !important;
+}
+/* 8. Links & Visibility Fixes */
+#content a {
+color: #60a5fa !important;
+text-decoration: none !important;
+}
+#content a:hover {
+color: #93c5fd !important;
+}
+:target {
+background-color: rgba(59, 130, 246, 0.15) !important;
+color: inherit !important;
+}
+#content code.name,
+#content code.name a,
+#content .name,
+#content .name a {
+color: #60a5fa !important;
+text-decoration: none !important;
+}
+#content code.name a:hover,
+#content .name a:hover {
+color: #93c5fd !important;
+}
+#content code {
+color: #e4e4e7 !important;
+}
+</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>linux_plus_plus.apps.ssh_daemon</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="linux_plus_plus.apps.ssh_daemon.SSHDaemon"><code class="flex name class">
+<span>class <span class="ident">SSHDaemon</span></span>
+<span>(</span><span>shell: Shell)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SSHDaemon:
+    &#34;&#34;&#34;
+    A real SSH server built on paramiko&#39;s Transport layer.
+
+    Features:
+      - RSA host key (auto-generated, saved to ~/.linuxpp/ssh/host_rsa_key)
+      - Password auth via OS database (PAM → spwd → single-user fallback)
+      - Public key auth via ~/.ssh/authorized_keys
+      - Each client gets an isolated linux++ shell session
+      - Runs in a background daemon thread — non-blocking
+      - Multiple concurrent clients supported
+
+    Commands:
+      sshd start [port]   start (default port 2222)
+      sshd stop           stop and disconnect all clients
+      sshd status         show port and connected clients
+      sshd keygen         regenerate the host key
+
+    Requires: pip install paramiko
+    &#34;&#34;&#34;
+
+    KEY_DIR       = os.path.join(os.path.expanduser(&#34;~&#34;), &#34;.linuxpp&#34;, &#34;ssh&#34;)
+    HOST_KEY_PATH = os.path.join(KEY_DIR, &#34;host_rsa_key&#34;)
+    DEFAULT_PORT  = 2222
+    BANNER        = b&#34;linux++ sshd\r\n&#34;
+
+    def __init__(self, shell: &#34;Shell&#34;):
+        self._shell       = shell
+        self._port        = self.DEFAULT_PORT
+        self._server_sock: Optional[socket.socket] = None
+        self._thread:      Optional[threading.Thread] = None
+        self._running     = False
+        self._clients:    list[dict] = []
+        self._host_key    = None
+        self._lock        = threading.Lock()
+
+    # ------------------------------------------------------------------
+    # Public commands
+    # ------------------------------------------------------------------
+
+    def start(self, port: int = DEFAULT_PORT) -&gt; int:
+        if self._running:
+            IOManager.error(f&#34;sshd: already running on port {self._port}&#34;)
+            return 1
+        try:
+            import paramiko  # type: ignore
+        except ImportError:
+            IOManager.error(
+                &#34;sshd: paramiko is required.\n&#34;
+                &#34;      pip install paramiko&#34;
+            )
+            return 1
+
+        self._port     = port
+        self._host_key = self._load_or_generate_key(paramiko)
+        if self._host_key is None:
+            return 1
+
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            sock.bind((&#34;0.0.0.0&#34;, port))
+            sock.listen(10)
+            sock.settimeout(1.0)
+            self._server_sock = sock
+        except OSError as e:
+            IOManager.error(f&#34;sshd: cannot bind port {port}: {e}&#34;)
+            return 1
+
+        self._running = True
+        self._thread  = threading.Thread(
+            target=self._accept_loop,
+            args=(paramiko,),
+            daemon=True,
+            name=&#34;sshd-accept&#34;,
+        )
+        self._thread.start()
+
+        IOManager.write(
+            f&#34;sshd: listening on 0.0.0.0:{port}\n&#34;
+            f&#34;sshd: host key fingerprint: {self._fingerprint(self._host_key)}\n&#34;
+            f&#34;sshd: connect with:  ssh {EnvManager.username()}@localhost -p {port}&#34;
+        )
+        return 0
+
+    def stop(self) -&gt; int:
+        if not self._running:
+            IOManager.error(&#34;sshd: not running&#34;)
+            return 1
+        self._running = False
+        if self._server_sock:
+            try:
+                self._server_sock.close()
+            except Exception:
+                pass
+            self._server_sock = None
+        with self._lock:
+            for c in self._clients:
+                try:
+                    c[&#34;transport&#34;].close()
+                except Exception:
+                    pass
+            self._clients.clear()
+        IOManager.write(&#34;sshd: stopped&#34;)
+        return 0
+
+    def status(self) -&gt; int:
+        if not self._running:
+            IOManager.write(&#34;sshd: not running&#34;)
+            return 0
+        with self._lock:
+            clients = list(self._clients)
+        IOManager.write(
+            f&#34;sshd: running on port {self._port}\n&#34;
+            f&#34;sshd: {len(clients)} client(s) connected&#34;
+        )
+        for c in clients:
+            addr = c.get(&#34;addr&#34;, (&#34;?&#34;, 0))
+            user = c.get(&#34;user&#34;, &#34;?&#34;)
+            IOManager.write(f&#34;       {user}@{addr[0]}:{addr[1]}&#34;)
+        return 0
+
+    def keygen(self) -&gt; int:
+        try:
+            import paramiko  # type: ignore
+        except ImportError:
+            IOManager.error(&#34;sshd: paramiko required — pip install paramiko&#34;)
+            return 1
+        os.makedirs(self.KEY_DIR, exist_ok=True)
+        key = paramiko.RSAKey.generate(2048)
+        key.write_private_key_file(self.HOST_KEY_PATH)
+        if not IS_WINDOWS:
+            os.chmod(self.HOST_KEY_PATH, 0o600)
+        IOManager.write(
+            f&#34;sshd: new host key → {self.HOST_KEY_PATH}\n&#34;
+            f&#34;sshd: fingerprint:   {self._fingerprint(key)}&#34;
+        )
+        return 0
+
+    # ------------------------------------------------------------------
+    # Accept loop
+    # ------------------------------------------------------------------
+
+    def _accept_loop(self, paramiko) -&gt; None:
+        while self._running:
+            try:
+                conn, addr = self._server_sock.accept()
+            except socket.timeout:
+                continue
+            except OSError:
+                break
+            threading.Thread(
+                target=self._handle_client,
+                args=(paramiko, conn, addr),
+                daemon=True,
+                name=f&#34;sshd-{addr[0]}:{addr[1]}&#34;,
+            ).start()
+
+    # ------------------------------------------------------------------
+    # Per-client handler
+    # ------------------------------------------------------------------
+
+    def _handle_client(self, paramiko, conn: socket.socket, addr: tuple) -&gt; None:
+        transport = None
+        iface     = _SSHServerInterface()
+        entry     = {&#34;addr&#34;: addr, &#34;transport&#34;: None, &#34;user&#34;: &#34;?&#34;}
+
+        try:
+            transport = paramiko.Transport(conn)
+            transport.add_server_key(self._host_key)
+            transport.start_server(server=iface)
+
+            entry[&#34;transport&#34;] = transport
+            with self._lock:
+                self._clients.append(entry)
+
+            chan = transport.accept(30)
+            if chan is None:
+                return
+
+            iface.shell_event.wait(10)
+            entry[&#34;user&#34;] = iface.username or &#34;?&#34;
+
+            if iface.exec_command:
+                self._run_command(chan, iface.exec_command)
+            else:
+                self._run_shell(chan)
+
+        except Exception:
+            pass
+        finally:
+            if transport:
+                try:
+                    transport.close()
+                except Exception:
+                    pass
+            try:
+                conn.close()
+            except Exception:
+                pass
+            with self._lock:
+                self._clients[:] = [c for c in self._clients if c is not entry]
+
+    def _run_command(self, chan, command: str) -&gt; None:
+        &#34;&#34;&#34;Execute one command in a fresh shell and send output back.&#34;&#34;&#34;
+        import io as _io
+        from ..kernel import Kernel
+        from ..shell  import Shell as _Shell
+
+        k  = Kernel()
+        sh = _Shell(k)
+        buf = _io.StringIO()
+        old_out, old_err = sys.stdout, sys.stderr
+        sys.stdout = sys.stderr = buf
+        try:
+            rc = sh.execute_line(command)
+        finally:
+            sys.stdout, sys.stderr = old_out, old_err
+
+        output = buf.getvalue().replace(&#34;\n&#34;, &#34;\r\n&#34;)
+        try:
+            if output:
+                chan.send(output.encode(&#34;utf-8&#34;, errors=&#34;replace&#34;))
+            chan.send_exit_status(rc)
+        except Exception:
+            pass
+        finally:
+            chan.close()
+
+    def _run_shell(self, chan) -&gt; None:
+        &#34;&#34;&#34;Interactive shell session over the SSH channel.&#34;&#34;&#34;
+        import io as _io
+        import re as _re
+        from ..kernel import Kernel
+        from ..shell  import Shell as _Shell
+
+        k  = Kernel()
+        sh = _Shell(k)
+
+        chan.send(self.BANNER)
+
+        try:
+            while sh.running:
+                # build and strip ANSI from prompt (client renders its own)
+                raw_prompt = sh._prompt()
+                plain_prompt = _re.sub(r&#39;\033\[[0-9;]*[mGKHF]&#39;, &#39;&#39;, raw_prompt)
+                # also strip readline \001..\002 markers
+                plain_prompt = plain_prompt.replace(&#34;\001&#34;, &#34;&#34;).replace(&#34;\002&#34;, &#34;&#34;)
+                chan.send(plain_prompt.encode(&#34;utf-8&#34;, errors=&#34;replace&#34;))
+
+                # read one line char-by-char
+                line = &#34;&#34;
+                while True:
+                    try:
+                        data = chan.recv(1)
+                    except Exception:
+                        return
+                    if not data:
+                        return
+                    ch = data.decode(&#34;utf-8&#34;, errors=&#34;replace&#34;)
+
+                    if ch in (&#34;\r&#34;, &#34;\n&#34;):
+                        chan.send(b&#34;\r\n&#34;)
+                        break
+                    elif ch == &#34;\x03&#34;:       # Ctrl+C
+                        chan.send(b&#34;^C\r\n&#34;)
+                        line = &#34;&#34;
+                        break
+                    elif ch == &#34;\x04&#34;:       # Ctrl+D / EOF
+                        chan.send(b&#34;logout\r\n&#34;)
+                        return
+                    elif ch in (&#34;\x7f&#34;, &#34;\x08&#34;):  # Backspace
+                        if line:
+                            line = line[:-1]
+                            chan.send(b&#34;\x08 \x08&#34;)
+                    elif ord(ch) &gt;= 32:
+                        line += ch
+                        chan.send(ch.encode())
+
+                if not line.strip():
+                    continue
+
+                # capture output
+                buf = _io.StringIO()
+                old_out, old_err = sys.stdout, sys.stderr
+                sys.stdout = sys.stderr = buf
+                try:
+                    sh.execute_line(line)
+                finally:
+                    sys.stdout, sys.stderr = old_out, old_err
+
+                out = buf.getvalue()
+                if out:
+                    # convert bare \n to \r\n for SSH terminals
+                    out = out.replace(&#34;\n&#34;, &#34;\r\n&#34;)
+                    chan.send(out.encode(&#34;utf-8&#34;, errors=&#34;replace&#34;))
+
+        except Exception:
+            pass
+        finally:
+            try:
+                chan.close()
+            except Exception:
+                pass
+
+    # ------------------------------------------------------------------
+    # Key management
+    # ------------------------------------------------------------------
+
+    def _load_or_generate_key(self, paramiko):
+        os.makedirs(self.KEY_DIR, exist_ok=True)
+        if os.path.isfile(self.HOST_KEY_PATH):
+            try:
+                key = paramiko.RSAKey(filename=self.HOST_KEY_PATH)
+                IOManager.write(f&#34;sshd: loaded host key from {self.HOST_KEY_PATH}&#34;)
+                return key
+            except Exception as e:
+                IOManager.write(f&#34;sshd: could not load host key ({e}), regenerating...&#34;)
+
+        IOManager.write(&#34;sshd: generating RSA host key ...&#34;)
+        try:
+            key = paramiko.RSAKey.generate(2048)
+            key.write_private_key_file(self.HOST_KEY_PATH)
+            if not IS_WINDOWS:
+                os.chmod(self.HOST_KEY_PATH, 0o600)
+            IOManager.write(f&#34;sshd: host key saved to {self.HOST_KEY_PATH}&#34;)
+            return key
+        except Exception as e:
+            IOManager.error(f&#34;sshd: failed to generate host key: {e}&#34;)
+            return None
+
+    @staticmethod
+    def _fingerprint(key) -&gt; str:
+        data   = key.asbytes()
+        digest = hashlib.md5(data).hexdigest()
+        return &#34;:&#34;.join(digest[i:i+2] for i in range(0, 32, 2))</code></pre>
+</details>
+<div class="desc"><p>A real SSH server built on paramiko's Transport layer.</p>
+<h2 id="features">Features</h2>
+<ul>
+<li>RSA host key (auto-generated, saved to ~/.linuxpp/ssh/host_rsa_key)</li>
+<li>Password auth via OS database (PAM → spwd → single-user fallback)</li>
+<li>Public key auth via ~/.ssh/authorized_keys</li>
+<li>Each client gets an isolated linux++ shell session</li>
+<li>Runs in a background daemon thread — non-blocking</li>
+<li>Multiple concurrent clients supported</li>
+</ul>
+<h2 id="commands">Commands</h2>
+<p>sshd start [port]
+start (default port 2222)
+sshd stop
+stop and disconnect all clients
+sshd status
+show port and connected clients
+sshd keygen
+regenerate the host key</p>
+<p>Requires: pip install paramiko</p></div>
+<h3>Class variables</h3>
+<dl>
+<dt id="linux_plus_plus.apps.ssh_daemon.SSHDaemon.BANNER"><code class="name">var <span class="ident">BANNER</span></code></dt>
+<dd>
+<div class="desc"><p>The type of the None singleton.</p></div>
+</dd>
+<dt id="linux_plus_plus.apps.ssh_daemon.SSHDaemon.DEFAULT_PORT"><code class="name">var <span class="ident">DEFAULT_PORT</span></code></dt>
+<dd>
+<div class="desc"><p>The type of the None singleton.</p></div>
+</dd>
+<dt id="linux_plus_plus.apps.ssh_daemon.SSHDaemon.HOST_KEY_PATH"><code class="name">var <span class="ident">HOST_KEY_PATH</span></code></dt>
+<dd>
+<div class="desc"><p>The type of the None singleton.</p></div>
+</dd>
+<dt id="linux_plus_plus.apps.ssh_daemon.SSHDaemon.KEY_DIR"><code class="name">var <span class="ident">KEY_DIR</span></code></dt>
+<dd>
+<div class="desc"><p>The type of the None singleton.</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="linux_plus_plus.apps.ssh_daemon.SSHDaemon.keygen"><code class="name flex">
+<span>def <span class="ident">keygen</span></span>(<span>self) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def keygen(self) -&gt; int:
+    try:
+        import paramiko  # type: ignore
+    except ImportError:
+        IOManager.error(&#34;sshd: paramiko required — pip install paramiko&#34;)
+        return 1
+    os.makedirs(self.KEY_DIR, exist_ok=True)
+    key = paramiko.RSAKey.generate(2048)
+    key.write_private_key_file(self.HOST_KEY_PATH)
+    if not IS_WINDOWS:
+        os.chmod(self.HOST_KEY_PATH, 0o600)
+    IOManager.write(
+        f&#34;sshd: new host key → {self.HOST_KEY_PATH}\n&#34;
+        f&#34;sshd: fingerprint:   {self._fingerprint(key)}&#34;
+    )
+    return 0</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="linux_plus_plus.apps.ssh_daemon.SSHDaemon.start"><code class="name flex">
+<span>def <span class="ident">start</span></span>(<span>self, port: int = 2222) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def start(self, port: int = DEFAULT_PORT) -&gt; int:
+    if self._running:
+        IOManager.error(f&#34;sshd: already running on port {self._port}&#34;)
+        return 1
+    try:
+        import paramiko  # type: ignore
+    except ImportError:
+        IOManager.error(
+            &#34;sshd: paramiko is required.\n&#34;
+            &#34;      pip install paramiko&#34;
+        )
+        return 1
+
+    self._port     = port
+    self._host_key = self._load_or_generate_key(paramiko)
+    if self._host_key is None:
+        return 1
+
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        sock.bind((&#34;0.0.0.0&#34;, port))
+        sock.listen(10)
+        sock.settimeout(1.0)
+        self._server_sock = sock
+    except OSError as e:
+        IOManager.error(f&#34;sshd: cannot bind port {port}: {e}&#34;)
+        return 1
+
+    self._running = True
+    self._thread  = threading.Thread(
+        target=self._accept_loop,
+        args=(paramiko,),
+        daemon=True,
+        name=&#34;sshd-accept&#34;,
+    )
+    self._thread.start()
+
+    IOManager.write(
+        f&#34;sshd: listening on 0.0.0.0:{port}\n&#34;
+        f&#34;sshd: host key fingerprint: {self._fingerprint(self._host_key)}\n&#34;
+        f&#34;sshd: connect with:  ssh {EnvManager.username()}@localhost -p {port}&#34;
+    )
+    return 0</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="linux_plus_plus.apps.ssh_daemon.SSHDaemon.status"><code class="name flex">
+<span>def <span class="ident">status</span></span>(<span>self) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def status(self) -&gt; int:
+    if not self._running:
+        IOManager.write(&#34;sshd: not running&#34;)
+        return 0
+    with self._lock:
+        clients = list(self._clients)
+    IOManager.write(
+        f&#34;sshd: running on port {self._port}\n&#34;
+        f&#34;sshd: {len(clients)} client(s) connected&#34;
+    )
+    for c in clients:
+        addr = c.get(&#34;addr&#34;, (&#34;?&#34;, 0))
+        user = c.get(&#34;user&#34;, &#34;?&#34;)
+        IOManager.write(f&#34;       {user}@{addr[0]}:{addr[1]}&#34;)
+    return 0</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="linux_plus_plus.apps.ssh_daemon.SSHDaemon.stop"><code class="name flex">
+<span>def <span class="ident">stop</span></span>(<span>self) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def stop(self) -&gt; int:
+    if not self._running:
+        IOManager.error(&#34;sshd: not running&#34;)
+        return 1
+    self._running = False
+    if self._server_sock:
+        try:
+            self._server_sock.close()
+        except Exception:
+            pass
+        self._server_sock = None
+    with self._lock:
+        for c in self._clients:
+            try:
+                c[&#34;transport&#34;].close()
+            except Exception:
+                pass
+        self._clients.clear()
+    IOManager.write(&#34;sshd: stopped&#34;)
+    return 0</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="linux_plus_plus.apps" href="index.html">linux_plus_plus.apps</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="linux_plus_plus.apps.ssh_daemon.SSHDaemon" href="#linux_plus_plus.apps.ssh_daemon.SSHDaemon">SSHDaemon</a></code></h4>
+<ul class="two-column">
+<li><code><a title="linux_plus_plus.apps.ssh_daemon.SSHDaemon.BANNER" href="#linux_plus_plus.apps.ssh_daemon.SSHDaemon.BANNER">BANNER</a></code></li>
+<li><code><a title="linux_plus_plus.apps.ssh_daemon.SSHDaemon.DEFAULT_PORT" href="#linux_plus_plus.apps.ssh_daemon.SSHDaemon.DEFAULT_PORT">DEFAULT_PORT</a></code></li>
+<li><code><a title="linux_plus_plus.apps.ssh_daemon.SSHDaemon.HOST_KEY_PATH" href="#linux_plus_plus.apps.ssh_daemon.SSHDaemon.HOST_KEY_PATH">HOST_KEY_PATH</a></code></li>
+<li><code><a title="linux_plus_plus.apps.ssh_daemon.SSHDaemon.KEY_DIR" href="#linux_plus_plus.apps.ssh_daemon.SSHDaemon.KEY_DIR">KEY_DIR</a></code></li>
+<li><code><a title="linux_plus_plus.apps.ssh_daemon.SSHDaemon.keygen" href="#linux_plus_plus.apps.ssh_daemon.SSHDaemon.keygen">keygen</a></code></li>
+<li><code><a title="linux_plus_plus.apps.ssh_daemon.SSHDaemon.start" href="#linux_plus_plus.apps.ssh_daemon.SSHDaemon.start">start</a></code></li>
+<li><code><a title="linux_plus_plus.apps.ssh_daemon.SSHDaemon.status" href="#linux_plus_plus.apps.ssh_daemon.SSHDaemon.status">status</a></code></li>
+<li><code><a title="linux_plus_plus.apps.ssh_daemon.SSHDaemon.stop" href="#linux_plus_plus.apps.ssh_daemon.SSHDaemon.stop">stop</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

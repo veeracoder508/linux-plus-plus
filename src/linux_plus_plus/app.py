@@ -10,7 +10,7 @@ SSH features) but fall back gracefully.
 
 Responsibilities and noteworthy apps provided here:
 - PackageManager (`lpp`): install, remove, list and search linux++ packages.
-- TextEditor (`edit`): a small terminal text editor for editing files.
+- TextEditor (`lppedit`): a small terminal text editor for editing files.
 - ManSystem (`man`): built-in manual pages for bundled commands.
 - FTPClient (`ftp`): interactive FTP client for file transfers.
 - SSHClient / SSHDaemon (`ssh` / `sshd`): optional SSH client and server
@@ -29,24 +29,11 @@ loads applications on demand during startup.
 import os
 import sys
 import json
-import socket
-import struct
-import hashlib
-import zipfile
-import urllib.request
-import urllib.error
-import urllib.parse
-import tempfile
-import time
-import platform
-import threading
-from typing import Optional
 
 try:
     from .hal    import IS_WINDOWS
-    from .stdlib import IOManager, EnvManager, SignalHandler
-    from .kernel import Kernel, SyscallError
-    from .shell  import Shell, BuiltinRegistry
+    from .stdlib import IOManager, EnvManager
+    from .shell  import Shell
 
     from .apps import *
 except ImportError:
@@ -498,7 +485,6 @@ EXAMPLES
     # connect from another machine:
     ssh user@your-ip -p 2222""",
 }
-
 """Collection of built-in manual pages used by `ManSystem`.
 
 Each key is a command name and each value is the plain-text manual page
@@ -563,7 +549,7 @@ def register_all(shell: "Shell") -> None:
     This function is invoked once at startup after the `Kernel` and `Shell`
     instances are created. It creates application helpers (package manager,
     script runner, sshd instance, etc.) and registers top-level commands
-    such as `lpp`, `man`, `edit`, `ftp`, `sysinfo`, `sh`, `ssh` and `sshd`.
+    such as `lpp`, `lppman`, `edit`, `ftp`, `sysinfo`, `sh`, `ssh` and `sshd`.
 
     The function mutates the supplied `shell` by calling
     `shell.builtins.register(name, callable)` for each command. It also
