@@ -7,4 +7,5 @@ A simple terminal OS made in python.
 ![Alt Text](linux_plus_plus_architecture.svg)   
 
 # Docs
-[https://veeracoder508.github.io/linux-plus-plus](https://veeracoder508.github.io/linux-plus-plus)
+[modular docs](https://veeracoder508.github.io/linux-plus-plus)
+[user docs]() *in progress*
