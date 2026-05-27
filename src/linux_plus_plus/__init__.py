@@ -41,7 +41,7 @@ __license__ = 'MIT'
 
 # Default version; keep in sync with project release version when
 # updating the package source.
-__version__ = '0.0.0b3'
+__version__ = '0.0.1'
 
 # If the package is installed as a distribution, prefer the distribution
 # metadata version. Use importlib.metadata when available, or fallback

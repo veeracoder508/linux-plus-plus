@@ -28,6 +28,15 @@ import fnmatch
 import atexit
 import re
 
+try:
+    from prompt_toolkit import prompt as pt_prompt
+    from prompt_toolkit.formatted_text import ANSI
+    from prompt_toolkit.lexers import PygmentsLexer
+    from pygments.lexers import get_lexer_by_name
+    HAS_HIGHLIGHTING = True
+except ImportError:
+    HAS_HIGHLIGHTING = False
+
 # ---------------------------------------------------------------------------
 # Cross-platform readline shim
 # readline   -> Unix/macOS (built into CPython)
@@ -1504,7 +1513,7 @@ class Shell:
     handling to the kernel via `kernel.syscall`.
     """
 
-    VERSION = "0.0.0b3"
+    VERSION = "0.0.1"
 
     def __init__(self, kernel):
         self.kernel     = kernel
@@ -1769,7 +1778,23 @@ class Shell:
 
         while self.running:
             try:
-                line = input(self._prompt())
+                # Generate the prompt string (which contains ANSI color codes)
+                prompt_str = self._prompt()
+                
+                if HAS_HIGHLIGHTING:
+                    # Dynamically fetch the PowerShell lexer
+                    ps_lexer = get_lexer_by_name("powershell").__class__
+                    
+                    # We MUST wrap prompt_str in ANSI() so prompt_toolkit 
+                    # correctly renders your green/blue/yellow prompt colors
+                    line = pt_prompt(
+                        ANSI(prompt_str), 
+                        lexer=PygmentsLexer(ps_lexer)
+                    )
+                else:
+                    # Graceful fallback to standard library
+                    line = input(prompt_str)
+
             except EOFError:
                 IOManager.write("")
                 break

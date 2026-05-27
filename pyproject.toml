@@ -5,11 +5,12 @@ build-backend = "uv_build"
 [project]
 name = "linux-plus-plus"
 authors = [{ name = "R A Veeraragavan", email = "veeracoder123@gmail.com" }]
-version = "0.0.0b3"
+version = "0.0.1"
 description = "A simple terminal OS made in python."
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "basic-pp>=0.0.0",
     "e2eeftp>=0.0.0",
     "paramiko>=4.0.0",
     "psutil>=7.2.2",
