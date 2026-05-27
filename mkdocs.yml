@@ -1,0 +1,131 @@
+# ============================================================================
+# The configuration produced by default is meant to highlight the features
+# that Zensical provides and to serve as a starting point for your own
+# projects.
+# ============================================================================
+
+site_name: "Basic++ docs"
+site_description: "A simple language for beginners."
+site_author: "R A Veeraragavan"
+copyright: "Copyright &copy; 2026 R A Veeraragavan. All rights reserved."
+
+# Repository
+repo_url: https://github.com/veeracoder508/linux-plus-plus
+repo_name: veeracoder508/linux-plus-plus
+
+# Configuration
+theme:
+  custom_dir: overrides
+  variant: modern
+  language: en
+  features:
+    - announce.dismiss
+    - content.code.annotate
+    - content.code.copy
+    - content.code.select
+    - content.footnote.tooltips
+    - content.tabs.link
+    - content.tooltips
+    - header.autohide
+    - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.path
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - toc.follow
+    - navigation.tabs
+    - navigation.path
+  font:
+    text: Inter
+    code: Jetbrains Mono
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: lucide/sun-moon
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo # You can change this to your preferred color
+      accent: blue    # You can change this to your preferred color
+      toggle:
+        icon: lucide/sun
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo # You can change this to your preferred color
+      accent: blue    # You can change this to your preferred color
+      toggle:
+        icon: lucide/moon
+        name: Switch to system preference
+
+extra_html:
+  - ""
+
+# Additional configuration
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/veeracoder508
+  alternate:
+    - name: English
+      link: /en/
+      lang: en
+    - name: Tamil
+      link: /ta/
+      lang: ta
+  version:
+    provider: mike
+
+# Extensions
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:zensical.extensions.emoji.to_svg
+      emoji_index: !!python/name:zensical.extensions.emoji.twemoji
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+      combine_header_slug: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+# Page tree
+nav:
+  - Home: index.md
+  - Changelog: changelog.md
+  - License: license.md
