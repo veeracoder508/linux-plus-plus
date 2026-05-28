@@ -16,3 +16,6 @@ linux.py
 # e2eeftp
 known_server.pub
 server_id.key
+
+# pytest
+.pytest_cache/
