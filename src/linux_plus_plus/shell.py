@@ -34,6 +34,9 @@ try:
     from prompt_toolkit.lexers import PygmentsLexer
     from prompt_toolkit.history import FileHistory
     from pygments.lexers import get_lexer_by_name
+
+    from pygments.styles import get_style_by_name
+    from prompt_toolkit.styles.pygments import style_from_pygments_cls
     HAS_HIGHLIGHTING = True
 except ImportError:
     HAS_HIGHLIGHTING = False
@@ -1786,12 +1789,15 @@ class Shell:
                     # Dynamically fetch the PowerShell lexer
                     ps_lexer = get_lexer_by_name("powershell").__class__
                     
-                    # We MUST wrap prompt_str in ANSI() so prompt_toolkit 
-                    # correctly renders your green/blue/yellow prompt colors
+                    # Create the Gruvbox Dark style object
+                    gruvbox_style = style_from_pygments_cls(get_style_by_name('gruvbox-dark'))
+                    
+                    # Pass the style into the prompt
                     line = pt_prompt(
                         ANSI(prompt_str), 
                         lexer=PygmentsLexer(ps_lexer),
-                        history=FileHistory(self.history._path)
+                        history=FileHistory(self.history._path),
+                        style=gruvbox_style  # <-- ADD THIS
                     )
                 else:
                     # Graceful fallback to standard library
