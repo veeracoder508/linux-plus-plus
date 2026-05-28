@@ -32,6 +32,7 @@ try:
     from prompt_toolkit import prompt as pt_prompt
     from prompt_toolkit.formatted_text import ANSI
     from prompt_toolkit.lexers import PygmentsLexer
+    from prompt_toolkit.history import FileHistory
     from pygments.lexers import get_lexer_by_name
     HAS_HIGHLIGHTING = True
 except ImportError:
@@ -1789,7 +1790,8 @@ class Shell:
                     # correctly renders your green/blue/yellow prompt colors
                     line = pt_prompt(
                         ANSI(prompt_str), 
-                        lexer=PygmentsLexer(ps_lexer)
+                        lexer=PygmentsLexer(ps_lexer),
+                        history=FileHistory(self.history._path)
                     )
                 else:
                     # Graceful fallback to standard library
