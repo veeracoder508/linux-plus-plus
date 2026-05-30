@@ -24,7 +24,7 @@ license = "MIT"
 license-files = ["LICEN[CS]E*"]
 
 [project.scripts]
-linux-plus-plus = "linux_plus_plus.cli:app"
+linuxpp = "linux_plus_plus.cli:app"
 
 [tool.setuptools.packages.find]
 where = ["src"]
